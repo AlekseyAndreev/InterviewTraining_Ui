@@ -18,10 +18,13 @@ const authConfig: PassedInitialConfig = {
     silentRenew: true,
     useRefreshToken: true,
     autoUserInfo: true,
-    logLevel: 1,
+    logLevel: 3,
     secureRoutes: [
       'https://localhost:5101/',
     ],
+    ignoreNonceAfterRefresh: true,
+    disableIatOffsetValidation: true,
+    maxIdTokenIatOffsetAllowedInSeconds: 600,
   },
 };
 

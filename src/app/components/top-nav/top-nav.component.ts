@@ -13,19 +13,15 @@ import { AsyncPipe } from '@angular/common';
        <nav class="top-nav">
          <a routerLink="/" class="nav-brand">Interview App</a>
          <div class="nav-menu">
-           <a routerLink="/user-info" class="nav-link">
-              <span>Информация</span>
-            </a>
-            
-           <div class="nav-user">
-              @if (oidcSecurityService.userData$ | async; as userData) {
+            <div class="nav-user">
+               @if (oidcSecurityService.userData$ | async; as userData) {
 <div class="user-avatar">
-                  {{ getInitials(userData) }}
-                </div>
-                <span>{{ getUserName(userData) || 'Пользователь' }}</span>
-              }
-             <button class="btn-logout" (click)="logout()">Выход</button>
-            </div>
+                   {{ getInitials(userData) }}
+                 </div>
+                 <a routerLink="/user-info" class="nav-link user-name-link">{{ getUserName(userData) || 'Пользователь' }}</a>
+               }
+              <button class="btn-logout" (click)="logout()">Выход</button>
+             </div>
           </div>
         </nav>
       }
