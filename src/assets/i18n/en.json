@@ -30,7 +30,7 @@
   "EXPERT_SEARCH": {
     "TITLE": "Interview Search",
     "EXPERTS": "Experts",
-    "FOUND": "found",
+    "TOTAL_FOUND": "Total found",
     "LOADING": "Loading...",
     "NO_RESULTS": "No experts found",
     "ERROR": "Error loading experts",

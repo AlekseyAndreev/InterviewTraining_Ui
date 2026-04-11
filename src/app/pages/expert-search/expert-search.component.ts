@@ -38,7 +38,7 @@ import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.mo
 
       @if (!loading && !error && experts.length > 0) {
         <div class="results-info">
-          {{ experts.length }} {{ 'EXPERT_SEARCH.EXPERTS' | translate }} {{ 'EXPERT_SEARCH.FOUND' | translate }}
+          {{ 'EXPERT_SEARCH.TOTAL_FOUND' | translate }} {{ experts.length }}
         </div>
 
         <div class="experts-grid">
