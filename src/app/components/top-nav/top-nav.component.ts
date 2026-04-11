@@ -14,6 +14,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         <a routerLink="/" class="nav-brand">{{ 'APP.TITLE' | translate }}</a>
         <div class="nav-menu">
           @if (auth.isAuthenticated) {
+            @if (oidcSecurityService.userData$ | async; as userData) {
+              <a routerLink="/expert-search" class="nav-link">{{ 'NAV.EXPERT_SEARCH' | translate }}</a>
+            }
             <div class="nav-user">
               @if (oidcSecurityService.userData$ | async; as userData) {
                 <div class="user-avatar">

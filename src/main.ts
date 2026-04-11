@@ -1,12 +1,12 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideAuth, PassedInitialConfig } from 'angular-auth-oidc-client';
-import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { provideAuth, PassedInitialConfig, authInterceptor } from 'angular-auth-oidc-client';
+import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
@@ -42,6 +42,7 @@ const authConfig: PassedInitialConfig = {
     logLevel: 3,
     secureRoutes: [
       'https://localhost:5101/',
+      'http://localhost:54962/',
     ],
     ignoreNonceAfterRefresh: true,
     disableIatOffsetValidation: true,
@@ -52,7 +53,10 @@ const authConfig: PassedInitialConfig = {
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withFetch()),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor()])
+    ),
     provideAnimations(),
     provideAuth(authConfig),
     provideTranslateService({

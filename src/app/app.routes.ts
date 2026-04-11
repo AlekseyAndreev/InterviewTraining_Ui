@@ -1,5 +1,6 @@
 ﻿import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { candidateGuard } from './guards/candidate.guard';
 
 export const routes: Routes = [
   {
@@ -10,6 +11,11 @@ export const routes: Routes = [
     path: 'user-info',
     loadComponent: () => import('./pages/user-info/user-info.component').then(m => m.UserInfoComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'expert-search',
+    loadComponent: () => import('./pages/expert-search/expert-search.component').then(m => m.ExpertSearchComponent),
+    canActivate: [candidateGuard]
   },
   {
     path: 'callback',

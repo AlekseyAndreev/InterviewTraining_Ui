@@ -6,7 +6,8 @@
   },
   "NAV": {
     "USER": "User",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "EXPERT_SEARCH": "Interview Search"
   },
   "HOME": {
     "LOGIN": "Login"
@@ -25,5 +26,22 @@
   "LANGUAGE": {
     "EN": "English",
     "RU": "Russian"
+  },
+  "EXPERT_SEARCH": {
+    "TITLE": "Interview Search",
+    "EXPERTS": "Experts",
+    "FOUND": "found",
+    "LOADING": "Loading...",
+    "NO_RESULTS": "No experts found",
+    "ERROR": "Error loading experts",
+    "VIEW_PROFILE": "View Profile",
+    "BOOK_INTERVIEW": "Book Interview",
+    "PAGE": "Page",
+    "OF": "of",
+    "SORT_BY": "Sort by",
+    "RATING_DESC": "Rating (High to Low)",
+    "RATING_ASC": "Rating (Low to High)",
+    "DATE_DESC": "Newest First",
+    "DATE_ASC": "Oldest First"
   }
 }
