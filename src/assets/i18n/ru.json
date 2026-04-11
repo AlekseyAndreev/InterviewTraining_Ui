@@ -1,0 +1,29 @@
+{
+  "APP": {
+    "TITLE": "Interview App",
+    "SLOGAN": "Собеседования без обязательств",
+    "SLOGAN_ACCENT": "Найди свою идеальную возможность"
+  },
+  "NAV": {
+    "USER": "Пользователь",
+    "LOGOUT": "Выход"
+  },
+  "HOME": {
+    "LOGIN": "Войти"
+  },
+  "USER_INFO": {
+    "TITLE": "Информация о пользователе",
+    "NAME": "Имя",
+    "EMAIL": "Email",
+    "USER_ID": "User ID",
+    "ACCESS_TOKEN": "Access Token",
+    "NOT_SPECIFIED": "Не указано"
+  },
+  "CALLBACK": {
+    "PROCESSING": "Обработка аутентификации..."
+  },
+  "LANGUAGE": {
+    "EN": "English",
+    "RU": "Русский"
+  }
+}

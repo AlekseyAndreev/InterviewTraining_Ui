@@ -1,22 +1,25 @@
 ﻿import { Component } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, TranslateModule],
   template: `
 <div class="home-container">
 <h1 class="slogan">
-        Собеседования без обязательств
-       <span class="slogan-accent">Найди свою идеальную возможность</span>
+        {{ 'APP.SLOGAN' | translate }}
+       <span class="slogan-accent">{{ 'APP.SLOGAN_ACCENT' | translate }}</span>
       </h1>
-      @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
-        @if (!auth.isAuthenticated) {
-<button class="btn-login" (click)="login()">Войти</button>
+      <div class="home-controls">
+        @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
+          @if (!auth.isAuthenticated) {
+<button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+          }
         }
-      }
+      </div>
     </div>
   `
 })

@@ -90,6 +90,20 @@ body {
   color: white;
 }
 
+.lang-selector {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.lang-selector:hover {
+  border-color: #667eea;
+}
+
 /* Main Content */
 .main-content {
   padding-top: 60px;

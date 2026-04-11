@@ -1,14 +1,16 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-callback',
   standalone: true,
+  imports: [TranslateModule],
   template: `
     <div class="loading-container">
       <div class="spinner"></div>
-     <p style="margin-top: 1rem;">Обработка аутентификации...</p>
+     <p style="margin-top: 1rem;">{{ 'CALLBACK.PROCESSING' | translate }}</p>
     </div>
   `
 })

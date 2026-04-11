@@ -1,0 +1,29 @@
+{
+  "APP": {
+    "TITLE": "Interview App",
+    "SLOGAN": "Interviews without obligations",
+    "SLOGAN_ACCENT": "Find your perfect opportunity"
+  },
+  "NAV": {
+    "USER": "User",
+    "LOGOUT": "Logout"
+  },
+  "HOME": {
+    "LOGIN": "Login"
+  },
+  "USER_INFO": {
+    "TITLE": "User Info",
+    "NAME": "Name",
+    "EMAIL": "Email",
+    "USER_ID": "User ID",
+    "ACCESS_TOKEN": "Access Token",
+    "NOT_SPECIFIED": "Not specified"
+  },
+  "CALLBACK": {
+    "PROCESSING": "Processing authentication..."
+  },
+  "LANGUAGE": {
+    "EN": "English",
+    "RU": "Russian"
+  }
+}

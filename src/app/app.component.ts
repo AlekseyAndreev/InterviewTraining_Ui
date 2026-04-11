@@ -1,6 +1,7 @@
 ﻿import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { TranslateService } from '@ngx-translate/core';
 import { TopNavComponent } from './components/top-nav/top-nav.component';
 
 @Component({
@@ -15,7 +16,13 @@ import { TopNavComponent } from './components/top-nav/top-nav.component';
   `
 })
 export class AppComponent {
-  constructor(private oidcSecurityService: OidcSecurityService) {
+  constructor(
+    private oidcSecurityService: OidcSecurityService,
+    private translateService: TranslateService
+  ) {
+    this.translateService.setDefaultLang('ru');
+    this.translateService.use('ru');
+
     this.oidcSecurityService.checkAuth().subscribe({
       next: ({ isAuthenticated, userData, accessToken }) => {
         console.log('Auth check result:', { isAuthenticated, userData, accessToken });

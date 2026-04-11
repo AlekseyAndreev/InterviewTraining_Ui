@@ -1,11 +1,12 @@
 ﻿import { Component } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-info',
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, TranslateModule],
   template: `
     <div class="user-info-container">
       <div class="user-card">
@@ -14,7 +15,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 <div class="user-card-avatar">
               {{ getInitials(userData) }}
             </div>
-            <h2 class="user-card-name">{{ getUserName(userData) || 'Пользователь' }}</h2>
+            <h2 class="user-card-name">{{ getUserName(userData) || ('NAV.USER' | translate) }}</h2>
             <p class="user-card-email">{{ getUserEmail(userData) || '' }}</p>
           }
         </div>
@@ -22,22 +23,22 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
         <div class="user-card-body">
           @if (oidcSecurityService.userData$ | async; as userData) {
 <div class="info-section">
-<div class="info-label">Имя</div>
-              <div class="info-value">{{ getUserName(userData) || 'Не указано' }}</div>
+<div class="info-label">{{ 'USER_INFO.NAME' | translate }}</div>
+              <div class="info-value">{{ getUserName(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
             <div class="info-section">
-              <div class="info-label">Email</div>
-              <div class="info-value">{{ getUserEmail(userData) || 'Не указано' }}</div>
+              <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
+              <div class="info-value">{{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
            <div class="info-section">
-             <div class="info-label">User ID</div>
-<div class="info-value">{{ getUserId(userData) || 'Не указано' }}</div>
+             <div class="info-label">{{ 'USER_INFO.USER_ID' | translate }}</div>
+<div class="info-value">{{ getUserId(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
           }
           
           @if (oidcSecurityService.getAccessToken() | async; as token) {
 <div class="info-section">
-<div class="info-label">Access Token</div>
+<div class="info-label">{{ 'USER_INFO.ACCESS_TOKEN' | translate }}</div>
               <div class="token-value">{{ token }}</div>
             </div>
           }
