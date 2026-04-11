@@ -51,8 +51,9 @@ export class UserInfoComponent {
   constructor(public oidcSecurityService: OidcSecurityService) {}
 
   getInitials(userData: any): string {
-    const name = this.getUserName(userData);
-    const email = this.getUserEmail(userData);
+    const data = userData?.userData || userData;
+    const name = data?.preferred_username || data?.name;
+    const email = data?.email;
     
     if (name) {
       const names = name.split(' ');
@@ -68,14 +69,17 @@ export class UserInfoComponent {
   }
 
   getUserName(userData: any): string | undefined {
-    return userData?.name;
+    const data = userData?.userData || userData;
+    return data?.preferred_username || data?.name;
   }
 
   getUserEmail(userData: any): string | undefined {
-    return userData?.email;
+    const data = userData?.userData || userData;
+    return data?.email;
   }
 
   getUserId(userData: any): string | undefined {
-    return userData?.sub;
+    const data = userData?.userData || userData;
+    return data?.sub;
   }
 }

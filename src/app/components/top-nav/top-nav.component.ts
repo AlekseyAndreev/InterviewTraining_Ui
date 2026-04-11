@@ -55,8 +55,9 @@ export class TopNavComponent {
   }
 
   getInitials(userData: any): string {
-    const name = this.getUserName(userData);
-    const email = this.getUserEmail(userData);
+    const data = userData?.userData || userData;
+    const name = data?.preferred_username || data?.name;
+    const email = data?.email;
     
     if (name) {
       const names = name.split(' ');
@@ -72,11 +73,13 @@ export class TopNavComponent {
   }
 
   getUserName(userData: any): string | undefined {
-    return userData?.name;
+    const data = userData?.userData || userData;
+    return data?.preferred_username || data?.name;
   }
 
   getUserEmail(userData: any): string | undefined {
-    return userData?.email;
+    const data = userData?.userData || userData;
+    return data?.email;
   }
 
   logout(): void {
