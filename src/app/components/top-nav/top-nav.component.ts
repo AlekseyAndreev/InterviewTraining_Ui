@@ -19,9 +19,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             }
             <div class="nav-user">
               @if (oidcSecurityService.userData$ | async; as userData) {
-                <div class="user-avatar">
-                  {{ getInitials(userData) }}
-                </div>
+                <a routerLink="/user-info" class="user-avatar-link">
+                  <div class="user-avatar">
+                    {{ getInitials(userData) }}
+                  </div>
+                </a>
                 <a routerLink="/user-info" class="nav-link user-name-link">{{ getUserName(userData) || ('NAV.USER' | translate) }}</a>
               }
              <select class="lang-selector" (change)="switchLanguage($event)" [value]="translateService.currentLang">
