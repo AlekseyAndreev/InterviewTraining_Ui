@@ -2,6 +2,7 @@
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,14 @@ import { TranslateModule } from '@ngx-translate/core';
       <div class="home-controls">
         @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
           @if (!auth.isAuthenticated) {
+            @if (isLoggingIn) {
+              <div class="login-loading">
+                <div class="spinner"></div>
+                <span>{{ 'HOME.LOGGING_IN' | translate }}</span>
+              </div>
+            } @else {
 <button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+            }
           }
         }
       </div>
@@ -24,9 +32,15 @@ import { TranslateModule } from '@ngx-translate/core';
   `
 })
 export class HomeComponent {
-  constructor(public oidcSecurityService: OidcSecurityService) {}
+  isLoggingIn = false;
+
+  constructor(
+    public oidcSecurityService: OidcSecurityService,
+    private router: Router
+  ) {}
 
   login(): void {
+    this.isLoggingIn = true;
     sessionStorage.setItem('returnUrl', '/');
     this.oidcSecurityService.authorize();
   }

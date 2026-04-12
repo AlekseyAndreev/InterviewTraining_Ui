@@ -10,7 +10,8 @@
     "EXPERT_SEARCH": "Interview Search"
   },
   "HOME": {
-    "LOGIN": "Login"
+    "LOGIN": "Login",
+    "LOGGING_IN": "Logging in..."
   },
   "USER_INFO": {
     "TITLE": "User Info",
