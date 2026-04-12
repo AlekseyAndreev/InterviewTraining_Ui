@@ -26,8 +26,6 @@ export class AppComponent {
 
     this.oidcSecurityService.checkAuth().subscribe({
       next: ({ isAuthenticated, userData, accessToken }) => {
-        console.log('AppComponent Auth check result:', { isAuthenticated, userData, accessToken: !!accessToken });
-        
         if (isAuthenticated) {
           const returnUrl = sessionStorage.getItem('returnUrl') || '/';
           sessionStorage.removeItem('returnUrl');
