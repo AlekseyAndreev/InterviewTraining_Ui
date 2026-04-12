@@ -1,0 +1,22 @@
+{
+  "auth": {
+    "authority": "https://localhost:5101",
+    "clientId": "interview_training_web_spa",
+    "scope": "openid profile roles permissions interview_training_signalr_web interview_training_interview offline_access",
+    "responseType": "code",
+    "silentRenew": true,
+    "useRefreshToken": true,
+    "autoUserInfo": true,
+    "logLevel": 3,
+    "secureRoutes": [
+      "https://localhost:5101/",
+      "http://localhost:54962/"
+    ],
+    "ignoreNonceAfterRefresh": true,
+    "disableIatOffsetValidation": true,
+    "maxIdTokenIatOffsetAllowedInSeconds": 600
+  },
+  "api": {
+    "baseUrl": "http://localhost:54962"
+  }
+}
