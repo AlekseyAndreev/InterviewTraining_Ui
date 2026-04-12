@@ -16,7 +16,9 @@
     ],
     "ignoreNonceAfterRefresh": true,
     "disableIatOffsetValidation": true,
-    "maxIdTokenIatOffsetAllowedInSeconds": 600
+    "maxIdTokenIatOffsetAllowedInSeconds": 600,
+    "redirectUrl": "https://interview-training.site/callback",
+    "postLogoutRedirectUri": "https://interview-training.site"
   },
   "api": {
     "baseUrl": "http://interview-training.site:1234"

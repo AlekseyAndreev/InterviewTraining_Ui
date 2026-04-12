@@ -11,6 +11,8 @@ export interface AuthConfig {
   ignoreNonceAfterRefresh: boolean;
   disableIatOffsetValidation: boolean;
   maxIdTokenIatOffsetAllowedInSeconds: number;
+  redirectUrl?: string;
+  postLogoutRedirectUri?: string;
 }
 
 export interface ApiConfig {

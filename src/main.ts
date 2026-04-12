@@ -47,8 +47,8 @@ function createAuthConfig(appConfig: AppConfig): PassedInitialConfig {
   return {
     config: {
       authority: appConfig.auth.authority,
-      redirectUrl: window.location.origin + '/callback',
-      postLogoutRedirectUri: window.location.origin,
+      redirectUrl: appConfig.auth.redirectUrl || window.location.origin + '/callback',
+      postLogoutRedirectUri: appConfig.auth.postLogoutRedirectUri || window.location.origin,
       clientId: appConfig.auth.clientId,
       scope: appConfig.auth.scope,
       responseType: appConfig.auth.responseType,
