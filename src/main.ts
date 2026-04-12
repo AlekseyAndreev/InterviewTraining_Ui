@@ -32,7 +32,7 @@ export function customLoaderFactory(http: HttpClient): CustomTranslateLoader {
 
 function getConfigPath(): string {
   const configName = (window as any).__APP_CONFIG__ || 'dev';
-  return `assets/config/config.${configName}.json`;
+  return `./assets/config/config.${configName}.json`;
 }
 
 async function loadConfig(): Promise<AppConfig> {

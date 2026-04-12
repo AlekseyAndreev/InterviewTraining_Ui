@@ -1,6 +1,6 @@
 {
   "auth": {
-    "authority": "https://interviewtrainingauth",
+    "authority": "https://interview-training.site:5108",
     "clientId": "interview_training_web_spa",
     "scope": "openid profile roles permissions interview_training_signalr_web interview_training_interview offline_access",
     "responseType": "code",
@@ -9,14 +9,16 @@
     "autoUserInfo": true,
     "logLevel": 3,
     "secureRoutes": [
-      "https://interviewtrainingauth/",
-      "http://interviewtrainingapi/"
+      "https://interview-training.site/",
+      "http://interview-training.site/",
+      "https://interview-training.site:5108/",
+      "http://interview-training.site:5108/"
     ],
     "ignoreNonceAfterRefresh": true,
     "disableIatOffsetValidation": true,
     "maxIdTokenIatOffsetAllowedInSeconds": 600
   },
   "api": {
-    "baseUrl": "http://interviewtrainingapi"
+    "baseUrl": "http://interview-training.site:1234"
   }
 }
