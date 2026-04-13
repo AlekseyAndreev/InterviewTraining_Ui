@@ -12,7 +12,9 @@
       "https://interview-training.site/",
       "http://interview-training.site/",
       "https://interview-training.site:5108/",
-      "http://interview-training.site:5108/"
+      "http://interview-training.site:5108/",
+      "https://interview-training.site:53384/",
+      "https://interview-training.site:53384"
     ],
     "ignoreNonceAfterRefresh": true,
     "disableIatOffsetValidation": true,
@@ -21,6 +23,6 @@
     "postLogoutRedirectUri": "https://interview-training.site"
   },
   "api": {
-    "baseUrl": "http://interview-training.site:1234"
+    "baseUrl": "https://interview-training.site:53384"
   }
 }
