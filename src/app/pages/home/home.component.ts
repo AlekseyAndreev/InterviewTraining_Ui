@@ -1,8 +1,9 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { APP_CONFIG } from '../../services/config.service';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,16 @@ import { Router } from '@angular/router';
                 <span>{{ 'HOME.LOGGING_IN' | translate }}</span>
               </div>
             } @else {
-<button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+              <button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+            }
+          } @else {
+            @if (oidcSecurityService.userData$ | async; as userData) {
+              @if (getUserRoles(userData).length === 0) {
+                <div class="set-roles-container">
+                  <p class="set-roles-hint">{{ 'HOME.SET_ROLES_HINT' | translate }}</p>
+                  <button class="btn-set-roles" (click)="goToChangeRoles()">{{ 'HOME.SET_ROLES' | translate }}</button>
+                </div>
+              }
             }
           }
         }
@@ -33,6 +43,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
   isLoggingIn = false;
+  private config = inject(APP_CONFIG);
 
   constructor(
     public oidcSecurityService: OidcSecurityService,
@@ -43,5 +54,23 @@ export class HomeComponent {
     this.isLoggingIn = true;
     sessionStorage.setItem('returnUrl', '/');
     this.oidcSecurityService.authorize();
+  }
+
+  getUserRoles(userData: any): string[] {
+    const data = userData?.userData || userData;
+    const roles = data?.role;
+    if (Array.isArray(roles)) {
+      return roles;
+    }
+    if (typeof roles === 'string') {
+      return [roles];
+    }
+    return [];
+  }
+
+  goToChangeRoles(): void {
+    const authority = this.config.auth.authority;
+    const returnUrl = window.location.origin + '/';
+    window.location.href = `${authority}/Account/ChangeRoles?returnUrl=${encodeURIComponent(returnUrl)}`;
   }
 }

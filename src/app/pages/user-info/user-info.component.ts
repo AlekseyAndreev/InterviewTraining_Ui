@@ -1,7 +1,8 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { APP_CONFIG } from '../../services/config.service';
 
 @Component({
   selector: 'app-user-info',
@@ -30,9 +31,26 @@ import { TranslateModule } from '@ngx-translate/core';
               <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
               <div class="info-value">{{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
-           <div class="info-section">
-             <div class="info-label">{{ 'USER_INFO.USER_ID' | translate }}</div>
+<div class="info-section">
+              <div class="info-label">{{ 'USER_INFO.USER_ID' | translate }}</div>
 <div class="info-value">{{ getUserId(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+            </div>
+            <div class="info-section">
+              <div class="info-label">{{ 'USER_INFO.ROLES' | translate }}</div>
+              <div class="info-value">
+                <div class="roles-container">
+                  @if (getUserRoles(userData).length > 0) {
+                    <div class="roles-list">
+                      @for (role of getUserRoles(userData); track role) {
+                        <span class="role-badge">{{ getRoleDisplayName(role) }}</span>
+                      }
+                    </div>
+                  } @else {
+                    <span>{{ 'USER_INFO.NO_ROLES' | translate }}</span>
+                  }
+                  <button class="btn-set-roles btn-set-roles-small" (click)="goToChangeRoles()">{{ 'USER_INFO.CHANGE_ROLES' | translate }}</button>
+                </div>
+              </div>
             </div>
           }
           
@@ -48,7 +66,12 @@ import { TranslateModule } from '@ngx-translate/core';
   `
 })
 export class UserInfoComponent {
-  constructor(public oidcSecurityService: OidcSecurityService) {}
+  private config = inject(APP_CONFIG);
+  
+  constructor(
+    public oidcSecurityService: OidcSecurityService,
+    private translateService: TranslateService
+  ) {}
 
   getInitials(userData: any): string {
     const data = userData?.userData || userData;
@@ -81,5 +104,32 @@ export class UserInfoComponent {
   getUserId(userData: any): string | undefined {
     const data = userData?.userData || userData;
     return data?.sub;
+  }
+
+  getUserRoles(userData: any): string[] {
+    const data = userData?.userData || userData;
+    const roles = data?.role;
+    if (Array.isArray(roles)) {
+      return roles;
+    }
+    if (typeof roles === 'string') {
+      return [roles];
+    }
+    return [];
+  }
+
+  getRoleDisplayName(role: string): string {
+    const currentLang = this.translateService.currentLang || 'en';
+    const roleTranslations: Record<string, Record<string, string>> = {
+      'Candidate': { en: 'Candidate', ru: 'Кандидат' },
+      'Expert': { en: 'Expert', ru: 'Эксперт' }
+    };
+    return roleTranslations[role]?.[currentLang] || role;
+  }
+
+  goToChangeRoles(): void {
+    const authority = this.config.auth.authority;
+    const returnUrl = window.location.origin + '/';
+    window.location.href = `${authority}/Account/ChangeRoles?returnUrl=${encodeURIComponent(returnUrl)}`;
   }
 }

@@ -11,7 +11,9 @@
   },
   "HOME": {
     "LOGIN": "Войти",
-    "LOGGING_IN": "Вход..."
+    "LOGGING_IN": "Вход...",
+    "SET_ROLES": "Задайте себе роли",
+    "SET_ROLES_HINT": "Для полного доступа к функциям необходимо задать роли"
   },
   "USER_INFO": {
     "TITLE": "Информация о пользователе",
@@ -19,7 +21,10 @@
     "EMAIL": "Email",
     "USER_ID": "User ID",
     "ACCESS_TOKEN": "Access Token",
-    "NOT_SPECIFIED": "Не указано"
+    "NOT_SPECIFIED": "Не указано",
+    "ROLES": "Роли",
+    "NO_ROLES": "Роли не заданы",
+    "CHANGE_ROLES": "Изменить роли"
   },
   "CALLBACK": {
     "PROCESSING": "Обработка аутентификации..."

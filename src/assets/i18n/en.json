@@ -11,7 +11,9 @@
   },
   "HOME": {
     "LOGIN": "Login",
-    "LOGGING_IN": "Logging in..."
+    "LOGGING_IN": "Logging in...",
+    "SET_ROLES": "Set your roles",
+    "SET_ROLES_HINT": "You need to set roles for full access to features"
   },
   "USER_INFO": {
     "TITLE": "User Info",
@@ -19,7 +21,9 @@
     "EMAIL": "Email",
     "USER_ID": "User ID",
     "ACCESS_TOKEN": "Access Token",
-    "NOT_SPECIFIED": "Not specified"
+    "NOT_SPECIFIED": "Not specified",
+    "ROLES": "Roles",
+    "NO_ROLES": "No roles assigned"
   },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."
