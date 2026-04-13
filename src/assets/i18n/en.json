@@ -23,7 +23,8 @@
     "ACCESS_TOKEN": "Access Token",
     "NOT_SPECIFIED": "Not specified",
     "ROLES": "Roles",
-    "NO_ROLES": "No roles assigned"
+    "NO_ROLES": "No roles assigned",
+    "CHANGE_ROLES": "Change roles"
   },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."

@@ -210,11 +210,19 @@ body {
 
 .btn-set-roles-small {
   margin-top: 20px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
 }
 
 .btn-set-roles:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.roles-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .roles-list {

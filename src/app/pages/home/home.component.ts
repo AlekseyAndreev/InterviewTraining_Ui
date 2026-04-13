@@ -69,8 +69,11 @@ export class HomeComponent {
   }
 
   goToChangeRoles(): void {
-    const authority = this.config.auth.authority;
-    const returnUrl = window.location.origin + '/';
-    window.location.href = `${authority}/Account/ChangeRoles?returnUrl=${encodeURIComponent(returnUrl)}`;
+    this.oidcSecurityService.authorize(undefined, {
+      customParams: {
+        redirect_to_change_roles: 'true',
+        prompt: 'login'
+      }
+    });
   }
 }

@@ -14,7 +14,8 @@
     ],
     "ignoreNonceAfterRefresh": true,
     "disableIatOffsetValidation": true,
-    "maxIdTokenIatOffsetAllowedInSeconds": 600
+    "maxIdTokenIatOffsetAllowedInSeconds": 600,
+    "postLogoutRedirectUri": "http://localhost:4200"
   },
   "api": {
     "baseUrl": "http://localhost:54962"
