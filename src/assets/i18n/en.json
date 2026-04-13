@@ -13,7 +13,19 @@
     "LOGIN": "Login",
     "LOGGING_IN": "Logging in...",
     "SET_ROLES": "Set your roles",
-    "SET_ROLES_HINT": "You need to set roles for full access to features"
+    "SET_ROLES_HINT": "You need to set roles for full access to features",
+    "FOR_CANDIDATES": "For Candidates",
+    "FOR_EXPERTS": "For Experts",
+    "CANDIDATE_BENEFIT_1": "Take a practice interview with no obligations",
+    "CANDIDATE_BENEFIT_2": "Test your professional skills",
+    "CANDIDATE_BENEFIT_3": "Get feedback from an expert",
+    "CANDIDATE_BENEFIT_4": "Prepare for real interviews",
+    "EXPERT_BENEFIT_1": "Conduct practice interviews with no obligations",
+    "EXPERT_BENEFIT_2": "Get monetary compensation for conducting interviews",
+    "EXPERT_BENEFIT_3": "Share your experience and knowledge",
+    "CANDIDATE_HINT_PREFIX": "Now you can",
+    "CANDIDATE_HINT_LINK": "search for experts",
+    "CANDIDATE_HINT_SUFFIX": "to take an interview."
   },
   "USER_INFO": {
     "TITLE": "User Info",

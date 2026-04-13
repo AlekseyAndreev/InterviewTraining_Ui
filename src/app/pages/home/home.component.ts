@@ -2,19 +2,38 @@
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { APP_CONFIG } from '../../services/config.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe, TranslateModule],
+  imports: [AsyncPipe, TranslateModule, RouterLink],
   template: `
 <div class="home-container">
 <h1 class="slogan">
         {{ 'APP.SLOGAN' | translate }}
        <span class="slogan-accent">{{ 'APP.SLOGAN_ACCENT' | translate }}</span>
       </h1>
+      <div class="benefits-container">
+        <div class="benefit-card candidate-card">
+          <h2 class="benefit-title">{{ 'HOME.FOR_CANDIDATES' | translate }}</h2>
+          <ul class="benefit-list">
+            <li>{{ 'HOME.CANDIDATE_BENEFIT_1' | translate }}</li>
+            <li>{{ 'HOME.CANDIDATE_BENEFIT_2' | translate }}</li>
+            <li>{{ 'HOME.CANDIDATE_BENEFIT_3' | translate }}</li>
+            <li>{{ 'HOME.CANDIDATE_BENEFIT_4' | translate }}</li>
+          </ul>
+        </div>
+        <div class="benefit-card expert-card">
+          <h2 class="benefit-title">{{ 'HOME.FOR_EXPERTS' | translate }}</h2>
+          <ul class="benefit-list">
+            <li>{{ 'HOME.EXPERT_BENEFIT_1' | translate }}</li>
+            <li>{{ 'HOME.EXPERT_BENEFIT_2' | translate }}</li>
+            <li>{{ 'HOME.EXPERT_BENEFIT_3' | translate }}</li>
+          </ul>
+        </div>
+      </div>
       <div class="home-controls">
         @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
           @if (!auth.isAuthenticated) {
@@ -28,7 +47,13 @@ import { APP_CONFIG } from '../../services/config.service';
             }
           } @else {
             @if (oidcSecurityService.userData$ | async; as userData) {
-              @if (getUserRoles(userData).length === 0) {
+              @if (hasCandidateRole(userData)) {
+                <p class="candidate-hint">
+                  {{ 'HOME.CANDIDATE_HINT_PREFIX' | translate }}
+                  <a routerLink="/expert-search" class="candidate-link">{{ 'HOME.CANDIDATE_HINT_LINK' | translate }}</a>
+                  {{ 'HOME.CANDIDATE_HINT_SUFFIX' | translate }}
+                </p>
+              } @else if (getUserRoles(userData).length === 0) {
                 <div class="set-roles-container">
                   <p class="set-roles-hint">{{ 'HOME.SET_ROLES_HINT' | translate }}</p>
                   <button class="btn-set-roles" (click)="goToChangeRoles()">{{ 'HOME.SET_ROLES' | translate }}</button>
@@ -66,6 +91,10 @@ export class HomeComponent {
       return [roles];
     }
     return [];
+  }
+
+  hasCandidateRole(userData: any): boolean {
+    return this.getUserRoles(userData).includes('Candidate');
   }
 
   goToChangeRoles(): void {

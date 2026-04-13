@@ -219,6 +219,107 @@ body {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
+.benefits-container {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 900px;
+}
+
+.benefit-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.candidate-card {
+  border-top: 4px solid #667eea;
+}
+
+.expert-card {
+  border-top: 4px solid #764ba2;
+}
+
+.benefit-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: #333;
+}
+
+.candidate-card .benefit-title {
+  color: #667eea;
+}
+
+.expert-card .benefit-title {
+  color: #764ba2;
+}
+
+.benefit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefit-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.benefit-list li:last-child {
+  margin-bottom: 0;
+}
+
+.benefit-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.expert-card .benefit-list li::before {
+  color: #764ba2;
+}
+
+.candidate-hint {
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.candidate-link {
+  color: white;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.candidate-link:hover {
+  text-decoration-color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+
 .roles-container {
   display: flex;
   flex-direction: column;
@@ -538,6 +639,16 @@ body {
 @media (max-width: 768px) {
   .slogan {
     font-size: 2rem;
+  }
+  
+  .benefits-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .benefit-card {
+    min-width: 100%;
+    max-width: 100%;
   }
   
   .top-nav {
