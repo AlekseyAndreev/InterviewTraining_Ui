@@ -50,7 +50,9 @@
     "SHORT_DESCRIPTION_PLACEHOLDER": "Краткое описание о себе",
     "DESCRIPTION_PLACEHOLDER": "Подробное описание о себе",
     "LOADING": "Загрузка...",
-    "ERROR_LOADING": "Ошибка при загрузке информации о пользователе"
+    "ERROR_LOADING": "Ошибка при загрузке информации о пользователе",
+    "TIME_ZONE": "Часовой пояс",
+    "SELECT_TIME_ZONE": "Выберите часовой пояс"
   },
   "SKILLS": {
     "TITLE": "Навыки",

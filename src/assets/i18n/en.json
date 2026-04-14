@@ -50,7 +50,9 @@
     "SHORT_DESCRIPTION_PLACEHOLDER": "Brief description about yourself",
     "DESCRIPTION_PLACEHOLDER": "Detailed description about yourself",
     "LOADING": "Loading...",
-    "ERROR_LOADING": "Error loading user information"
+    "ERROR_LOADING": "Error loading user information",
+    "TIME_ZONE": "Time Zone",
+    "SELECT_TIME_ZONE": "Select time zone"
   },
   "SKILLS": {
     "TITLE": "Skills",

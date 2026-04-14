@@ -51,6 +51,16 @@ import { SkillGroupComponent } from '../../components/skill-group/skill-group.co
                 <textarea class="form-textarea" [(ngModel)]="editFormData.description" [placeholder]="'USER_INFO.DESCRIPTION_PLACEHOLDER' | translate" rows="4"></textarea>
               </div>
               
+              <div class="form-section">
+                <label class="form-label">{{ 'USER_INFO.TIME_ZONE' | translate }}</label>
+                <select class="form-input" [(ngModel)]="editFormData.selectedTimeZoneId">
+                  <option [ngValue]="null">{{ 'USER_INFO.SELECT_TIME_ZONE' | translate }}</option>
+                  @for (tz of apiUserInfo.timeZones; track tz.id) {
+                    <option [ngValue]="tz.id">{{ tz.description }} ({{ tz.code }})</option>
+                  }
+                </select>
+              </div>
+              
               <div class="form-actions">
                 <button class="btn-save" (click)="saveUserInfo()" [disabled]="isSaving">
                   @if (isSaving) {
@@ -85,6 +95,11 @@ import { SkillGroupComponent } from '../../components/skill-group/skill-group.co
               <div class="info-section">
                 <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
                 <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+              </div>
+              
+              <div class="info-section">
+                <div class="info-label">{{ 'USER_INFO.TIME_ZONE' | translate }}</div>
+                <div class="info-value">{{ getSelectedTimeZoneName() || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
               </div>
               
               <div class="info-section">
@@ -160,7 +175,9 @@ export class MyUserInfoComponent implements OnInit {
     photo: null,
     fullName: null,
     shortDescription: null,
-    description: null
+    description: null,
+    selectedTimeZoneId: null,
+    timeZones: []
   };
   isEditing = false;
   isSaving = false;
@@ -176,7 +193,8 @@ export class MyUserInfoComponent implements OnInit {
     photo: null,
     fullName: null,
     shortDescription: null,
-    description: null
+    description: null,
+    selectedTimeZoneId: null
   };
   
   constructor(
@@ -239,6 +257,14 @@ export class MyUserInfoComponent implements OnInit {
     });
   }
 
+  getSelectedTimeZoneName(): string {
+    if (!this.apiUserInfo.selectedTimeZoneId || !this.apiUserInfo.timeZones) {
+      return '';
+    }
+    const tz = this.apiUserInfo.timeZones.find(t => t.id === this.apiUserInfo.selectedTimeZoneId);
+    return tz ? `${tz.description} (${tz.code})` : '';
+  }
+
   startEdit(): void {
     this.isEditing = true;
     this.editFormData = {
@@ -246,7 +272,8 @@ export class MyUserInfoComponent implements OnInit {
       photo: this.apiUserInfo.photo || null,
       fullName: this.apiUserInfo.fullName || null,
       shortDescription: this.apiUserInfo.shortDescription || null,
-      description: this.apiUserInfo.description || null
+      description: this.apiUserInfo.description || null,
+      selectedTimeZoneId: this.apiUserInfo.selectedTimeZoneId || null
     };
   }
 
@@ -259,7 +286,10 @@ export class MyUserInfoComponent implements OnInit {
     this.userService.updateUserInfo(this.editFormData).subscribe({
       next: (response) => {
         if (response.success) {
-          this.apiUserInfo = { ...this.editFormData };
+          this.apiUserInfo = { 
+            ...this.apiUserInfo,
+            ...this.editFormData 
+          };
           this.isEditing = false;
         }
         this.isSaving = false;

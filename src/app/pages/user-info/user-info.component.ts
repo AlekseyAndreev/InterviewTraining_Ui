@@ -90,7 +90,9 @@ export class UserInfoComponent implements OnInit {
     photo: null,
     fullName: null,
     shortDescription: null,
-    description: null
+    description: null,
+    selectedTimeZoneId: null,
+    timeZones: []
   };
   isLoading = true;
   error = false;
