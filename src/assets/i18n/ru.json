@@ -39,7 +39,17 @@
     "CHANGE_ROLES": "Изменить роли",
     "SHORT_DESCRIPTION": "Краткое описание",
     "DESCRIPTION": "Полное описание",
-    "FULL_NAME": "Полное имя"
+    "FULL_NAME": "Полное имя",
+    "PHOTO_URL": "URL фотографии",
+    "EDIT": "Редактировать",
+    "SAVE": "Сохранить",
+    "SAVING": "Сохранение...",
+    "CANCEL": "Отмена",
+    "PHOTO_URL_PLACEHOLDER": "Введите URL фотографии",
+    "FULL_NAME_PLACEHOLDER": "Введите ваше полное имя",
+    "SHORT_DESCRIPTION_PLACEHOLDER": "Краткое описание о себе",
+    "DESCRIPTION_PLACEHOLDER": "Подробное описание о себе",
+    "LOADING": "Загрузка..."
   },
   "CALLBACK": {
     "PROCESSING": "Обработка аутентификации..."

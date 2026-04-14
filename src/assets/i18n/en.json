@@ -39,7 +39,17 @@
     "CHANGE_ROLES": "Change roles",
     "SHORT_DESCRIPTION": "Short Description",
     "DESCRIPTION": "Full Description",
-    "FULL_NAME": "Full Name"
+    "FULL_NAME": "Full Name",
+    "PHOTO_URL": "Photo URL",
+    "EDIT": "Edit",
+    "SAVE": "Save",
+    "SAVING": "Saving...",
+    "CANCEL": "Cancel",
+    "PHOTO_URL_PLACEHOLDER": "Enter photo URL",
+    "FULL_NAME_PLACEHOLDER": "Enter your full name",
+    "SHORT_DESCRIPTION_PLACEHOLDER": "Brief description about yourself",
+    "DESCRIPTION_PLACEHOLDER": "Detailed description about yourself",
+    "LOADING": "Loading..."
   },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."
