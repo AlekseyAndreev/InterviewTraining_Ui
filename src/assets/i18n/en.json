@@ -36,7 +36,10 @@
     "NOT_SPECIFIED": "Not specified",
     "ROLES": "Roles",
     "NO_ROLES": "No roles assigned",
-    "CHANGE_ROLES": "Change roles"
+    "CHANGE_ROLES": "Change roles",
+    "SHORT_DESCRIPTION": "Short Description",
+    "DESCRIPTION": "Full Description",
+    "FULL_NAME": "Full Name"
   },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."

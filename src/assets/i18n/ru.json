@@ -36,7 +36,10 @@
     "NOT_SPECIFIED": "Не указано",
     "ROLES": "Роли",
     "NO_ROLES": "Роли не заданы",
-    "CHANGE_ROLES": "Изменить роли"
+    "CHANGE_ROLES": "Изменить роли",
+    "SHORT_DESCRIPTION": "Краткое описание",
+    "DESCRIPTION": "Полное описание",
+    "FULL_NAME": "Полное имя"
   },
   "CALLBACK": {
     "PROCESSING": "Обработка аутентификации..."

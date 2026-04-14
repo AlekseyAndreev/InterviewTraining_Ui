@@ -1,8 +1,10 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { APP_CONFIG } from '../../services/config.service';
+import { UserService } from '../../services/user.service';
+import { GetUserInfoResponse } from '../../models/user-info.model';
 
 @Component({
   selector: 'app-user-info',
@@ -12,7 +14,16 @@ import { APP_CONFIG } from '../../services/config.service';
     <div class="user-info-container">
       <div class="user-card">
         <div class="user-card-header">
-          @if (oidcSecurityService.userData$ | async; as userData) {
+          @if (apiUserInfo) {
+            <div class="user-card-avatar">
+              @if (apiUserInfo.photoUrl) {
+                <img [src]="apiUserInfo.photoUrl" alt="User photo" class="avatar-image">
+              } @else {
+                {{ getInitialsFromName(apiUserInfo.fullName) }}
+              }
+            </div>
+            <h2 class="user-card-name">{{ apiUserInfo.fullName || ('NAV.USER' | translate) }}</h2>
+          } @else if (oidcSecurityService.userData$ | async; as userData) {
             <div class="user-card-avatar">
               {{ getInitials(userData) }}
             </div>
@@ -21,6 +32,21 @@ import { APP_CONFIG } from '../../services/config.service';
         </div>
         
         <div class="user-card-body">
+          @if (apiUserInfo) {
+            @if (apiUserInfo.shortDescription) {
+              <div class="info-section">
+                <div class="info-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</div>
+                <div class="info-value">{{ apiUserInfo.shortDescription }}</div>
+              </div>
+            }
+            @if (apiUserInfo.description) {
+              <div class="info-section">
+                <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
+                <div class="info-value">{{ apiUserInfo.description }}</div>
+              </div>
+            }
+          }
+          
           @if (oidcSecurityService.userData$ | async; as userData) {
             <div class="info-section">
               <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
@@ -49,13 +75,40 @@ import { APP_CONFIG } from '../../services/config.service';
     </div>
   `
 })
-export class UserInfoComponent {
+export class UserInfoComponent implements OnInit {
   private config = inject(APP_CONFIG);
+  private userService = inject(UserService);
+  
+  apiUserInfo: GetUserInfoResponse | null = null;
   
   constructor(
     public oidcSecurityService: OidcSecurityService,
     private translateService: TranslateService
   ) {}
+
+  ngOnInit(): void {
+    this.loadUserInfo();
+  }
+
+  private loadUserInfo(): void {
+    this.userService.getUserInfo().subscribe({
+      next: (response) => {
+        this.apiUserInfo = response;
+      },
+      error: (error) => {
+        console.error('Error loading user info:', error);
+      }
+    });
+  }
+
+  getInitialsFromName(name: string | null): string {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return names[0][0] + names[1][0];
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
 
   getInitials(userData: any): string {
     const data = userData?.userData || userData;
