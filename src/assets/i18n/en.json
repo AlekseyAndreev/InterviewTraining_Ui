@@ -52,6 +52,13 @@
     "LOADING": "Loading...",
     "ERROR_LOADING": "Error loading user information"
   },
+  "SKILLS": {
+    "TITLE": "Skills",
+    "LOADING": "Loading skills...",
+    "SAVE": "Save Skills",
+    "SAVING": "Saving...",
+    "NO_SKILLS": "No skills available"
+  },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."
   },

@@ -5,12 +5,15 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { APP_CONFIG } from '../../services/config.service';
 import { UserService } from '../../services/user.service';
+import { SkillService } from '../../services/skill.service';
 import { GetUserInfoResponse, UpdateUserInfoRequest } from '../../models/user-info.model';
+import { SkillGroupDto } from '../../models/skill.model';
+import { SkillGroupComponent } from '../../components/skill-group/skill-group.component';
 
 @Component({
   selector: 'app-my-user-info',
   standalone: true,
-  imports: [AsyncPipe, TranslateModule, FormsModule],
+  imports: [AsyncPipe, TranslateModule, FormsModule, SkillGroupComponent],
   template: `
     <div class="user-info-container">
       <div class="user-card">
@@ -83,6 +86,39 @@ import { GetUserInfoResponse, UpdateUserInfoRequest } from '../../models/user-in
                 <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
                 <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
               </div>
+              
+              <div class="info-section">
+                <div class="info-label">{{ 'SKILLS.TITLE' | translate }}</div>
+                <div class="skills-container">
+                  @if (isLoadingSkills) {
+                    <div class="loading-state">
+                      <div class="spinner"></div>
+                      <p>{{ 'SKILLS.LOADING' | translate }}</p>
+                    </div>
+                  } @else if (skillsGroups.length > 0) {
+                    <div class="skills-tree">
+                      @for (group of skillsGroups; track group.id) {
+                        <app-skill-group 
+                          [group]="group"
+                          [selectedSkills]="selectedSkills"
+                          (skillToggled)="toggleSkill($event)">
+                        </app-skill-group>
+                      }
+                    </div>
+                    <div class="skills-actions">
+                      <button class="btn-save-skills" (click)="saveSkills()" [disabled]="isSavingSkills">
+                        @if (isSavingSkills) {
+                          {{ 'SKILLS.SAVING' | translate }}
+                        } @else {
+                          {{ 'SKILLS.SAVE' | translate }}
+                        }
+                      </button>
+                    </div>
+                  } @else {
+                    <div class="no-skills">{{ 'SKILLS.NO_SKILLS' | translate }}</div>
+                  }
+                </div>
+              </div>
             }
             
             @if (oidcSecurityService.userData$ | async; as userData) {
@@ -117,6 +153,7 @@ import { GetUserInfoResponse, UpdateUserInfoRequest } from '../../models/user-in
 export class MyUserInfoComponent implements OnInit {
   private config = inject(APP_CONFIG);
   private userService = inject(UserService);
+  private skillService = inject(SkillService);
   
   apiUserInfo: GetUserInfoResponse = {
     photoUrl: null,
@@ -128,6 +165,11 @@ export class MyUserInfoComponent implements OnInit {
   isEditing = false;
   isSaving = false;
   isLoading = true;
+  
+  skillsGroups: SkillGroupDto[] = [];
+  selectedSkills: Set<string> = new Set();
+  isLoadingSkills = false;
+  isSavingSkills = false;
   
   editFormData: UpdateUserInfoRequest = {
     photoUrl: null,
@@ -144,6 +186,7 @@ export class MyUserInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserInfo();
+    this.loadSkillsTree();
   }
 
   private loadUserInfo(): void {
@@ -156,6 +199,42 @@ export class MyUserInfoComponent implements OnInit {
       error: (error) => {
         console.error('Error loading user info:', error);
         this.isLoading = false;
+      }
+    });
+  }
+
+  private loadSkillsTree(): void {
+    this.isLoadingSkills = true;
+    this.skillService.getSkillsTree().subscribe({
+      next: (response) => {
+        this.skillsGroups = response.groups || [];
+        this.isLoadingSkills = false;
+      },
+      error: (error) => {
+        console.error('Error loading skills tree:', error);
+        this.isLoadingSkills = false;
+      }
+    });
+  }
+
+  toggleSkill(skillId: string): void {
+    if (this.selectedSkills.has(skillId)) {
+      this.selectedSkills.delete(skillId);
+    } else {
+      this.selectedSkills.add(skillId);
+    }
+  }
+
+  saveSkills(): void {
+    this.isSavingSkills = true;
+    const skillIds = Array.from(this.selectedSkills);
+    this.skillService.addSkills(skillIds).subscribe({
+      next: () => {
+        this.isSavingSkills = false;
+      },
+      error: (error) => {
+        console.error('Error saving skills:', error);
+        this.isSavingSkills = false;
       }
     });
   }

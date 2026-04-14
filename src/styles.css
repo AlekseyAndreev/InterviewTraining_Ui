@@ -553,6 +553,115 @@ body {
   color: white;
 }
 
+.skills-container {
+  margin-top: 1rem;
+}
+
+.skills-tree {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+.skill-group {
+  margin-bottom: 0.5rem;
+}
+
+.skill-group-child {
+  margin-left: 1.5rem;
+}
+
+.skill-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  font-weight: 500;
+  color: #333;
+}
+
+.skill-group-header:hover {
+  background: #e8e8e8;
+}
+
+.skill-group-icon {
+  font-size: 0.8rem;
+  width: 16px;
+  text-align: center;
+}
+
+.skill-group-name {
+  flex: 1;
+}
+
+.skill-group-content {
+  padding-left: 1rem;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.skill-item:hover {
+  background: #e8e8e8;
+}
+
+.skill-item input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.skill-item span {
+  color: #555;
+}
+
+.no-skills {
+  text-align: center;
+  color: #888;
+  padding: 2rem;
+}
+
+.skills-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-save-skills {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-save-skills:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-save-skills:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .token-value {
   font-family: monospace;
   font-size: 0.85rem;
