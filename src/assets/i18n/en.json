@@ -57,7 +57,8 @@
     "LOADING": "Loading skills...",
     "SAVE": "Save Skills",
     "SAVING": "Saving...",
-    "NO_SKILLS": "No skills available"
+    "NO_SKILLS": "No skills available",
+    "NO_SKILLS_SELECTED": "No skills selected"
   },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."

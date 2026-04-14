@@ -2,12 +2,15 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
+import { SkillService } from '../../services/skill.service';
 import { GetUserInfoResponse } from '../../models/user-info.model';
+import { SkillGroupDto } from '../../models/skill.model';
+import { UserSkillGroupComponent } from '../../components/user-skill-group/user-skill-group.component';
 
 @Component({
   selector: 'app-user-info',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, UserSkillGroupComponent],
   template: `
     <div class="user-info-container">
       <div class="user-card">
@@ -49,6 +52,28 @@ import { GetUserInfoResponse } from '../../models/user-info.model';
               <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
               <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
+            
+            <div class="info-section">
+              <div class="info-label">{{ 'SKILLS.TITLE' | translate }}</div>
+              <div class="skills-container">
+                @if (isLoadingSkills) {
+                  <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>{{ 'SKILLS.LOADING' | translate }}</p>
+                  </div>
+                } @else if (hasSelectedSkills()) {
+                  <div class="skills-tree">
+                    @for (group of skillsGroups; track group.id) {
+                      <app-user-skill-group 
+                        [group]="group">
+                      </app-user-skill-group>
+                    }
+                  </div>
+                } @else {
+                  <div class="no-skills">{{ 'SKILLS.NO_SKILLS_SELECTED' | translate }}</div>
+                }
+              </div>
+            </div>
           }
         </div>
       </div>
@@ -58,6 +83,7 @@ import { GetUserInfoResponse } from '../../models/user-info.model';
 export class UserInfoComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
+  private skillService = inject(SkillService);
   
   apiUserInfo: GetUserInfoResponse = {
     photoUrl: null,
@@ -69,12 +95,17 @@ export class UserInfoComponent implements OnInit {
   isLoading = true;
   error = false;
   
+  skillsGroups: SkillGroupDto[] = [];
+  isLoadingSkills = false;
+  userId: string | null = null;
+  
   constructor(private translateService: TranslateService) {}
 
   ngOnInit(): void {
-    const userId = this.route.snapshot.paramMap.get('userId');
-    if (userId) {
-      this.loadUserInfo(userId);
+    this.userId = this.route.snapshot.paramMap.get('userId');
+    if (this.userId) {
+      this.loadUserInfo(this.userId);
+      this.loadUserSkills(this.userId);
     } else {
       this.isLoading = false;
       this.error = true;
@@ -95,6 +126,36 @@ export class UserInfoComponent implements OnInit {
         this.error = true;
       }
     });
+  }
+
+  private loadUserSkills(userId: string): void {
+    this.isLoadingSkills = true;
+    this.skillService.getUserSkillsTree(userId).subscribe({
+      next: (response) => {
+        this.skillsGroups = response.groups || [];
+        this.isLoadingSkills = false;
+      },
+      error: (error) => {
+        console.error('Error loading user skills:', error);
+        this.isLoadingSkills = false;
+      }
+    });
+  }
+
+  hasSelectedSkills(): boolean {
+    return this.skillsGroups.some(group => this.hasSelectedItemsInGroup(group));
+  }
+
+  private hasSelectedItemsInGroup(group: SkillGroupDto): boolean {
+    if (group.skills && group.skills.some(skill => skill.isSelected)) {
+      return true;
+    }
+    
+    if (group.childGroups) {
+      return group.childGroups.some(childGroup => this.hasSelectedItemsInGroup(childGroup));
+    }
+    
+    return false;
   }
 
   getInitialsFromName(name: string | null): string {

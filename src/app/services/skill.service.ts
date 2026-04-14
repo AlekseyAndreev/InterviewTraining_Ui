@@ -17,6 +17,11 @@ export class SkillService {
     return this.http.get<GetSkillsTreeResponse>(apiUrl);
   }
 
+  getUserSkillsTree(userId: string): Observable<GetSkillsTreeResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/user-skills/tree/${userId}`;
+    return this.http.get<GetSkillsTreeResponse>(apiUrl);
+  }
+
   addSkills(skillIds: string[]): Observable<void> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/user-skills`;
     return this.http.post<void>(apiUrl, skillIds);
