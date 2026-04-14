@@ -49,7 +49,8 @@
     "FULL_NAME_PLACEHOLDER": "Введите ваше полное имя",
     "SHORT_DESCRIPTION_PLACEHOLDER": "Краткое описание о себе",
     "DESCRIPTION_PLACEHOLDER": "Подробное описание о себе",
-    "LOADING": "Загрузка..."
+    "LOADING": "Загрузка...",
+    "ERROR_LOADING": "Ошибка при загрузке информации о пользователе"
   },
   "CALLBACK": {
     "PROCESSING": "Обработка аутентификации..."

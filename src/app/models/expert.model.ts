@@ -1,7 +1,7 @@
 export interface GetExpertResponse {
   id: string;
   identityServerId: string;
-  name: string;
+  fullName: string;
 }
 
 export interface PagedResponse<T> {

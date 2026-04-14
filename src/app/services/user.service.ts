@@ -17,6 +17,11 @@ export class UserService {
     return this.http.get<GetUserInfoResponse>(apiUrl);
   }
 
+  getUserInfoById(userId: string): Observable<GetUserInfoResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/users/${userId}`;
+    return this.http.get<GetUserInfoResponse>(apiUrl);
+  }
+
   updateUserInfo(request: UpdateUserInfoRequest): Observable<UpdateUserInfoResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/users`;
     return this.http.put<UpdateUserInfoResponse>(apiUrl, request);

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExpertService } from '../../services/expert.service';
 import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.model';
@@ -45,10 +46,10 @@ import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.mo
           @for (expert of experts; track expert.id) {
             <div class="expert-card">
               <div class="expert-avatar">
-                {{ getInitials(expert.name) }}
+                {{ getInitials(expert.fullName) }}
               </div>
               <div class="expert-info">
-                <h3 class="expert-name">{{ expert.name }}</h3>
+                <h3 class="expert-name">{{ expert.fullName }}</h3>
                 <div class="expert-id">ID: {{ expert.id }}</div>
               </div>
               <div class="expert-actions">
@@ -100,7 +101,10 @@ export class ExpertSearchComponent implements OnInit {
   totalRecords = 0;
   totalPages = 0;
 
-  constructor(private expertService: ExpertService) {}
+  constructor(
+    private expertService: ExpertService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadExperts();
@@ -144,7 +148,7 @@ export class ExpertSearchComponent implements OnInit {
   }
 
   viewProfile(expert: GetExpertResponse): void {
-    console.log('View profile:', expert);
+    this.router.navigate(['/user-info', expert.identityServerId]);
   }
 
   bookInterview(expert: GetExpertResponse): void {

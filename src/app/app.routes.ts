@@ -8,7 +8,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
   },
   {
-    path: 'user-info',
+    path: 'my-user-info',
+    loadComponent: () => import('./pages/my-user-info/my-user-info.component').then(m => m.MyUserInfoComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'user-info/:userId',
     loadComponent: () => import('./pages/user-info/user-info.component').then(m => m.UserInfoComponent),
     canActivate: [authGuard]
   },
