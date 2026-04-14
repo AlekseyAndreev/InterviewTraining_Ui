@@ -13,27 +13,18 @@ import { APP_CONFIG } from '../../services/config.service';
       <div class="user-card">
         <div class="user-card-header">
           @if (oidcSecurityService.userData$ | async; as userData) {
-<div class="user-card-avatar">
+            <div class="user-card-avatar">
               {{ getInitials(userData) }}
             </div>
-            <h2 class="user-card-name">{{ getUserName(userData) || ('NAV.USER' | translate) }}</h2>
-            <p class="user-card-email">{{ getUserEmail(userData) || '' }}</p>
+            <h2 class="user-card-name">{{ getUserEmail(userData) || ('NAV.USER' | translate) }}</h2>
           }
         </div>
         
         <div class="user-card-body">
           @if (oidcSecurityService.userData$ | async; as userData) {
-<div class="info-section">
-<div class="info-label">{{ 'USER_INFO.NAME' | translate }}</div>
-              <div class="info-value">{{ getUserName(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-            </div>
             <div class="info-section">
               <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
               <div class="info-value">{{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-            </div>
-<div class="info-section">
-              <div class="info-label">{{ 'USER_INFO.USER_ID' | translate }}</div>
-<div class="info-value">{{ getUserId(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
             <div class="info-section">
               <div class="info-label">{{ 'USER_INFO.ROLES' | translate }}</div>
@@ -52,14 +43,7 @@ import { APP_CONFIG } from '../../services/config.service';
                 </div>
               </div>
             </div>
-          }
-          
-          @if (oidcSecurityService.getAccessToken() | async; as token) {
-<div class="info-section">
-<div class="info-label">{{ 'USER_INFO.ACCESS_TOKEN' | translate }}</div>
-              <div class="token-value">{{ token }}</div>
-            </div>
-          }
+          }          
         </div>
       </div>
     </div>
