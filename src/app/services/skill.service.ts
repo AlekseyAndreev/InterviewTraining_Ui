@@ -13,7 +13,7 @@ export class SkillService {
   constructor(private http: HttpClient) {}
 
   getSkillsTree(): Observable<GetSkillsTreeResponse> {
-    const apiUrl = `${this.config.api.baseUrl}/api/v1/skills/tree`;
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/user-skills/tree`;
     return this.http.get<GetSkillsTreeResponse>(apiUrl);
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { SkillGroupDto, SkillDto } from '../../models/skill.model';
@@ -42,12 +42,67 @@ import { SkillGroupDto, SkillDto } from '../../models/skill.model';
     </div>
   `
 })
-export class SkillGroupComponent {
+export class SkillGroupComponent implements OnInit {
   @Input() group!: SkillGroupDto;
   @Input() selectedSkills!: Set<string>;
   @Output() skillToggled = new EventEmitter<string>();
   
   isExpanded = false;
+  
+  ngOnInit(): void {
+    this.initializeSelectedSkills();
+    this.isExpanded = this.hasSelectedItems();
+  }
+  
+  private initializeSelectedSkills(): void {
+    if (this.group.skills) {
+      this.group.skills.forEach(skill => {
+        if (skill.isSelected) {
+          this.selectedSkills.add(skill.id);
+        }
+      });
+    }
+  }
+  
+  private hasSelectedItems(): boolean {
+    if (this.group.skills) {
+      for (const skill of this.group.skills) {
+        if (skill.isSelected) {
+          return true;
+        }
+      }
+    }
+    
+    if (this.group.childGroups) {
+      for (const childGroup of this.group.childGroups) {
+        if (this.hasSelectedItemsInGroup(childGroup)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+  
+  private hasSelectedItemsInGroup(group: SkillGroupDto): boolean {
+    if (group.skills) {
+      for (const skill of group.skills) {
+        if (skill.isSelected) {
+          return true;
+        }
+      }
+    }
+    
+    if (group.childGroups) {
+      for (const childGroup of group.childGroups) {
+        if (this.hasSelectedItemsInGroup(childGroup)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
   
   toggleGroup(): void {
     this.isExpanded = !this.isExpanded;

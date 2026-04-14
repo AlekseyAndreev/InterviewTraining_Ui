@@ -1,6 +1,7 @@
 export interface SkillDto {
   id: string;
   name: string;
+  isSelected: boolean;
 }
 
 export interface SkillGroupDto {
