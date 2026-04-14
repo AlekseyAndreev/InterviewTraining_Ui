@@ -74,6 +74,8 @@
     "RATING_DESC": "Rating (High to Low)",
     "RATING_ASC": "Rating (Low to High)",
     "DATE_DESC": "Newest First",
-    "DATE_ASC": "Oldest First"
+    "DATE_ASC": "Oldest First",
+    "NOT_SPECIFIED": "Not specified",
+    "SHORT_DESCRIPTION": "Short Description"
   }
 }

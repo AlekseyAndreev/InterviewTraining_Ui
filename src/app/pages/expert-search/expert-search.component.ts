@@ -49,8 +49,8 @@ import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.mo
                 {{ getInitials(expert.fullName) }}
               </div>
               <div class="expert-info">
-                <h3 class="expert-name">{{ expert.fullName }}</h3>
-                <div class="expert-id">ID: {{ expert.id }}</div>
+                <h3 class="expert-name">{{ expert.fullName || ('EXPERT_SEARCH.NOT_SPECIFIED' | translate) }}</h3>
+                <p class="expert-description">{{ expert.shortDescription || ('EXPERT_SEARCH.NOT_SPECIFIED' | translate) }}</p>
               </div>
               <div class="expert-actions">
                 <button class="btn-view" (click)="viewProfile(expert)">
