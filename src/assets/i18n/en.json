@@ -12,6 +12,7 @@
   },
   "HOME": {
     "LOGIN": "Login",
+    "REGISTER": "Register",
     "LOGGING_IN": "Logging in...",
     "SET_ROLES": "Set your roles",
     "SET_ROLES_HINT": "You need to set roles for full access to features",

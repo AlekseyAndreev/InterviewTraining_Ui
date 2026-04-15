@@ -43,7 +43,10 @@ import { APP_CONFIG } from '../../services/config.service';
                 <span>{{ 'HOME.LOGGING_IN' | translate }}</span>
               </div>
             } @else {
-              <button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+              <div class="auth-buttons">
+                <button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+                <button class="btn-register" (click)="register()">{{ 'HOME.REGISTER' | translate }}</button>
+              </div>
             }
           } @else {
             @if (oidcSecurityService.userData$ | async; as userData) {
@@ -79,6 +82,16 @@ export class HomeComponent {
     this.isLoggingIn = true;
     sessionStorage.setItem('returnUrl', '/');
     this.oidcSecurityService.authorize();
+  }
+
+  register(): void {
+    this.isLoggingIn = true;
+    sessionStorage.setItem('returnUrl', '/');
+    this.oidcSecurityService.authorize(undefined, {
+      customParams: {
+        register: 'true'
+      }
+    });
   }
 
   getUserRoles(userData: any): string[] {

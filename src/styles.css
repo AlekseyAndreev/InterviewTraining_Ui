@@ -150,7 +150,7 @@ body {
   margin-top: 0.5rem;
 }
 
-.btn-login {
+.btn-login, .btn-register {
   background: white;
   color: #667eea;
   border: none;
@@ -163,9 +163,16 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.btn-login:hover {
+.btn-login:hover, .btn-register:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .login-loading {

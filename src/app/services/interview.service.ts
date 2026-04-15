@@ -1,7 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GetMyInterviewsRequest, GetMyInterviewsResponse } from '../models/interview.model';
+import { 
+  GetMyInterviewsRequest, 
+  GetMyInterviewsResponse, 
+  CreateInterviewRequest, 
+  CreateInterviewResponse 
+} from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
 @Injectable({
@@ -15,5 +20,10 @@ export class InterviewService {
   getMyInterviews(request: GetMyInterviewsRequest): Observable<GetMyInterviewsResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/my`;
     return this.http.post<GetMyInterviewsResponse>(apiUrl, request);
+  }
+
+  createInterview(request: CreateInterviewRequest): Observable<CreateInterviewResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews`;
+    return this.http.post<CreateInterviewResponse>(apiUrl, request);
   }
 }

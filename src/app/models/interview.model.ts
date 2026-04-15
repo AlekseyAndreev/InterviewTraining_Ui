@@ -31,3 +31,15 @@ export interface PagedResponse<T> {
 }
 
 export type GetMyInterviewsResponse = PagedResponse<InterviewDto>;
+
+export interface CreateInterviewRequest {
+  expertId: string;
+  date: string;
+  time: string;
+  notes?: string;
+}
+
+export interface CreateInterviewResponse {
+  id: string;
+  success: boolean;
+}
