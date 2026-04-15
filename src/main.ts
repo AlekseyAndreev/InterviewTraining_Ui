@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAuth, PassedInitialConfig, authInterceptor } from 'angular-auth-oidc-client';
+import { unauthorizedInterceptor } from './app/interceptors/unauthorized.interceptor';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -72,7 +73,7 @@ loadConfig()
         provideRouter(routes),
         provideHttpClient(
           withFetch(),
-          withInterceptors([authInterceptor()])
+          withInterceptors([authInterceptor(), unauthorizedInterceptor])
         ),
         provideAnimations(),
         provideAuth(createAuthConfig(appConfig)),
