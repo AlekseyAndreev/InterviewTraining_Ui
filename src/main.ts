@@ -17,7 +17,8 @@ class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient) {}
 
   getTranslation(lang: string): Observable<any> {
-    return this.http.get(`./assets/i18n/${lang}.json`).pipe(
+    const cacheBuster = `?v=${Date.now()}`;
+    return this.http.get(`./assets/i18n/${lang}.json${cacheBuster}`).pipe(
       catchError(() => {
         console.warn(`Translation file for ${lang} not found`);
         return of({});
