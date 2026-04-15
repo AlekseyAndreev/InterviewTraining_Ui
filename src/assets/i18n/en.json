@@ -7,7 +7,8 @@
   "NAV": {
     "USER": "User",
     "LOGOUT": "Logout",
-    "EXPERT_SEARCH": "Interview Search"
+    "EXPERT_SEARCH": "Interview Search",
+    "MY_INTERVIEWS": "My Interviews"
   },
   "HOME": {
     "LOGIN": "Login",
@@ -140,5 +141,23 @@
       "FRIDAY": "Friday",
       "SATURDAY": "Saturday"
     }
+  },
+  "MY_INTERVIEWS": {
+    "TITLE": "My Interviews",
+    "TOTAL_FOUND": "Total found",
+    "LOADING": "Loading...",
+    "NO_RESULTS": "No interviews found",
+    "ERROR": "Error loading interviews",
+    "VIEW_DETAILS": "View Details",
+    "PAGE": "Page",
+    "OF": "of",
+    "FILTER_BY_STATUS": "Filter by status",
+    "ALL_STATUSES": "All statuses",
+    "STATUS_SCHEDULED": "Scheduled",
+    "STATUS_COMPLETED": "Completed",
+    "STATUS_CANCELLED": "Cancelled",
+    "STATUS_NO_SHOW": "No Show",
+    "NOT_SPECIFIED": "Not specified",
+    "SCHEDULED_AT": "Scheduled at"
   }
 }

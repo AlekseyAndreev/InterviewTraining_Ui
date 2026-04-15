@@ -28,6 +28,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'my-interviews',
+    loadComponent: () => import('./pages/my-interviews/my-interviews.component').then(m => m.MyInterviewsComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'callback',
     loadComponent: () => import('./pages/callback/callback.component').then(m => m.CallbackComponent)
   },

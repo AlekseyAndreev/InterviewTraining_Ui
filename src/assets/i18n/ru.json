@@ -7,7 +7,8 @@
   "NAV": {
     "USER": "Пользователь",
     "LOGOUT": "Выход",
-    "EXPERT_SEARCH": "Поиск собеседования"
+    "EXPERT_SEARCH": "Поиск собеседования",
+    "MY_INTERVIEWS": "Мои собеседования"
   },
   "HOME": {
     "LOGIN": "Войти",
@@ -140,5 +141,23 @@
       "FRIDAY": "Пятница",
       "SATURDAY": "Суббота"
     }
+  },
+  "MY_INTERVIEWS": {
+    "TITLE": "Мои собеседования",
+    "TOTAL_FOUND": "Всего найдено",
+    "LOADING": "Загрузка...",
+    "NO_RESULTS": "Собеседования не найдены",
+    "ERROR": "Ошибка при загрузке собеседований",
+    "VIEW_DETAILS": "Подробнее",
+    "PAGE": "Страница",
+    "OF": "из",
+    "FILTER_BY_STATUS": "Фильтр по статусу",
+    "ALL_STATUSES": "Все статусы",
+    "STATUS_SCHEDULED": "Запланировано",
+    "STATUS_COMPLETED": "Завершено",
+    "STATUS_CANCELLED": "Отменено",
+    "STATUS_NO_SHOW": "Неявка",
+    "NOT_SPECIFIED": "Не указано",
+    "SCHEDULED_AT": "Запланировано на"
   }
 }

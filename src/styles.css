@@ -719,6 +719,13 @@ body {
   padding: 2rem;
 }
 
+/* My Interviews Page */
+.my-interviews-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
 .search-header {
   display: flex;
   justify-content: space-between;
