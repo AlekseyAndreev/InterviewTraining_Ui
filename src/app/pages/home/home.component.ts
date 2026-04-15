@@ -89,7 +89,7 @@ export class HomeComponent {
     sessionStorage.setItem('returnUrl', '/');
     this.oidcSecurityService.authorize(undefined, {
       customParams: {
-        register: 'true'
+        'redirect_to_register': 'true'
       }
     });
   }
