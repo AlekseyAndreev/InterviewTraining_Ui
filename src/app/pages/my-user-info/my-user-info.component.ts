@@ -6,14 +6,18 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { APP_CONFIG } from '../../services/config.service';
 import { UserService } from '../../services/user.service';
 import { SkillService } from '../../services/skill.service';
+import { AvailableTimeService } from '../../services/available-time.service';
 import { GetUserInfoResponse, UpdateUserInfoRequest } from '../../models/user-info.model';
 import { SkillGroupDto } from '../../models/skill.model';
+import { AvailableTimeDto, CreateAvailableTimeRequest, UpdateAvailableTimeRequest } from '../../models/available-time.model';
 import { SkillGroupComponent } from '../../components/skill-group/skill-group.component';
+import { AvailableTimeFormComponent } from '../../components/available-time-form/available-time-form.component';
+import { AvailableTimeListComponent } from '../../components/available-time-list/available-time-list.component';
 
 @Component({
   selector: 'app-my-user-info',
   standalone: true,
-  imports: [AsyncPipe, TranslateModule, FormsModule, SkillGroupComponent],
+  imports: [AsyncPipe, TranslateModule, FormsModule, SkillGroupComponent, AvailableTimeFormComponent, AvailableTimeListComponent],
   template: `
     <div class="user-info-container">
       <div class="user-card">
@@ -134,6 +138,38 @@ import { SkillGroupComponent } from '../../components/skill-group/skill-group.co
                   }
                 </div>
               </div>
+              
+              <div class="info-section">
+                <div class="info-label">{{ 'AVAILABLE_TIME.TITLE' | translate }}</div>
+                <div class="available-time-container">
+                  @if (isLoadingAvailableTimes) {
+                    <div class="loading-state">
+                      <div class="spinner"></div>
+                      <p>{{ 'AVAILABLE_TIME.LOADING' | translate }}</p>
+                    </div>
+                  } @else {
+                    <app-available-time-list 
+                      [availableTimes]="availableTimes"
+                      (edit)="onEditAvailableTime($event)"
+                      (delete)="onDeleteAvailableTime($event)">
+                    </app-available-time-list>
+                    
+                    @if (showAvailableTimeForm) {
+                      <app-available-time-form
+                        [editingTime]="editingAvailableTime"
+                        [isSaving]="isSavingAvailableTime"
+                        (saveTime)="onSaveAvailableTime($event)"
+                        (updateTime)="onUpdateAvailableTime($event)"
+                        (cancel)="onCancelAvailableTimeForm()">
+                      </app-available-time-form>
+                    } @else {
+                      <button class="btn-add-time" (click)="showAddAvailableTimeForm()">
+                        {{ 'AVAILABLE_TIME.ADD_TIME' | translate }}
+                      </button>
+                    }
+                  }
+                </div>
+              </div>
             }
             
             @if (oidcSecurityService.userData$ | async; as userData) {
@@ -169,6 +205,7 @@ export class MyUserInfoComponent implements OnInit {
   private config = inject(APP_CONFIG);
   private userService = inject(UserService);
   private skillService = inject(SkillService);
+  private availableTimeService = inject(AvailableTimeService);
   
   apiUserInfo: GetUserInfoResponse = {
     photoUrl: null,
@@ -188,6 +225,12 @@ export class MyUserInfoComponent implements OnInit {
   isLoadingSkills = false;
   isSavingSkills = false;
   
+  availableTimes: AvailableTimeDto[] = [];
+  isLoadingAvailableTimes = false;
+  isSavingAvailableTime = false;
+  showAvailableTimeForm = false;
+  editingAvailableTime: AvailableTimeDto | null = null;
+  
   editFormData: UpdateUserInfoRequest = {
     photoUrl: null,
     photo: null,
@@ -205,6 +248,7 @@ export class MyUserInfoComponent implements OnInit {
   ngOnInit(): void {
     this.loadUserInfo();
     this.loadSkillsTree();
+    this.loadAvailableTimes();
   }
 
   private loadUserInfo(): void {
@@ -343,5 +387,83 @@ export class MyUserInfoComponent implements OnInit {
         prompt: 'login'
       }
     });
+  }
+
+  private loadAvailableTimes(): void {
+    this.isLoadingAvailableTimes = true;
+    this.availableTimeService.getAvailableTimes().subscribe({
+      next: (response) => {
+        this.availableTimes = response.availableTimes || [];
+        this.isLoadingAvailableTimes = false;
+      },
+      error: (error) => {
+        console.error('Error loading available times:', error);
+        this.isLoadingAvailableTimes = false;
+      }
+    });
+  }
+
+  showAddAvailableTimeForm(): void {
+    this.showAvailableTimeForm = true;
+    this.editingAvailableTime = null;
+  }
+
+  onEditAvailableTime(time: AvailableTimeDto): void {
+    this.editingAvailableTime = time;
+    this.showAvailableTimeForm = true;
+  }
+
+  onDeleteAvailableTime(time: AvailableTimeDto): void {
+    if (confirm(this.translateService.instant('AVAILABLE_TIME.CONFIRM_DELETE'))) {
+      this.availableTimeService.deleteAvailableTime(time.id).subscribe({
+        next: () => {
+          this.availableTimes = this.availableTimes.filter(t => t.id !== time.id);
+        },
+        error: (error) => {
+          console.error('Error deleting available time:', error);
+        }
+      });
+    }
+  }
+
+  onSaveAvailableTime(request: CreateAvailableTimeRequest): void {
+    this.isSavingAvailableTime = true;
+    this.availableTimeService.createAvailableTime(request).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.loadAvailableTimes();
+          this.showAvailableTimeForm = false;
+          this.editingAvailableTime = null;
+        }
+        this.isSavingAvailableTime = false;
+      },
+      error: (error) => {
+        console.error('Error saving available time:', error);
+        this.isSavingAvailableTime = false;
+      }
+    });
+  }
+
+  onUpdateAvailableTime(event: { id: string; request: UpdateAvailableTimeRequest }): void {
+    this.isSavingAvailableTime = true;
+    this.availableTimeService.updateAvailableTime(event.id, event.request).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.loadAvailableTimes();
+          this.showAvailableTimeForm = false;
+          this.editingAvailableTime = null;
+        }
+        this.isSavingAvailableTime = false;
+      },
+      error: (error) => {
+        console.error('Error updating available time:', error);
+        this.isSavingAvailableTime = false;
+      }
+    });
+  }
+
+  onCancelAvailableTimeForm(): void {
+    this.showAvailableTimeForm = false;
+    this.editingAvailableTime = null;
   }
 }

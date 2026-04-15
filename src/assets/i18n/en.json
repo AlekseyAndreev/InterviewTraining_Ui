@@ -52,7 +52,8 @@
     "LOADING": "Loading...",
     "ERROR_LOADING": "Error loading user information",
     "TIME_ZONE": "Time Zone",
-    "SELECT_TIME_ZONE": "Select time zone"
+    "SELECT_TIME_ZONE": "Select time zone",
+    "BOOK_INTERVIEW": "Book Interview"
   },
   "SKILLS": {
     "TITLE": "Skills",
@@ -67,7 +68,7 @@
   },
   "LANGUAGE": {
     "EN": "English",
-    "RU": "Russian"
+    "RU": "Русский"
   },
   "EXPERT_SEARCH": {
     "TITLE": "Interview Search",
@@ -87,9 +88,6 @@
     "DATE_ASC": "Oldest First",
     "NOT_SPECIFIED": "Not specified",
     "SHORT_DESCRIPTION": "Short Description"
-  },
-  "USER_INFO": {
-    "BOOK_INTERVIEW": "Book Interview"
   },
   "BOOK_INTERVIEW": {
     "TITLE": "Book Interview",
@@ -113,7 +111,10 @@
   },
   "AVAILABLE_TIME": {
     "TITLE": "Available Time for Interviews",
+    "TYPE": "Availability Type",
     "ADD_TIME": "Add Time",
+    "EDIT_TIME": "Edit Time",
+    "UPDATE_TIME": "Update Time",
     "TYPE_ALWAYS": "Always available",
     "TYPE_WEEKLY_DAY": "Available on a specific day of the week",
     "TYPE_WEEKLY_TIME": "Available on a specific day and time",
@@ -125,9 +126,11 @@
     "TIME": "Time",
     "END_TIME": "End time",
     "DELETE": "Delete",
+    "EDIT": "Edit",
     "SAVING": "Saving...",
     "LOADING": "Loading...",
     "NO_TIMES": "No available times set",
+    "CONFIRM_DELETE": "Are you sure you want to delete this available time?",
     "DAYS": {
       "SUNDAY": "Sunday",
       "MONDAY": "Monday",

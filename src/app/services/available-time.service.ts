@@ -6,6 +6,8 @@ import {
   AvailableTimeDto,
   CreateAvailableTimeRequest,
   CreateAvailableTimeResponse,
+  UpdateAvailableTimeRequest,
+  UpdateAvailableTimeResponse,
   DeleteAvailableTimeResponse,
   GetAvailableTimesResponse,
   GetExpertAvailableSlotsRequest,
@@ -30,6 +32,11 @@ export class AvailableTimeService {
   createAvailableTime(request: CreateAvailableTimeRequest): Observable<CreateAvailableTimeResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/users/me/available-time`;
     return this.http.post<CreateAvailableTimeResponse>(apiUrl, request);
+  }
+
+  updateAvailableTime(id: string, request: UpdateAvailableTimeRequest): Observable<UpdateAvailableTimeResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/users/me/available-time/${id}`;
+    return this.http.put<UpdateAvailableTimeResponse>(apiUrl, request);
   }
 
   deleteAvailableTime(id: string): Observable<DeleteAvailableTimeResponse> {

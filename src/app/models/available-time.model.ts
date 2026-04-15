@@ -21,10 +21,22 @@ export interface CreateAvailableTimeRequest {
   specificDate?: string | null;
   startTime?: string | null;
   endTime?: string | null;
-  timeZoneId?: string | null;
+}
+
+export interface UpdateAvailableTimeRequest {
+  availabilityType: AvailabilityType;
+  dayOfWeek?: number | null;
+  specificDate?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
 }
 
 export interface CreateAvailableTimeResponse {
+  id: string;
+  success: boolean;
+}
+
+export interface UpdateAvailableTimeResponse {
   id: string;
   success: boolean;
 }
