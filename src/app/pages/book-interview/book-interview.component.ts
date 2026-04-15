@@ -6,7 +6,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AvailableTimeService } from '../../services/available-time.service';
 import { UserService } from '../../services/user.service';
-import { InterviewSlotDto, SlotStatus } from '../../models/available-time.model';
+import { AvailableTimeDto, SlotStatus } from '../../models/available-time.model';
 import { GetUserInfoResponse } from '../../models/user-info.model';
 
 @Component({
@@ -56,8 +56,8 @@ import { GetUserInfoResponse } from '../../models/user-info.model';
                   [class.selected]="selectedSlot?.id === slot.id"
                   (click)="selectSlot(slot)">
                   <div class="slot-date">{{ slot.displayTime }}</div>
-                  <div class="slot-status" [class.available]="slot.status === 0">
-                    {{ getSlotStatusText(slot.status) }}
+                  <div class="slot-status" [class.available]="0 === 0">
+                    {{ getSlotStatusText(0) }}
                   </div>
                 </div>
               }
@@ -121,8 +121,8 @@ export class BookInterviewComponent implements OnInit {
     timeZones: []
   };
 
-  availableSlots: InterviewSlotDto[] = [];
-  selectedSlot: InterviewSlotDto | null = null;
+  availableSlots: AvailableTimeDto[] = [];
+  selectedSlot: AvailableTimeDto | null = null;
   bookingNotes: string = '';
 
   isLoadingExpert = true;
@@ -169,7 +169,7 @@ export class BookInterviewComponent implements OnInit {
 
     this.availableTimeService.getExpertAvailableSlots(expertId, request).subscribe({
       next: (response) => {
-        this.availableSlots = response.slots.filter(s => s.status === SlotStatus.Available);
+        this.availableSlots = response.availableTimes;
         this.isLoadingSlots = false;
       },
       error: (error) => {
@@ -184,10 +184,8 @@ export class BookInterviewComponent implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
-  selectSlot(slot: InterviewSlotDto): void {
-    if (slot.status === SlotStatus.Available) {
-      this.selectedSlot = slot;
-    }
+  selectSlot(slot: AvailableTimeDto): void {
+    this.selectedSlot = slot;
   }
 
   getSlotStatusText(status: SlotStatus): string {

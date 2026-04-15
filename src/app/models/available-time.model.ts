@@ -49,14 +49,6 @@ export interface GetAvailableTimesResponse {
   availableTimes: AvailableTimeDto[];
 }
 
-export interface InterviewSlotDto {
-  id: string;
-  startDateTime: string;
-  endDateTime: string;
-  status: SlotStatus;
-  displayTime: string;
-}
-
 export enum SlotStatus {
   Available = 0,
   Booked = 1,
@@ -70,8 +62,7 @@ export interface GetExpertAvailableSlotsRequest {
 }
 
 export interface GetExpertAvailableSlotsResponse {
-  expertTimeZone: string;
-  slots: InterviewSlotDto[];
+  availableTimes: AvailableTimeDto[];
 }
 
 export interface BookSlotRequest {
