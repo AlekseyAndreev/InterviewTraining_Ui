@@ -87,5 +87,55 @@
     "DATE_ASC": "Oldest First",
     "NOT_SPECIFIED": "Not specified",
     "SHORT_DESCRIPTION": "Short Description"
+  },
+  "USER_INFO": {
+    "BOOK_INTERVIEW": "Book Interview"
+  },
+  "BOOK_INTERVIEW": {
+    "TITLE": "Book Interview",
+    "LOADING_EXPERT": "Loading expert information...",
+    "ERROR_LOADING": "Error loading data",
+    "BACK": "Back",
+    "EXPERT": "Expert",
+    "NO_DESCRIPTION": "No description available",
+    "SELECT_TIME": "Select available time",
+    "LOADING_SLOTS": "Loading available slots...",
+    "NO_AVAILABLE_SLOTS": "No available time slots",
+    "BOOKING_FORM": {
+      "TITLE": "Booking Details",
+      "SELECTED_TIME": "Selected time",
+      "NOTES": "Notes",
+      "NOTES_PLACEHOLDER": "Enter any notes for the expert...",
+      "BOOK": "Book Interview",
+      "BOOKING": "Booking...",
+      "CANCEL": "Cancel"
+    }
+  },
+  "AVAILABLE_TIME": {
+    "TITLE": "Available Time for Interviews",
+    "ADD_TIME": "Add Time",
+    "TYPE_ALWAYS": "Always available",
+    "TYPE_WEEKLY_DAY": "Available on a specific day of the week",
+    "TYPE_WEEKLY_TIME": "Available on a specific day and time",
+    "TYPE_SPECIFIC": "Available on a specific date",
+    "DAY_OF_WEEK": "Day of week",
+    "WHOLE_DAY": "Whole day",
+    "SPECIFIC_TIME": "Specific time",
+    "DATE": "Date",
+    "TIME": "Time",
+    "END_TIME": "End time",
+    "DELETE": "Delete",
+    "SAVING": "Saving...",
+    "LOADING": "Loading...",
+    "NO_TIMES": "No available times set",
+    "DAYS": {
+      "SUNDAY": "Sunday",
+      "MONDAY": "Monday",
+      "TUESDAY": "Tuesday",
+      "WEDNESDAY": "Wednesday",
+      "THURSDAY": "Thursday",
+      "FRIDAY": "Friday",
+      "SATURDAY": "Saturday"
+    }
   }
 }

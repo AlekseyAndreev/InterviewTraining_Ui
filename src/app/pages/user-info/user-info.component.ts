@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UserService } from '../../services/user.service';
 import { SkillService } from '../../services/skill.service';
 import { GetUserInfoResponse } from '../../models/user-info.model';
@@ -36,6 +37,14 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
               <p>{{ 'USER_INFO.ERROR_LOADING' | translate }}</p>
             </div>
           } @else {
+            @if (canBookInterview) {
+              <div class="book-interview-section">
+                <button class="btn-book-interview" (click)="bookInterview()">
+                  {{ 'USER_INFO.BOOK_INTERVIEW' | translate }}
+                </button>
+              </div>
+            }
+            
             <div class="info-section">
               <div class="info-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</div>
               <div class="info-value">{{ apiUserInfo.photoUrl || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
@@ -82,8 +91,10 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
 })
 export class UserInfoComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private userService = inject(UserService);
   private skillService = inject(SkillService);
+  public oidcSecurityService = inject(OidcSecurityService);
   
   apiUserInfo: GetUserInfoResponse = {
     photoUrl: null,
@@ -100,6 +111,7 @@ export class UserInfoComponent implements OnInit {
   skillsGroups: SkillGroupDto[] = [];
   isLoadingSkills = false;
   userId: string | null = null;
+  canBookInterview = false;
   
   constructor(private translateService: TranslateService) {}
 
@@ -108,10 +120,24 @@ export class UserInfoComponent implements OnInit {
     if (this.userId) {
       this.loadUserInfo(this.userId);
       this.loadUserSkills(this.userId);
+      this.checkCanBookInterview();
     } else {
       this.isLoading = false;
       this.error = true;
     }
+  }
+
+  private checkCanBookInterview(): void {
+    this.oidcSecurityService.userData$.subscribe({
+      next: ({ userData }) => {
+        const currentUserRoles = userData?.role as string | string[];
+        const isCandidate = Array.isArray(currentUserRoles)
+          ? currentUserRoles.includes('Candidate')
+          : currentUserRoles === 'Candidate';
+        
+        this.canBookInterview = isCandidate && this.userId !== userData?.sub;
+      }
+    });
   }
 
   private loadUserInfo(userId: string): void {
@@ -167,5 +193,11 @@ export class UserInfoComponent implements OnInit {
       return names[0][0] + names[1][0];
     }
     return name.substring(0, 2).toUpperCase();
+  }
+
+  bookInterview(): void {
+    if (this.userId) {
+      this.router.navigate(['/book-interview', this.userId]);
+    }
   }
 }

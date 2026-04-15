@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ExpertService } from '../../services/expert.service';
 import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.model';
 
@@ -56,9 +57,11 @@ import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.mo
                 <button class="btn-view" (click)="viewProfile(expert)">
                   {{ 'EXPERT_SEARCH.VIEW_PROFILE' | translate }}
                 </button>
-                <button class="btn-book" (click)="bookInterview(expert)">
-                  {{ 'EXPERT_SEARCH.BOOK_INTERVIEW' | translate }}
-                </button>
+                @if (isCandidate) {
+                  <button class="btn-book" (click)="bookInterview(expert)">
+                    {{ 'EXPERT_SEARCH.BOOK_INTERVIEW' | translate }}
+                  </button>
+                }
               </div>
             </div>
           }
@@ -95,11 +98,14 @@ export class ExpertSearchComponent implements OnInit {
   experts: GetExpertResponse[] = [];
   loading = false;
   error = false;
+  isCandidate = false;
   
   currentPage = 1;
   pageSize = 10;
   totalRecords = 0;
   totalPages = 0;
+
+  private oidcSecurityService = inject(OidcSecurityService);
 
   constructor(
     private expertService: ExpertService,
@@ -107,7 +113,19 @@ export class ExpertSearchComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.checkUserRole();
     this.loadExperts();
+  }
+
+  private checkUserRole(): void {
+    this.oidcSecurityService.userData$.subscribe({
+      next: ({ userData }) => {
+        const roles = userData?.role as string | string[];
+        this.isCandidate = Array.isArray(roles)
+          ? roles.includes('Candidate')
+          : roles === 'Candidate';
+      }
+    });
   }
 
   loadExperts(): void {
@@ -152,7 +170,7 @@ export class ExpertSearchComponent implements OnInit {
   }
 
   bookInterview(expert: GetExpertResponse): void {
-    console.log('Book interview:', expert);
+    this.router.navigate(['/book-interview', expert.identityServerId]);
   }
 
   goToPage(page: number): void {

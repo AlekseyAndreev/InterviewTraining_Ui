@@ -23,6 +23,11 @@ export const routes: Routes = [
     canActivate: [candidateGuard]
   },
   {
+    path: 'book-interview/:expertId',
+    loadComponent: () => import('./pages/book-interview/book-interview.component').then(m => m.BookInterviewComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'callback',
     loadComponent: () => import('./pages/callback/callback.component').then(m => m.CallbackComponent)
   },
