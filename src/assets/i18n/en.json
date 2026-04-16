@@ -115,6 +115,8 @@
       "SELECTED_TIME": "Selected time",
       "NOTES": "Notes",
       "NOTES_PLACEHOLDER": "Enter any notes for the expert...",
+      "LANGUAGE": "Interview Language",
+      "SELECT_LANGUAGE": "Select language (optional)",
       "BOOK": "Book Interview",
       "BOOKING": "Booking...",
       "CANCEL": "Cancel"

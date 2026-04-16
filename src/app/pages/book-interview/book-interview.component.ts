@@ -11,6 +11,7 @@ import { SkillService } from '../../services/skill.service';
 import { AvailableTimeDto, SlotStatus } from '../../models/available-time.model';
 import { GetUserInfoResponse } from '../../models/user-info.model';
 import { SkillGroupDto } from '../../models/skill.model';
+import { InterviewLanguageDto } from '../../models/interview.model';
 import { UserSkillGroupComponent } from '../../components/user-skill-group/user-skill-group.component';
 
 @Component({
@@ -47,7 +48,7 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
               <div class="spinner"></div>
               <p>{{ 'SKILLS.LOADING' | translate }}</p>
             </div>
-          } @else if (skillGroups.length > 0) {
+          } @else if (hasSelectedSkills()) {
             <div class="skills-tree">
               @for (group of skillGroups; track group.id) {
                 <app-user-skill-group 
@@ -120,6 +121,17 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
                 rows="3">
               </textarea>
             </div>
+
+            <div class="form-section">
+              <label class="form-label">{{ 'BOOK_INTERVIEW.BOOKING_FORM.LANGUAGE' | translate }}</label>
+              <select class="form-input" [(ngModel)]="selectedLanguageId">
+                <option [ngValue]="null">{{ 'BOOK_INTERVIEW.BOOKING_FORM.SELECT_LANGUAGE' | translate }}</option>
+                @for (lang of interviewLanguages; track lang.id) {
+                  <option [ngValue]="lang.id">{{ getLanguageName(lang) }}</option>
+                }
+              </select>
+            </div>
+
             <div class="form-actions">
               <button 
                 class="btn-book" 
@@ -167,6 +179,8 @@ export class BookInterviewComponent implements OnInit {
   selectedTime: string = '';
   bookingNotes: string = '';
   skillGroups: SkillGroupDto[] = [];
+  interviewLanguages: InterviewLanguageDto[] = [];
+  selectedLanguageId: string | null = null;
 
   isLoadingExpert = true;
   isLoadingSlots = false;
@@ -180,6 +194,7 @@ export class BookInterviewComponent implements OnInit {
       this.loadExpertInfo(this.expertId);
       this.loadAvailableSlots(this.expertId);
       this.loadExpertSkills(this.expertId);
+      this.loadInterviewLanguages();
     } else {
       this.error = true;
       this.isLoadingExpert = false;
@@ -240,6 +255,18 @@ export class BookInterviewComponent implements OnInit {
     });
   }
 
+  private loadInterviewLanguages(): void {
+    this.interviewService.getInterviewLanguages().subscribe({
+      next: (response) => {
+        this.interviewLanguages = response || [];
+      },
+      error: (error) => {
+        console.error('Error loading interview languages:', error);
+        this.interviewLanguages = [];
+      }
+    });
+  }
+
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -278,7 +305,8 @@ export class BookInterviewComponent implements OnInit {
       expertId: this.expertId,
       date: this.selectedDate,
       time: this.selectedTime,
-      notes: this.bookingNotes || undefined
+      notes: this.bookingNotes || undefined,
+      interviewLanguageId: this.selectedLanguageId
     };
 
     this.interviewService.createInterview(request).subscribe({
@@ -300,6 +328,7 @@ export class BookInterviewComponent implements OnInit {
     this.selectedDate = '';
     this.selectedTime = '';
     this.bookingNotes = '';
+    this.selectedLanguageId = null;
   }
 
   goBack(): void {
@@ -313,5 +342,26 @@ export class BookInterviewComponent implements OnInit {
       return names[0][0] + names[1][0];
     }
     return name.substring(0, 2).toUpperCase();
+  }
+
+  getLanguageName(lang: InterviewLanguageDto): string {
+    const currentLang = this.translateService.getCurrentLang() || 'en';
+    return currentLang === 'ru' ? lang.nameRu : lang.nameEn;
+  }
+
+  hasSelectedSkills(): boolean {
+    return this.skillGroups.some(group => this.hasSelectedItemsInGroup(group));
+  }
+
+  private hasSelectedItemsInGroup(group: SkillGroupDto): boolean {
+    if (group.skills && group.skills.some(skill => skill.isSelected)) {
+      return true;
+    }
+    
+    if (group.childGroups) {
+      return group.childGroups.some(childGroup => this.hasSelectedItemsInGroup(childGroup));
+    }
+    
+    return false;
   }
 }

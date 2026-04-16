@@ -37,9 +37,19 @@ export interface CreateInterviewRequest {
   date: string;
   time: string;
   notes?: string;
+  interviewLanguageId?: string | null;
 }
 
 export interface CreateInterviewResponse {
   id: string;
   success: boolean;
 }
+
+export interface InterviewLanguageDto {
+  id: string;
+  code: string;
+  nameRu: string;
+  nameEn: string;
+}
+
+export type GetAllInterviewLanguagesResponse = InterviewLanguageDto[];

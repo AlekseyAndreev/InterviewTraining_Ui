@@ -5,7 +5,8 @@ import {
   GetMyInterviewsRequest, 
   GetMyInterviewsResponse, 
   CreateInterviewRequest, 
-  CreateInterviewResponse 
+  CreateInterviewResponse,
+  GetAllInterviewLanguagesResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -25,5 +26,10 @@ export class InterviewService {
   createInterview(request: CreateInterviewRequest): Observable<CreateInterviewResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews`;
     return this.http.post<CreateInterviewResponse>(apiUrl, request);
+  }
+
+  getInterviewLanguages(): Observable<GetAllInterviewLanguagesResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/languages`;
+    return this.http.get<GetAllInterviewLanguagesResponse>(apiUrl);
   }
 }

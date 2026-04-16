@@ -173,6 +173,7 @@ body {
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 2.5rem;
 }
 
 .login-loading {
@@ -930,14 +931,14 @@ body {
 }
 
 .btn-view, .btn-book {
-  flex: 1;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 6px;
   border: none;
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
-  min-width: 120px;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .btn-view {
@@ -1106,6 +1107,43 @@ body {
 .expert-header .expert-description {
   color: #666;
   font-size: 0.95rem;
+}
+
+.expert-skills-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.expert-skills-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: #333;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.75rem;
+}
+
+.expert-skills-section .no-skills {
+  background: #f9f9f9;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.expert-skills-section .no-skills p {
+  color: #888;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.expert-skills-section .skills-tree {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e8e8e8;
 }
 
 .slots-section {

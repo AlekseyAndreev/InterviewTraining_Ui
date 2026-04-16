@@ -15,6 +15,21 @@ import { APP_CONFIG } from '../../services/config.service';
         {{ 'APP.SLOGAN' | translate }}
        <span class="slogan-accent">{{ 'APP.SLOGAN_ACCENT' | translate }}</span>
       </h1>
+      @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
+        @if (!auth.isAuthenticated) {
+          @if (isLoggingIn) {
+            <div class="login-loading">
+              <div class="spinner"></div>
+              <span>{{ 'HOME.LOGGING_IN' | translate }}</span>
+            </div>
+          } @else {
+            <div class="auth-buttons">
+              <button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
+              <button class="btn-register" (click)="register()">{{ 'HOME.REGISTER' | translate }}</button>
+            </div>
+          }
+        }
+      }
       <div class="benefits-container">
         <a routerLink="/candidate-info" class="benefit-card candidate-card clickable-card">
           <h2 class="benefit-title">{{ 'HOME.FOR_CANDIDATES' | translate }}</h2>
@@ -34,38 +49,24 @@ import { APP_CONFIG } from '../../services/config.service';
           </ul>
         </a>
       </div>
-      <div class="home-controls">
-        @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
-          @if (!auth.isAuthenticated) {
-            @if (isLoggingIn) {
-              <div class="login-loading">
-                <div class="spinner"></div>
-                <span>{{ 'HOME.LOGGING_IN' | translate }}</span>
+      @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
+        @if (auth.isAuthenticated) {
+          @if (oidcSecurityService.userData$ | async; as userData) {
+            @if (hasCandidateRole(userData)) {
+              <p class="candidate-hint">
+                {{ 'HOME.CANDIDATE_HINT_PREFIX' | translate }}
+                <a routerLink="/expert-search" class="candidate-link">{{ 'HOME.CANDIDATE_HINT_LINK' | translate }}</a>
+                {{ 'HOME.CANDIDATE_HINT_SUFFIX' | translate }}
+              </p>
+            } @else if (getUserRoles(userData).length === 0) {
+              <div class="set-roles-container">
+                <p class="set-roles-hint">{{ 'HOME.SET_ROLES_HINT' | translate }}</p>
+                <button class="btn-set-roles" (click)="goToChangeRoles()">{{ 'HOME.SET_ROLES' | translate }}</button>
               </div>
-            } @else {
-              <div class="auth-buttons">
-                <button class="btn-login" (click)="login()">{{ 'HOME.LOGIN' | translate }}</button>
-                <button class="btn-register" (click)="register()">{{ 'HOME.REGISTER' | translate }}</button>
-              </div>
-            }
-          } @else {
-            @if (oidcSecurityService.userData$ | async; as userData) {
-              @if (hasCandidateRole(userData)) {
-                <p class="candidate-hint">
-                  {{ 'HOME.CANDIDATE_HINT_PREFIX' | translate }}
-                  <a routerLink="/expert-search" class="candidate-link">{{ 'HOME.CANDIDATE_HINT_LINK' | translate }}</a>
-                  {{ 'HOME.CANDIDATE_HINT_SUFFIX' | translate }}
-                </p>
-              } @else if (getUserRoles(userData).length === 0) {
-                <div class="set-roles-container">
-                  <p class="set-roles-hint">{{ 'HOME.SET_ROLES_HINT' | translate }}</p>
-                  <button class="btn-set-roles" (click)="goToChangeRoles()">{{ 'HOME.SET_ROLES' | translate }}</button>
-                </div>
-              }
             }
           }
         }
-      </div>
+      }
     </div>
   `
 })
