@@ -29,6 +29,13 @@
     "CANDIDATE_HINT_LINK": "search for experts",
     "CANDIDATE_HINT_SUFFIX": "to take an interview."
   },
+  "TABS": {
+    "PROFILE": "Profile",
+    "SKILLS": "Skills",
+    "TIMEZONE": "Time Zone",
+    "AVAILABILITY": "Available Time",
+    "ROLES": "Roles"
+  },
   "USER_INFO": {
     "TITLE": "User Info",
     "NAME": "Name",
@@ -55,6 +62,8 @@
     "ERROR_LOADING": "Error loading user information",
     "TIME_ZONE": "Time Zone",
     "SELECT_TIME_ZONE": "Select time zone",
+    "TIMEZONE_DESCRIPTION": "Select your time zone for correct display of interview times.",
+    "ROLES_DESCRIPTION": "Roles determine your capabilities on the platform. A Candidate can search for experts and book interviews. An Expert can conduct interviews and receive compensation.",
     "BOOK_INTERVIEW": "Book Interview"
   },
   "SKILLS": {

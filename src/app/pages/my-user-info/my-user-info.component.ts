@@ -14,6 +14,8 @@ import { SkillGroupComponent } from '../../components/skill-group/skill-group.co
 import { AvailableTimeFormComponent } from '../../components/available-time-form/available-time-form.component';
 import { AvailableTimeListComponent } from '../../components/available-time-list/available-time-list.component';
 
+type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
+
 @Component({
   selector: 'app-my-user-info',
   standalone: true,
@@ -32,170 +34,234 @@ import { AvailableTimeListComponent } from '../../components/available-time-list
           <h2 class="user-card-name">{{ apiUserInfo.fullName || ('NAV.USER' | translate) }}</h2>
         </div>
         
-        <div class="user-card-body">
-          @if (isEditing) {
-            <div class="edit-form">
-              <div class="form-section">
-                <label class="form-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</label>
-                <input type="text" class="form-input" [(ngModel)]="editFormData.photoUrl" [placeholder]="'USER_INFO.PHOTO_URL_PLACEHOLDER' | translate">
-              </div>
-              
-              <div class="form-section">
-                <label class="form-label">{{ 'USER_INFO.FULL_NAME' | translate }}</label>
-                <input type="text" class="form-input" [(ngModel)]="editFormData.fullName" [placeholder]="'USER_INFO.FULL_NAME_PLACEHOLDER' | translate">
-              </div>
-              
-              <div class="form-section">
-                <label class="form-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</label>
-                <input type="text" class="form-input" [(ngModel)]="editFormData.shortDescription" [placeholder]="'USER_INFO.SHORT_DESCRIPTION_PLACEHOLDER' | translate">
-              </div>
-              
-              <div class="form-section">
-                <label class="form-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</label>
-                <textarea class="form-textarea" [(ngModel)]="editFormData.description" [placeholder]="'USER_INFO.DESCRIPTION_PLACEHOLDER' | translate" rows="4"></textarea>
-              </div>
-              
-              <div class="form-section">
-                <label class="form-label">{{ 'USER_INFO.TIME_ZONE' | translate }}</label>
-                <select class="form-input" [(ngModel)]="editFormData.selectedTimeZoneId">
-                  <option [ngValue]="null">{{ 'USER_INFO.SELECT_TIME_ZONE' | translate }}</option>
-                  @for (tz of apiUserInfo.timeZones; track tz.id) {
-                    <option [ngValue]="tz.id">{{ tz.description }} ({{ tz.code }})</option>
-                  }
-                </select>
-              </div>
-              
-              <div class="form-actions">
-                <button class="btn-save" (click)="saveUserInfo()" [disabled]="isSaving">
-                  @if (isSaving) {
-                    {{ 'USER_INFO.SAVING' | translate }}
-                  } @else {
-                    {{ 'USER_INFO.SAVE' | translate }}
-                  }
-                </button>
-                <button class="btn-cancel" (click)="cancelEdit()">{{ 'USER_INFO.CANCEL' | translate }}</button>
-              </div>
-            </div>
-          } @else {
-            @if (isLoading) {
-              <div class="loading-state">
-                <div class="spinner"></div>
-                <p>{{ 'USER_INFO.LOADING' | translate }}</p>
-              </div>
-            } @else {
-              <button class="btn-edit" (click)="startEdit()">{{ 'USER_INFO.EDIT' | translate }}</button>
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</div>
-                <div class="info-value">{{ apiUserInfo.photoUrl || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-              </div>
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.FULL_NAME' | translate }}</div>
-                <div class="info-value">{{ apiUserInfo.fullName || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-              </div>
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</div>
-                <div class="info-value">{{ apiUserInfo.shortDescription || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-              </div>
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
-                <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-              </div>
-              
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.TIME_ZONE' | translate }}</div>
-                <div class="info-value">{{ getSelectedTimeZoneName() || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-              </div>
-              
-              <div class="info-section">
-                <div class="info-label">{{ 'SKILLS.TITLE' | translate }}</div>
-                <div class="skills-container">
-                  @if (isLoadingSkills) {
-                    <div class="loading-state">
-                      <div class="spinner"></div>
-                      <p>{{ 'SKILLS.LOADING' | translate }}</p>
+        <div class="tabs-container">
+          <div class="tabs-nav">
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'profile'"
+              (click)="activeTab = 'profile'">
+              {{ 'TABS.PROFILE' | translate }}
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'skills'"
+              (click)="activeTab = 'skills'">
+              {{ 'TABS.SKILLS' | translate }}
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'timezone'"
+              (click)="activeTab = 'timezone'">
+              {{ 'TABS.TIMEZONE' | translate }}
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'availability'"
+              (click)="activeTab = 'availability'">
+              {{ 'TABS.AVAILABILITY' | translate }}
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'roles'"
+              (click)="activeTab = 'roles'">
+              {{ 'TABS.ROLES' | translate }}
+            </button>
+          </div>
+
+          <div class="tab-content">
+            @if (activeTab === 'profile') {
+              @if (isLoading) {
+                <div class="loading-state">
+                  <div class="spinner"></div>
+                  <p>{{ 'USER_INFO.LOADING' | translate }}</p>
+                </div>
+              } @else {
+                @if (isEditing) {
+                  <div class="edit-form">
+                    <div class="form-section">
+                      <label class="form-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</label>
+                      <input type="text" class="form-input" [(ngModel)]="editFormData.photoUrl" [placeholder]="'USER_INFO.PHOTO_URL_PLACEHOLDER' | translate">
                     </div>
-                  } @else if (skillsGroups.length > 0) {
-                    <div class="skills-tree">
-                      @for (group of skillsGroups; track group.id) {
-                        <app-skill-group 
-                          [group]="group"
-                          [selectedSkills]="selectedSkills"
-                          (skillToggled)="toggleSkill($event)">
-                        </app-skill-group>
-                      }
+                    
+                    <div class="form-section">
+                      <label class="form-label">{{ 'USER_INFO.FULL_NAME' | translate }}</label>
+                      <input type="text" class="form-input" [(ngModel)]="editFormData.fullName" [placeholder]="'USER_INFO.FULL_NAME_PLACEHOLDER' | translate">
                     </div>
-                    <div class="skills-actions">
-                      <button class="btn-save-skills" (click)="saveSkills()" [disabled]="isSavingSkills">
-                        @if (isSavingSkills) {
-                          {{ 'SKILLS.SAVING' | translate }}
+                    
+                    <div class="form-section">
+                      <label class="form-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</label>
+                      <input type="text" class="form-input" [(ngModel)]="editFormData.shortDescription" [placeholder]="'USER_INFO.SHORT_DESCRIPTION_PLACEHOLDER' | translate">
+                    </div>
+                    
+                    <div class="form-section">
+                      <label class="form-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</label>
+                      <textarea class="form-textarea" [(ngModel)]="editFormData.description" [placeholder]="'USER_INFO.DESCRIPTION_PLACEHOLDER' | translate" rows="4"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                      <button class="btn-save" (click)="saveUserInfo()" [disabled]="isSaving">
+                        @if (isSaving) {
+                          {{ 'USER_INFO.SAVING' | translate }}
                         } @else {
-                          {{ 'SKILLS.SAVE' | translate }}
+                          {{ 'USER_INFO.SAVE' | translate }}
                         }
                       </button>
+                      <button class="btn-cancel" (click)="cancelEdit()">{{ 'USER_INFO.CANCEL' | translate }}</button>
                     </div>
-                  } @else {
-                    <div class="no-skills">{{ 'SKILLS.NO_SKILLS' | translate }}</div>
-                  }
-                </div>
-              </div>
-              
-              <div class="info-section">
-                <div class="info-label">{{ 'AVAILABLE_TIME.TITLE' | translate }}</div>
-                <div class="available-time-container">
-                  @if (isLoadingAvailableTimes) {
-                    <div class="loading-state">
-                      <div class="spinner"></div>
-                      <p>{{ 'AVAILABLE_TIME.LOADING' | translate }}</p>
+                  </div>
+                } @else {
+                  <button class="btn-edit" (click)="startEdit()">{{ 'USER_INFO.EDIT' | translate }}</button>
+                  
+                  @if (oidcSecurityService.userData$ | async; as userData) {
+                    <div class="info-section">
+                      <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
+                      <div class="info-value info-value-readonly">{{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
                     </div>
-                  } @else {
-                    <app-available-time-list 
-                      [availableTimes]="availableTimes"
-                      (edit)="onEditAvailableTime($event)"
-                      (delete)="onDeleteAvailableTime($event)">
-                    </app-available-time-list>
-                    
-                    @if (showAvailableTimeForm) {
-                      <app-available-time-form
-                        [editingTime]="editingAvailableTime"
-                        [isSaving]="isSavingAvailableTime"
-                        (saveTime)="onSaveAvailableTime($event)"
-                        (updateTime)="onUpdateAvailableTime($event)"
-                        (cancel)="onCancelAvailableTimeForm()">
-                      </app-available-time-form>
-                    } @else {
-                      <button class="btn-add-time" (click)="showAddAvailableTimeForm()">
-                        {{ 'AVAILABLE_TIME.ADD_TIME' | translate }}
-                      </button>
-                    }
                   }
-                </div>
-              </div>
+                  
+                  <div class="info-section">
+                    <div class="info-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</div>
+                    <div class="info-value">{{ apiUserInfo.photoUrl || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+                  </div>
+                  <div class="info-section">
+                    <div class="info-label">{{ 'USER_INFO.FULL_NAME' | translate }}</div>
+                    <div class="info-value">{{ apiUserInfo.fullName || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+                  </div>
+                  <div class="info-section">
+                    <div class="info-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</div>
+                    <div class="info-value">{{ apiUserInfo.shortDescription || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+                  </div>
+                  <div class="info-section">
+                    <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
+                    <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+                  </div>                  
+                }
+              }
             }
-            
-            @if (oidcSecurityService.userData$ | async; as userData) {
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
-                <div class="info-value">{{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-              </div>
-              <div class="info-section">
-                <div class="info-label">{{ 'USER_INFO.ROLES' | translate }}</div>
-                <div class="info-value">
-                  <div class="roles-container">
-                    @if (getUserRoles(userData).length > 0) {
-                      <div class="roles-list">
-                        @for (role of getUserRoles(userData); track role) {
-                          <span class="role-badge">{{ getRoleDisplayName(role) }}</span>
+
+            @if (activeTab === 'roles') {
+              @if (oidcSecurityService.userData$ | async; as userData) {
+                <div class="roles-section">
+                  <p class="roles-description">{{ 'USER_INFO.ROLES_DESCRIPTION' | translate }}</p>
+                  
+                  <div class="current-roles">
+                    <div class="info-label">{{ 'USER_INFO.ROLES' | translate }}</div>
+                    <div class="info-value">
+                      <div class="roles-container">
+                        @if (getUserRoles(userData).length > 0) {
+                          <div class="roles-list">
+                            @for (role of getUserRoles(userData); track role) {
+                              <span class="role-badge">{{ getRoleDisplayName(role) }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="no-roles-text">{{ 'USER_INFO.NO_ROLES' | translate }}</span>
                         }
                       </div>
-                    } @else {
-                      <span>{{ 'USER_INFO.NO_ROLES' | translate }}</span>
-                    }
-                    <button class="btn-set-roles btn-set-roles-small" (click)="goToChangeRoles()">{{ 'USER_INFO.CHANGE_ROLES' | translate }}</button>
+                    </div>
                   </div>
+                  
+                  <button class="btn-change-roles" (click)="goToChangeRoles()">{{ 'USER_INFO.CHANGE_ROLES' | translate }}</button>
                 </div>
+              }
+            }
+
+            @if (activeTab === 'skills') {
+              <div class="skills-container">
+                @if (isLoadingSkills) {
+                  <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>{{ 'SKILLS.LOADING' | translate }}</p>
+                  </div>
+                } @else if (skillsGroups.length > 0) {
+                  <div class="skills-tree">
+                    @for (group of skillsGroups; track group.id) {
+                      <app-skill-group 
+                        [group]="group"
+                        [selectedSkills]="selectedSkills"
+                        (skillToggled)="toggleSkill($event)">
+                      </app-skill-group>
+                    }
+                  </div>
+                  <div class="skills-actions">
+                    <button class="btn-save-skills" (click)="saveSkills()" [disabled]="isSavingSkills">
+                      @if (isSavingSkills) {
+                        {{ 'SKILLS.SAVING' | translate }}
+                      } @else {
+                        {{ 'SKILLS.SAVE' | translate }}
+                      }
+                    </button>
+                  </div>
+                } @else {
+                  <div class="no-skills">{{ 'SKILLS.NO_SKILLS' | translate }}</div>
+                }
               </div>
             }
-          }
+
+            @if (activeTab === 'timezone') {
+              @if (isLoading) {
+                <div class="loading-state">
+                  <div class="spinner"></div>
+                  <p>{{ 'USER_INFO.LOADING' | translate }}</p>
+                </div>
+              } @else {
+                <div class="timezone-section">
+                  <p class="timezone-description">{{ 'USER_INFO.TIMEZONE_DESCRIPTION' | translate }}</p>
+                  
+                  <div class="form-section">
+                    <label class="form-label">{{ 'USER_INFO.TIME_ZONE' | translate }}</label>
+                    <select class="form-input" [(ngModel)]="selectedTimeZoneId">
+                      <option [ngValue]="null">{{ 'USER_INFO.SELECT_TIME_ZONE' | translate }}</option>
+                      @for (tz of apiUserInfo.timeZones; track tz.id) {
+                        <option [ngValue]="tz.id">{{ tz.description }} ({{ tz.code }})</option>
+                      }
+                    </select>
+                  </div>
+                  
+                  <div class="form-actions">
+                    <button class="btn-save" (click)="saveTimeZone()" [disabled]="isSavingTimeZone">
+                      @if (isSavingTimeZone) {
+                        {{ 'USER_INFO.SAVING' | translate }}
+                      } @else {
+                        {{ 'USER_INFO.SAVE' | translate }}
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+
+            @if (activeTab === 'availability') {
+              <div class="available-time-container">
+                @if (isLoadingAvailableTimes) {
+                  <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>{{ 'AVAILABLE_TIME.LOADING' | translate }}</p>
+                  </div>
+                } @else {
+                  <app-available-time-list 
+                    [availableTimes]="availableTimes"
+                    (edit)="onEditAvailableTime($event)"
+                    (delete)="onDeleteAvailableTime($event)">
+                  </app-available-time-list>
+                  
+                  @if (showAvailableTimeForm) {
+                    <app-available-time-form
+                      [editingTime]="editingAvailableTime"
+                      [isSaving]="isSavingAvailableTime"
+                      (saveTime)="onSaveAvailableTime($event)"
+                      (updateTime)="onUpdateAvailableTime($event)"
+                      (cancel)="onCancelAvailableTimeForm()">
+                    </app-available-time-form>
+                  } @else {
+                    <button class="btn-add-time" (click)="showAddAvailableTimeForm()">
+                      {{ 'AVAILABLE_TIME.ADD_TIME' | translate }}
+                    </button>
+                  }
+                }
+              </div>
+            }
+          </div>
         </div>
       </div>
     </div>
@@ -206,6 +272,8 @@ export class MyUserInfoComponent implements OnInit {
   private userService = inject(UserService);
   private skillService = inject(SkillService);
   private availableTimeService = inject(AvailableTimeService);
+  
+  activeTab: TabName = 'profile';
   
   apiUserInfo: GetUserInfoResponse = {
     photoUrl: null,
@@ -219,6 +287,8 @@ export class MyUserInfoComponent implements OnInit {
   isEditing = false;
   isSaving = false;
   isLoading = true;
+  isSavingTimeZone = false;
+  selectedTimeZoneId: string | null = null;
   
   skillsGroups: SkillGroupDto[] = [];
   selectedSkills: Set<string> = new Set();
@@ -256,6 +326,7 @@ export class MyUserInfoComponent implements OnInit {
     this.userService.getUserInfo().subscribe({
       next: (response) => {
         this.apiUserInfo = response;
+        this.selectedTimeZoneId = response.selectedTimeZoneId;
         this.isLoading = false;
       },
       error: (error) => {
@@ -341,6 +412,30 @@ export class MyUserInfoComponent implements OnInit {
       error: (error) => {
         console.error('Error saving user info:', error);
         this.isSaving = false;
+      }
+    });
+  }
+
+  saveTimeZone(): void {
+    this.isSavingTimeZone = true;
+    const request: UpdateUserInfoRequest = {
+      photoUrl: this.apiUserInfo.photoUrl,
+      photo: this.apiUserInfo.photo,
+      fullName: this.apiUserInfo.fullName,
+      shortDescription: this.apiUserInfo.shortDescription,
+      description: this.apiUserInfo.description,
+      selectedTimeZoneId: this.selectedTimeZoneId
+    };
+    this.userService.updateUserInfo(request).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.apiUserInfo.selectedTimeZoneId = this.selectedTimeZoneId;
+        }
+        this.isSavingTimeZone = false;
+      },
+      error: (error) => {
+        console.error('Error saving timezone:', error);
+        this.isSavingTimeZone = false;
       }
     });
   }
