@@ -201,6 +201,27 @@
     "PROFILE_DESCRIPTION_2": "Укажите свои навыки и технологии, по которым хотите пройти собеседование.",
     "MORE_INFO": "Подробнее"
   },
+  "INTERVIEW_INFO": {
+    "TITLE": "Информация о собеседовании",
+    "LOADING": "Загрузка...",
+    "ERROR": "Ошибка при загрузке информации о собеседовании",
+    "BACK": "Назад",
+    "START_TIME": "Начало",
+    "END_TIME": "Окончание",
+    "CANDIDATE": "Кандидат",
+    "EXPERT": "Эксперт",
+    "LANGUAGE": "Язык собеседования",
+    "VIDEO_CALL_LINK": "Ссылка на видеозвонок",
+    "NOTES": "Примечания",
+    "CREATED": "Создано",
+    "STATUS_SCHEDULED": "Запланировано",
+    "STATUS_COMPLETED": "Завершено",
+    "STATUS_CANCELLED": "Отменено",
+    "STATUS_NO_SHOW": "Неявка",
+    "APPROVAL_APPROVED": "Подтверждено",
+    "APPROVAL_PENDING": "Ожидает подтверждения",
+    "APPROVAL_CANCELLED": "Отменено"
+  },
   "EXPERT_INFO": {
     "TITLE": "Информация для эксперта",
     "BACK": "Назад",

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
@@ -9,7 +9,7 @@ import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../mo
 @Component({
   selector: 'app-my-interviews',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, RouterLink],
   template: `
     <div class="my-interviews-container">
       <div class="search-header">
@@ -71,6 +71,9 @@ import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../mo
                 <button class="btn-view" (click)="viewDetails(interview)">
                   {{ 'MY_INTERVIEWS.VIEW_DETAILS' | translate }}
                 </button>
+                <a [routerLink]="['/interview-info', interview.id]" class="btn-book">
+                  {{ 'INTERVIEW_INFO.TITLE' | translate }}
+                </a>
               </div>
             </div>
           }

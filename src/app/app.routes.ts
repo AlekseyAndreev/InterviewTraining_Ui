@@ -33,6 +33,15 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'interview-info/:id',
+    loadComponent: () => import('./pages/interview-info/interview-info.component').then(m => m.InterviewInfoComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'callback',
+    loadComponent: () => import('./pages/callback/callback.component').then(m => m.CallbackComponent)
+  },
+  {
     path: 'candidate-info',
     loadComponent: () => import('./pages/candidate-info/candidate-info.component').then(m => m.CandidateInfoComponent)
   },

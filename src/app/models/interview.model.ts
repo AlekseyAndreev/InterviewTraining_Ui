@@ -53,3 +53,38 @@ export interface InterviewLanguageDto {
 }
 
 export type GetAllInterviewLanguagesResponse = InterviewLanguageDto[];
+
+export interface InterviewParticipantDto {
+  id: string;
+  fullName: string;
+  photoUrl: string | null;
+  shortDescription: string | null;
+}
+
+export interface ParticipantApprovalDto {
+  isApproved: boolean;
+  isCancelled: boolean;
+  cancelReason: string | null;
+}
+
+export interface InterviewLanguageInfoDto {
+  id: string;
+  code: string;
+  nameRu: string;
+  nameEn: string;
+}
+
+export interface GetInterviewInfoResponse {
+  id: string;
+  status: string;
+  startDateTime: string;
+  endDateTime: string | null;
+  candidate: InterviewParticipantDto;
+  expert: InterviewParticipantDto;
+  language: InterviewLanguageInfoDto | null;
+  linkToVideoCall: string | null;
+  notes: string | null;
+  candidateApproval: ParticipantApprovalDto;
+  expertApproval: ParticipantApprovalDto;
+  createdUtc: string;
+}

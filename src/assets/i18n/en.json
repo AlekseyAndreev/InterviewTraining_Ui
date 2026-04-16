@@ -201,6 +201,27 @@
     "PROFILE_DESCRIPTION_2": "Specify your skills and technologies you want to be interviewed on.",
     "MORE_INFO": "More info"
   },
+  "INTERVIEW_INFO": {
+    "TITLE": "Interview Information",
+    "LOADING": "Loading...",
+    "ERROR": "Error loading interview information",
+    "BACK": "Back",
+    "START_TIME": "Start Time",
+    "END_TIME": "End Time",
+    "CANDIDATE": "Candidate",
+    "EXPERT": "Expert",
+    "LANGUAGE": "Interview Language",
+    "VIDEO_CALL_LINK": "Video Call Link",
+    "NOTES": "Notes",
+    "CREATED": "Created",
+    "STATUS_SCHEDULED": "Scheduled",
+    "STATUS_COMPLETED": "Completed",
+    "STATUS_CANCELLED": "Cancelled",
+    "STATUS_NO_SHOW": "No Show",
+    "APPROVAL_APPROVED": "Approved",
+    "APPROVAL_PENDING": "Pending Approval",
+    "APPROVAL_CANCELLED": "Cancelled"
+  },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",
     "BACK": "Back",
