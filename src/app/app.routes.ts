@@ -33,6 +33,14 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'candidate-info',
+    loadComponent: () => import('./pages/candidate-info/candidate-info.component').then(m => m.CandidateInfoComponent)
+  },
+  {
+    path: 'expert-info',
+    loadComponent: () => import('./pages/expert-info/expert-info.component').then(m => m.ExpertInfoComponent)
+  },
+  {
     path: 'callback',
     loadComponent: () => import('./pages/callback/callback.component').then(m => m.CallbackComponent)
   },

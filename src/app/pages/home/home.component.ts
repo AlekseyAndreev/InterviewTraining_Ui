@@ -16,7 +16,7 @@ import { APP_CONFIG } from '../../services/config.service';
        <span class="slogan-accent">{{ 'APP.SLOGAN_ACCENT' | translate }}</span>
       </h1>
       <div class="benefits-container">
-        <div class="benefit-card candidate-card">
+        <a routerLink="/candidate-info" class="benefit-card candidate-card clickable-card">
           <h2 class="benefit-title">{{ 'HOME.FOR_CANDIDATES' | translate }}</h2>
           <ul class="benefit-list">
             <li>{{ 'HOME.CANDIDATE_BENEFIT_1' | translate }}</li>
@@ -24,15 +24,15 @@ import { APP_CONFIG } from '../../services/config.service';
             <li>{{ 'HOME.CANDIDATE_BENEFIT_3' | translate }}</li>
             <li>{{ 'HOME.CANDIDATE_BENEFIT_4' | translate }}</li>
           </ul>
-        </div>
-        <div class="benefit-card expert-card">
+        </a>
+        <a routerLink="/expert-info" class="benefit-card expert-card clickable-card">
           <h2 class="benefit-title">{{ 'HOME.FOR_EXPERTS' | translate }}</h2>
           <ul class="benefit-list">
             <li>{{ 'HOME.EXPERT_BENEFIT_1' | translate }}</li>
             <li>{{ 'HOME.EXPERT_BENEFIT_2' | translate }}</li>
             <li>{{ 'HOME.EXPERT_BENEFIT_3' | translate }}</li>
           </ul>
-        </div>
+        </a>
       </div>
       <div class="home-controls">
         @if (oidcSecurityService.isAuthenticated$ | async; as auth) {

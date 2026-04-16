@@ -247,7 +247,13 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.benefit-card:hover {
+.clickable-card {
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.clickable-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
 }
@@ -1346,4 +1352,130 @@ body {
 .btn-add-time:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.more-info-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #667eea;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.more-info-link:hover {
+  text-decoration: underline;
+  color: #764ba2;
+}
+
+.expert-card .more-info-link {
+  color: #764ba2;
+}
+
+.expert-card .more-info-link:hover {
+  color: #667eea;
+}
+
+.info-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.info-title {
+  color: white;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.info-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.info-section h2 {
+  color: #667eea;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+
+.info-section p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.info-section p:last-child {
+  margin-bottom: 0;
+}
+
+.info-section .benefit-list {
+  margin: 0;
+}
+
+.authorized-section {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 2px solid #667eea;
+}
+
+.authorized-section h2 {
+  color: #27ae60;
+}
+
+.info-link {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.info-link:hover {
+  text-decoration: underline;
+  color: #764ba2;
+}
+
+.hint-text {
+  font-style: italic;
+  color: #888 !important;
+  font-size: 0.95rem;
+}
+
+.back-button-container {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.back-button-container .btn-back {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 0.875rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button-container .btn-back:hover {
+  background: white;
+  color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.action-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.action-link:hover {
+  text-decoration: none;
 }
