@@ -68,11 +68,8 @@ import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../mo
                 </p>
               </div>
               <div class="interview-actions">
-                <button class="btn-view" (click)="viewDetails(interview)">
+                <a [routerLink]="['/interview-info', interview.id]" class="btn-view">
                   {{ 'MY_INTERVIEWS.VIEW_DETAILS' | translate }}
-                </button>
-                <a [routerLink]="['/interview-info', interview.id]" class="btn-book">
-                  {{ 'INTERVIEW_INFO.TITLE' | translate }}
                 </a>
               </div>
             </div>
@@ -203,14 +200,6 @@ export class MyInterviewsComponent implements OnInit {
     this.selectedStatus = target.value ? target.value as InterviewStatus : undefined;
     this.currentPage = 1;
     this.loadInterviews();
-  }
-
-  viewDetails(interview: InterviewDto): void {
-    if (this.isCandidate) {
-      this.router.navigate(['/user-info', interview.expertId]);
-    } else {
-      this.router.navigate(['/user-info', interview.candidateId]);
-    }
   }
 
   goToPage(page: number): void {

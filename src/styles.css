@@ -1052,8 +1052,7 @@ body {
   flex-wrap: wrap;
 }
 
-.interview-actions .btn-view,
-.interview-actions .btn-book {
+.interview-actions .btn-view {
   padding: 0.75rem 1.25rem;
   border-radius: 6px;
   border: none;
@@ -1065,14 +1064,11 @@ body {
   text-decoration: none;
   display: block;
   text-align: center;
-}
-
-.interview-actions .btn-book {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.interview-actions .btn-book:hover {
+.interview-actions .btn-view:hover {
   opacity: 0.9;
   transform: scale(1.02);
 }
@@ -1478,6 +1474,117 @@ body {
   border-radius: 8px;
   padding: 1rem;
   border: 1px solid #e8e8e8;
+}
+
+.expert-availability-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.expert-availability-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: #333;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.75rem;
+}
+
+.availability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.availability-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9ff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  flex-wrap: wrap;
+}
+
+.availability-type-badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.availability-display {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.no-availability {
+  background: #f9f9f9;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.no-availability p {
+  color: #888;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.time-mode-selector {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.time-mode-selector .radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.time-mode-selector .radio-option:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.time-mode-selector .radio-option input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+}
+
+.time-mode-selector .radio-option input[type="radio"]:checked + span {
+  color: #667eea;
+  font-weight: 500;
+}
+
+.slots-not-available {
+  background: #fff3e0;
+  border: 2px dashed #ffb74d;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.slots-not-available p {
+  color: #e65100;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .slots-section {

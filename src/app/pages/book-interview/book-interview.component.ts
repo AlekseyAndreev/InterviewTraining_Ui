@@ -14,6 +14,8 @@ import { SkillGroupDto } from '../../models/skill.model';
 import { InterviewLanguageDto } from '../../models/interview.model';
 import { UserSkillGroupComponent } from '../../components/user-skill-group/user-skill-group.component';
 
+type TimeSelectionMode = 'manual' | 'slots';
+
 @Component({
   selector: 'app-book-interview',
   standalone: true,
@@ -64,87 +66,97 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
           }
         </div>
 
-        <div class="slots-section">
-          <h3>{{ 'BOOK_INTERVIEW.SELECT_TIME' | translate }}</h3>
-          
-          @if (isLoadingSlots) {
+        <div class="expert-availability-section">
+          <h3>{{ 'BOOK_INTERVIEW.EXPERT_AVAILABILITY' | translate }}</h3>
+          @if (isLoadingAvailableTimes) {
             <div class="loading-state">
               <div class="spinner"></div>
-              <p>{{ 'BOOK_INTERVIEW.LOADING_SLOTS' | translate }}</p>
+              <p>{{ 'AVAILABLE_TIME.LOADING' | translate }}</p>
             </div>
-          } @else if (availableSlots.length === 0) {
-            <div class="no-slots">
-              <p>{{ 'BOOK_INTERVIEW.NO_AVAILABLE_SLOTS' | translate }}</p>
-            </div>
-          } @else {
-            <div class="slots-grid">
-              @for (slot of availableSlots; track slot.id) {
-                <div 
-                  class="slot-card" 
-                  [class.selected]="selectedSlot?.id === slot.id"
-                  (click)="selectSlot(slot)">
-                  <div class="slot-date">{{ slot.displayTime }}</div>
-                  <div class="slot-status" [class.available]="0 === 0">
-                    {{ getSlotStatusText(0) }}
-                  </div>
+          } @else if (expertAvailableTimes.length > 0) {
+            <div class="availability-list">
+              @for (time of expertAvailableTimes; track time.id) {
+                <div class="availability-item">
+                  <span class="availability-type-badge" [ngClass]="getAvailabilityTypeClass(time.availabilityType)">
+                    {{ getAvailabilityTypeText(time.availabilityType) | translate }}
+                  </span>
+                  <span class="availability-display">{{ time.displayTime }}</span>
                 </div>
               }
             </div>
+          } @else {
+            <div class="no-availability">
+              <p>{{ 'BOOK_INTERVIEW.NO_EXPERT_AVAILABILITY' | translate }}</p>
+            </div>
           }
+        </div>
 
-          <div class="booking-form">
-            <h4>{{ 'BOOK_INTERVIEW.BOOKING_FORM.TITLE' | translate }}</h4>
-            
-            @if (selectedSlot) {
-              <div class="selected-slot-info">
-                <strong>{{ 'BOOK_INTERVIEW.BOOKING_FORM.SELECTED_TIME' | translate }}:</strong> 
-                {{ selectedSlot.displayTime }}
-              </div>
-            }
-
-            <div class="form-section">
-              <label class="form-label">{{ 'AVAILABLE_TIME.DATE' | translate }}</label>
-              <input type="date" class="form-input" [(ngModel)]="selectedDate">
-            </div>
-
-            <div class="form-section">
-              <label class="form-label">{{ 'AVAILABLE_TIME.TIME' | translate }}</label>
-              <input type="time" class="form-input" [(ngModel)]="selectedTime">
-            </div>
-
-            <div class="form-section">
-              <label class="form-label">{{ 'BOOK_INTERVIEW.BOOKING_FORM.NOTES' | translate }}</label>
-              <textarea 
-                class="form-textarea" 
-                [(ngModel)]="bookingNotes"
-                [placeholder]="'BOOK_INTERVIEW.BOOKING_FORM.NOTES_PLACEHOLDER' | translate"
-                rows="3">
-              </textarea>
-            </div>
-
-            <div class="form-section">
-              <label class="form-label">{{ 'BOOK_INTERVIEW.BOOKING_FORM.LANGUAGE' | translate }}</label>
-              <select class="form-input" [(ngModel)]="selectedLanguageId">
-                <option [ngValue]="null">{{ 'BOOK_INTERVIEW.BOOKING_FORM.SELECT_LANGUAGE' | translate }}</option>
-                @for (lang of interviewLanguages; track lang.id) {
-                  <option [ngValue]="lang.id">{{ getLanguageName(lang) }}</option>
-                }
-              </select>
-            </div>
-
-            <div class="form-actions">
-              <button 
-                class="btn-book" 
-                (click)="bookInterview()"
-                [disabled]="isBooking || !isFormValid()">
-                @if (isBooking) {
-                  {{ 'BOOK_INTERVIEW.BOOKING_FORM.BOOKING' | translate }}
-                } @else {
-                  {{ 'BOOK_INTERVIEW.BOOKING_FORM.BOOK' | translate }}
-                }
-              </button>
-            </div>
+        <div class="slots-section">
+          <h3>{{ 'BOOK_INTERVIEW.SELECT_TIME' | translate }}</h3>
+          
+          <div class="time-mode-selector">
+            <label class="radio-option">
+              <input type="radio" name="timeMode" value="manual" [(ngModel)]="timeSelectionMode">
+              <span>{{ 'BOOK_INTERVIEW.TIME_MODE_MANUAL' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="timeMode" value="slots" [(ngModel)]="timeSelectionMode">
+              <span>{{ 'BOOK_INTERVIEW.TIME_MODE_SLOTS' | translate }}</span>
+            </label>
           </div>
+
+          @if (timeSelectionMode === 'slots') {
+            <div class="slots-not-available">
+              <p>{{ 'BOOK_INTERVIEW.SLOTS_NOT_AVAILABLE' | translate }}</p>
+            </div>
+          } @else {
+            <div class="booking-form">
+              <h4>{{ 'BOOK_INTERVIEW.BOOKING_FORM.TITLE' | translate }}</h4>
+              
+              <div class="form-section">
+                <label class="form-label">{{ 'AVAILABLE_TIME.DATE' | translate }}</label>
+                <input type="date" class="form-input" [(ngModel)]="selectedDate">
+              </div>
+
+              <div class="form-section">
+                <label class="form-label">{{ 'AVAILABLE_TIME.TIME' | translate }}</label>
+                <input type="time" class="form-input" [(ngModel)]="selectedTime">
+              </div>
+
+              <div class="form-section">
+                <label class="form-label">{{ 'BOOK_INTERVIEW.BOOKING_FORM.NOTES' | translate }}</label>
+                <textarea 
+                  class="form-textarea" 
+                  [(ngModel)]="bookingNotes"
+                  [placeholder]="'BOOK_INTERVIEW.BOOKING_FORM.NOTES_PLACEHOLDER' | translate"
+                  rows="3">
+                </textarea>
+              </div>
+
+              <div class="form-section">
+                <label class="form-label">{{ 'BOOK_INTERVIEW.BOOKING_FORM.LANGUAGE' | translate }}</label>
+                <select class="form-input" [(ngModel)]="selectedLanguageId">
+                  <option [ngValue]="null">{{ 'BOOK_INTERVIEW.BOOKING_FORM.SELECT_LANGUAGE' | translate }}</option>
+                  @for (lang of interviewLanguages; track lang.id) {
+                    <option [ngValue]="lang.id">{{ getLanguageName(lang) }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-actions">
+                <button 
+                  class="btn-book" 
+                  (click)="bookInterview()"
+                  [disabled]="isBooking || !isFormValid()">
+                  @if (isBooking) {
+                    {{ 'BOOK_INTERVIEW.BOOKING_FORM.BOOKING' | translate }}
+                  } @else {
+                    {{ 'BOOK_INTERVIEW.BOOKING_FORM.BOOK' | translate }}
+                  }
+                </button>
+              </div>
+            </div>
+          }
         </div>
 
         <button class="btn-back" (click)="goBack()">{{ 'BOOK_INTERVIEW.BACK' | translate }}</button>
@@ -174,6 +186,7 @@ export class BookInterviewComponent implements OnInit {
   };
 
   availableSlots: AvailableTimeDto[] = [];
+  expertAvailableTimes: AvailableTimeDto[] = [];
   selectedSlot: AvailableTimeDto | null = null;
   selectedDate: string = '';
   selectedTime: string = '';
@@ -181,10 +194,12 @@ export class BookInterviewComponent implements OnInit {
   skillGroups: SkillGroupDto[] = [];
   interviewLanguages: InterviewLanguageDto[] = [];
   selectedLanguageId: string | null = null;
+  timeSelectionMode: TimeSelectionMode = 'manual';
 
   isLoadingExpert = true;
   isLoadingSlots = false;
   isLoadingSkills = false;
+  isLoadingAvailableTimes = false;
   isBooking = false;
   error = false;
 
@@ -192,9 +207,9 @@ export class BookInterviewComponent implements OnInit {
     this.expertId = this.route.snapshot.paramMap.get('expertId');
     if (this.expertId) {
       this.loadExpertInfo(this.expertId);
-      this.loadAvailableSlots(this.expertId);
       this.loadExpertSkills(this.expertId);
       this.loadInterviewLanguages();
+      this.loadExpertAvailableTime(this.expertId);
     } else {
       this.error = true;
       this.isLoadingExpert = false;
@@ -263,6 +278,30 @@ export class BookInterviewComponent implements OnInit {
       error: (error) => {
         console.error('Error loading interview languages:', error);
         this.interviewLanguages = [];
+      }
+    });
+  }
+
+  private loadExpertAvailableTime(expertId: string): void {
+    this.isLoadingAvailableTimes = true;
+    const today = new Date();
+    const toDate = new Date();
+    toDate.setDate(today.getDate() + 30);
+
+    const request = {
+      fromDate: this.formatDate(today),
+      toDate: this.formatDate(toDate)
+    };
+
+    this.availableTimeService.getExpertAvailableSlots(expertId, request).subscribe({
+      next: (response) => {
+        this.expertAvailableTimes = response.availableTimes || [];
+        this.isLoadingAvailableTimes = false;
+      },
+      error: (error) => {
+        console.error('Error loading expert available time:', error);
+        this.expertAvailableTimes = [];
+        this.isLoadingAvailableTimes = false;
       }
     });
   }
@@ -363,5 +402,25 @@ export class BookInterviewComponent implements OnInit {
     }
     
     return false;
+  }
+
+  getAvailabilityTypeClass(type: number): string {
+    const typeClasses: Record<number, string> = {
+      0: 'type-always',
+      1: 'type-weekly',
+      2: 'type-weekly-time',
+      3: 'type-specific'
+    };
+    return typeClasses[type] || '';
+  }
+
+  getAvailabilityTypeText(type: number): string {
+    const typeTexts: Record<number, string> = {
+      0: 'AVAILABLE_TIME.TYPE_ALWAYS',
+      1: 'AVAILABLE_TIME.TYPE_WEEKLY_DAY',
+      2: 'AVAILABLE_TIME.TYPE_WEEKLY_TIME',
+      3: 'AVAILABLE_TIME.TYPE_SPECIFIC'
+    };
+    return typeTexts[type] || '';
   }
 }

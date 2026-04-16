@@ -67,7 +67,7 @@
     "BOOK_INTERVIEW": "Book Interview"
   },
   "SKILLS": {
-    "TITLE": "Skills",
+    "TITLE": "Expert Skills",
     "LOADING": "Loading skills...",
     "SAVE": "Save Skills",
     "SAVING": "Saving...",
@@ -107,9 +107,14 @@
     "BACK": "Back",
     "EXPERT": "Expert",
     "NO_DESCRIPTION": "No description available",
-    "SELECT_TIME": "Select available time",
+    "SELECT_TIME": "Select interview time",
     "LOADING_SLOTS": "Loading available slots...",
     "NO_AVAILABLE_SLOTS": "No available time slots",
+    "EXPERT_AVAILABILITY": "Expert's Available Time",
+    "NO_EXPERT_AVAILABILITY": "Expert has not specified available time",
+    "TIME_MODE_MANUAL": "Set time manually",
+    "TIME_MODE_SLOTS": "Select expert's available slots",
+    "SLOTS_NOT_AVAILABLE": "Expert slots are not available — set time manually",
     "BOOKING_FORM": {
       "TITLE": "Booking Details",
       "SELECTED_TIME": "Selected time",
