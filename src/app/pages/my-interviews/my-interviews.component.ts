@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
+import { UserService } from '../../services/user.service';
 import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../models/interview.model';
 
 @Component({
@@ -109,6 +110,7 @@ export class MyInterviewsComponent implements OnInit {
   error = false;
   isCandidate = false;
   selectedStatus: InterviewStatus | undefined;
+  userTimeZoneCode: string | null = null;
   
   currentPage = 1;
   pageSize = 10;
@@ -119,11 +121,13 @@ export class MyInterviewsComponent implements OnInit {
 
   constructor(
     private interviewService: InterviewService,
+    private userService: UserService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.checkUserRole();
+    this.loadUserTimeZone();
     this.loadInterviews();
   }
 
@@ -134,6 +138,20 @@ export class MyInterviewsComponent implements OnInit {
         this.isCandidate = Array.isArray(roles)
           ? roles.includes('Candidate')
           : roles === 'Candidate';
+      }
+    });
+  }
+
+  private loadUserTimeZone(): void {
+    this.userService.getUserInfo().subscribe({
+      next: (response) => {
+        if (response.selectedTimeZoneId && response.timeZones) {
+          const tz = response.timeZones.find(t => t.id === response.selectedTimeZoneId);
+          this.userTimeZoneCode = tz?.code || null;
+        }
+      },
+      error: (err) => {
+        console.error('Error loading user timezone:', err);
       }
     });
   }
@@ -171,8 +189,16 @@ export class MyInterviewsComponent implements OnInit {
   }
 
   formatDateTime(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleString();
+    if (!dateStr) return '';
+    
+    const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+    if (match) {
+      const [, year, month, day, hours, minutes] = match;
+      const timeZoneStr = this.userTimeZoneCode ? ` (${this.userTimeZoneCode})` : '';
+      return `${day}.${month}.${year} ${hours}:${minutes}${timeZoneStr}`;
+    }
+    
+    return dateStr;
   }
 
   getStatusClass(status: InterviewStatus): string {

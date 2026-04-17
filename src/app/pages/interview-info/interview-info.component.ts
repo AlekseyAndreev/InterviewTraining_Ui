@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
+import { UserService } from '../../services/user.service';
 import { GetInterviewInfoResponse } from '../../models/interview.model';
 
 @Component({
@@ -130,6 +131,7 @@ export class InterviewInfoComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private interviewService = inject(InterviewService);
+  private userService = inject(UserService);
   private translateService = inject(TranslateService);
   public oidcSecurityService = inject(OidcSecurityService);
 
@@ -137,15 +139,31 @@ export class InterviewInfoComponent implements OnInit {
   isLoading = true;
   error = false;
   interviewId: string | null = null;
+  userTimeZoneCode: string | null = null;
 
   ngOnInit(): void {
     this.interviewId = this.route.snapshot.paramMap.get('id');
+    this.loadUserTimeZone();
     if (this.interviewId) {
       this.loadInterviewInfo(this.interviewId);
     } else {
       this.error = true;
       this.isLoading = false;
     }
+  }
+
+  private loadUserTimeZone(): void {
+    this.userService.getUserInfo().subscribe({
+      next: (response) => {
+        if (response.selectedTimeZoneId && response.timeZones) {
+          const tz = response.timeZones.find(t => t.id === response.selectedTimeZoneId);
+          this.userTimeZoneCode = tz?.code || null;
+        }
+      },
+      error: (err) => {
+        console.error('Error loading user timezone:', err);
+      }
+    });
   }
 
   private loadInterviewInfo(id: string): void {
@@ -164,8 +182,15 @@ export class InterviewInfoComponent implements OnInit {
   }
 
   formatDateTime(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleString();
+    if (!dateStr) return '';
+    const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+    if (match) {
+      const [, year, month, day, hours, minutes] = match;
+      const timeZoneStr = this.userTimeZoneCode ? ` (${this.userTimeZoneCode})` : '';
+      return `${day}.${month}.${year} ${hours}:${minutes}${timeZoneStr}`;
+    }
+    
+    return dateStr;
   }
 
   getInitials(name: string): string {
