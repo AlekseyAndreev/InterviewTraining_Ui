@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -7,7 +7,7 @@ import { APP_CONFIG } from '../../services/config.service';
 import { UserService } from '../../services/user.service';
 import { SkillService } from '../../services/skill.service';
 import { AvailableTimeService } from '../../services/available-time.service';
-import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserTimeZoneRequest } from '../../models/user-info.model';
+import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserTimeZoneRequest, TimeZoneDto } from '../../models/user-info.model';
 import { SkillGroupDto } from '../../models/skill.model';
 import { AvailableTimeDto, CreateAvailableTimeRequest, UpdateAvailableTimeRequest } from '../../models/available-time.model';
 import { SkillGroupComponent } from '../../components/skill-group/skill-group.component';
@@ -227,16 +227,46 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                   
                   <div class="form-section">
                     <label class="form-label">{{ 'USER_INFO.TIME_ZONE' | translate }}</label>
-                    <select class="form-input" [(ngModel)]="selectedTimeZoneId">
-                      <option [ngValue]="null">{{ 'USER_INFO.SELECT_TIME_ZONE' | translate }}</option>
-                      @for (tz of apiUserInfo.timeZones; track tz.id) {
-                        <option [ngValue]="tz.id">{{ tz.description }} ({{ tz.code }})</option>
+                    <div class="timezone-input-wrapper">
+                      <div class="timezone-search-container" #timezoneSearchContainer>
+                        <input 
+                          type="text" 
+                          class="form-input timezone-search-input"
+                          [placeholder]="'USER_INFO.SEARCH_TIME_ZONE' | translate"
+                          [(ngModel)]="timezoneSearchQuery"
+                          (click)="showTimezoneDropdown = true"
+                          (input)="filterTimeZones()">
+                        
+                        @if (showTimezoneDropdown && filteredTimeZones.length > 0) {
+                          <div class="timezone-dropdown">
+                            @for (tz of filteredTimeZones; track tz.id) {
+                              <div 
+                                class="timezone-option" 
+                                [class.selected]="tz.id === selectedTimeZoneId"
+                                (click)="selectTimeZone(tz.id)">
+                                {{ tz.description }} ({{ tz.code }})
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                      @if (apiUserInfo.selectedTimeZoneId) {
+                        <button type="button" class="btn-clear-timezone" (click)="clearTimeZoneSelection()">
+                          {{ 'USER_INFO.CLEAR_SELECTION' | translate }}
+                        </button>
                       }
-                    </select>
+                    </div>
+                    
+                    @if (apiUserInfo.selectedTimeZoneId) {
+                      <div class="selected-timezone-display">
+                        <span class="selected-timezone-label">{{ 'USER_INFO.SAVED_TIME_ZONE' | translate }}:</span>
+                        <span class="selected-timezone-value">{{ getSavedTimeZoneName() }}</span>
+                      </div>
+                    }
                   </div>
                   
                   <div class="form-actions">
-                    <button class="btn-save" (click)="saveTimeZone()" [disabled]="isSavingTimeZone">
+                    <button class="btn-save" (click)="saveTimeZone()" [disabled]="isSavingTimeZone || !hasTimeZoneChanged()">
                       @if (isSavingTimeZone) {
                         {{ 'USER_INFO.SAVING' | translate }}
                       } @else {
@@ -291,6 +321,7 @@ export class MyUserInfoComponent implements OnInit {
   private availableTimeService = inject(AvailableTimeService);
   
   @ViewChild('photoInput') photoInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('timezoneSearchContainer') timezoneSearchContainerRef!: ElementRef;
   
   activeTab: TabName = 'profile';
   
@@ -310,6 +341,9 @@ export class MyUserInfoComponent implements OnInit {
   isLoading = true;
   isSavingTimeZone = false;
   selectedTimeZoneId: string | null = null;
+  timezoneSearchQuery: string = '';
+  showTimezoneDropdown: boolean = false;
+  filteredTimeZones: TimeZoneDto[] = [];
   
   skillsGroups: SkillGroupDto[] = [];
   selectedSkills: Set<string> = new Set();
@@ -345,6 +379,13 @@ export class MyUserInfoComponent implements OnInit {
       next: (response) => {
         this.apiUserInfo = response;
         this.selectedTimeZoneId = response.selectedTimeZoneId;
+        this.filteredTimeZones = response.timeZones || [];
+        if (response.selectedTimeZoneId) {
+          const selectedTz = response.timeZones?.find(tz => tz.id === response.selectedTimeZoneId);
+          if (selectedTz) {
+            this.timezoneSearchQuery = `${selectedTz.description} (${selectedTz.code})`;
+          }
+        }
         if (response.photo && response.photo.length > 0) {
           this.photoPreviewUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(response.photo);
         }
@@ -502,6 +543,7 @@ export class MyUserInfoComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           this.apiUserInfo.selectedTimeZoneId = this.selectedTimeZoneId;
+          this.showTimezoneDropdown = false;
         }
         this.isSavingTimeZone = false;
       },
@@ -510,6 +552,53 @@ export class MyUserInfoComponent implements OnInit {
         this.isSavingTimeZone = false;
       }
     });
+  }
+
+  filterTimeZones(): void {
+    const query = this.timezoneSearchQuery.toLowerCase().trim();
+    if (!query) {
+      this.filteredTimeZones = this.apiUserInfo.timeZones || [];
+    } else {
+      this.filteredTimeZones = (this.apiUserInfo.timeZones || []).filter(tz => 
+        tz.description.toLowerCase().includes(query) || 
+        tz.code.toLowerCase().includes(query)
+      );
+    }
+    this.showTimezoneDropdown = true;
+  }
+
+  selectTimeZone(tzId: string): void {
+    this.selectedTimeZoneId = tzId;
+    const selectedTz = this.apiUserInfo.timeZones?.find(tz => tz.id === tzId);
+    if (selectedTz) {
+      this.timezoneSearchQuery = `${selectedTz.description} (${selectedTz.code})`;
+    }
+    this.showTimezoneDropdown = false;
+  }
+
+  clearTimeZoneSelection(): void {
+    this.selectedTimeZoneId = null;
+    this.timezoneSearchQuery = '';
+    this.filteredTimeZones = this.apiUserInfo.timeZones || [];
+  }
+
+  hasTimeZoneChanged(): boolean {
+    return this.selectedTimeZoneId !== this.apiUserInfo.selectedTimeZoneId;
+  }
+
+  getSavedTimeZoneName(): string {
+    if (!this.apiUserInfo.selectedTimeZoneId || !this.apiUserInfo.timeZones) {
+      return '';
+    }
+    const tz = this.apiUserInfo.timeZones.find(t => t.id === this.apiUserInfo.selectedTimeZoneId);
+    return tz ? `${tz.description} (${tz.code})` : '';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (this.timezoneSearchContainerRef && !this.timezoneSearchContainerRef.nativeElement.contains(event.target)) {
+      this.showTimezoneDropdown = false;
+    }
   }
 
   getInitialsFromName(name: string | null): string {

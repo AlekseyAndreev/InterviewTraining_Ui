@@ -67,6 +67,11 @@
     "ERROR_LOADING": "Error loading user information",
     "TIME_ZONE": "Time Zone",
     "SELECT_TIME_ZONE": "Select time zone",
+    "SEARCH_TIME_ZONE": "Search time zone...",
+    "SELECTED_TIME_ZONE": "Selected",
+    "SAVED_TIME_ZONE": "Saved",
+    "SELECTED_FOR_SAVE": "Selected for saving",
+    "CLEAR_SELECTION": "Clear",
     "TIMEZONE_DESCRIPTION": "Select your time zone for correct display of interview times.",
     "ROLES_DESCRIPTION": "Roles determine your capabilities on the platform. A Candidate can search for experts and book interviews. An Expert can conduct interviews and receive compensation.",
     "BOOK_INTERVIEW": "Book Interview"

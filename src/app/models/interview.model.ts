@@ -1,4 +1,4 @@
-export interface InterviewDto {
+export interface  InterviewDto {
   id: string;
   expertId: string;
   expertName: string;
