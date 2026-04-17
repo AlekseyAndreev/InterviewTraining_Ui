@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -7,12 +7,15 @@ import { APP_CONFIG } from '../../services/config.service';
 import { UserService } from '../../services/user.service';
 import { SkillService } from '../../services/skill.service';
 import { AvailableTimeService } from '../../services/available-time.service';
-import { GetUserInfoResponse, UpdateUserInfoRequest } from '../../models/user-info.model';
+import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserTimeZoneRequest } from '../../models/user-info.model';
 import { SkillGroupDto } from '../../models/skill.model';
 import { AvailableTimeDto, CreateAvailableTimeRequest, UpdateAvailableTimeRequest } from '../../models/available-time.model';
 import { SkillGroupComponent } from '../../components/skill-group/skill-group.component';
 import { AvailableTimeFormComponent } from '../../components/available-time-form/available-time-form.component';
 import { AvailableTimeListComponent } from '../../components/available-time-list/available-time-list.component';
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
 
@@ -25,8 +28,8 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
       <div class="user-card">
         <div class="user-card-header">
           <div class="user-card-avatar">
-            @if (apiUserInfo.photoUrl) {
-              <img [src]="apiUserInfo.photoUrl" alt="User photo" class="avatar-image">
+            @if (photoPreviewUrl) {
+              <img [src]="photoPreviewUrl" alt="User photo" class="avatar-image">
             } @else {
               {{ getInitialsFromName(apiUserInfo.fullName) }}
             }
@@ -79,8 +82,26 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                 @if (isEditing) {
                   <div class="edit-form">
                     <div class="form-section">
-                      <label class="form-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</label>
-                      <input type="text" class="form-input" [(ngModel)]="editFormData.photoUrl" [placeholder]="'USER_INFO.PHOTO_URL_PLACEHOLDER' | translate">
+                      <label class="form-label">{{ 'USER_INFO.PHOTO' | translate }}</label>
+                      <div class="photo-upload-container">
+                        <input type="file" 
+                               #photoInput
+                               class="photo-input-hidden" 
+                               accept="image/jpeg,image/png,image/gif,image/webp"
+                               (change)="onPhotoSelected($event)">
+                        <button type="button" class="btn-upload-photo" (click)="photoInput.click()">
+                          {{ 'USER_INFO.SELECT_PHOTO' | translate }}
+                        </button>
+                        @if (selectedPhotoFile) {
+                          <span class="selected-file-name">{{ selectedPhotoFile.name }}</span>
+                          <button type="button" class="btn-remove-photo" (click)="removeSelectedPhoto()">
+                            {{ 'USER_INFO.REMOVE_PHOTO' | translate }}
+                          </button>
+                        }
+                        @if (photoErrorMessage) {
+                          <div class="photo-error">{{ photoErrorMessage }}</div>
+                        }
+                      </div>
                     </div>
                     
                     <div class="form-section">
@@ -119,10 +140,6 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                     </div>
                   }
                   
-                  <div class="info-section">
-                    <div class="info-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</div>
-                    <div class="info-value">{{ apiUserInfo.photoUrl || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-                  </div>
                   <div class="info-section">
                     <div class="info-label">{{ 'USER_INFO.FULL_NAME' | translate }}</div>
                     <div class="info-value">{{ apiUserInfo.fullName || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
@@ -273,10 +290,11 @@ export class MyUserInfoComponent implements OnInit {
   private skillService = inject(SkillService);
   private availableTimeService = inject(AvailableTimeService);
   
+  @ViewChild('photoInput') photoInputRef!: ElementRef<HTMLInputElement>;
+  
   activeTab: TabName = 'profile';
   
   apiUserInfo: GetUserInfoResponse = {
-    photoUrl: null,
     photo: null,
     fullName: null,
     shortDescription: null,
@@ -284,6 +302,9 @@ export class MyUserInfoComponent implements OnInit {
     selectedTimeZoneId: null,
     timeZones: []
   };
+  photoPreviewUrl: string | null = null;
+  selectedPhotoFile: File | null = null;
+  photoErrorMessage: string | null = null;
   isEditing = false;
   isSaving = false;
   isLoading = true;
@@ -302,12 +323,9 @@ export class MyUserInfoComponent implements OnInit {
   editingAvailableTime: AvailableTimeDto | null = null;
   
   editFormData: UpdateUserInfoRequest = {
-    photoUrl: null,
-    photo: null,
     fullName: null,
     shortDescription: null,
     description: null,
-    selectedTimeZoneId: null
   };
   
   constructor(
@@ -327,6 +345,9 @@ export class MyUserInfoComponent implements OnInit {
       next: (response) => {
         this.apiUserInfo = response;
         this.selectedTimeZoneId = response.selectedTimeZoneId;
+        if (response.photo && response.photo.length > 0) {
+          this.photoPreviewUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(response.photo);
+        }
         this.isLoading = false;
       },
       error: (error) => {
@@ -334,6 +355,15 @@ export class MyUserInfoComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private byteArrayToBase64(byteArray: number[]): string {
+    const bytes = new Uint8Array(byteArray);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
   }
 
   private loadSkillsTree(): void {
@@ -382,29 +412,76 @@ export class MyUserInfoComponent implements OnInit {
 
   startEdit(): void {
     this.isEditing = true;
+    this.selectedPhotoFile = null;
+    this.photoErrorMessage = null;
     this.editFormData = {
-      photoUrl: this.apiUserInfo.photoUrl || null,
-      photo: this.apiUserInfo.photo || null,
       fullName: this.apiUserInfo.fullName || null,
       shortDescription: this.apiUserInfo.shortDescription || null,
       description: this.apiUserInfo.description || null,
-      selectedTimeZoneId: this.apiUserInfo.selectedTimeZoneId || null
     };
   }
 
   cancelEdit(): void {
     this.isEditing = false;
+    this.selectedPhotoFile = null;
+    this.photoErrorMessage = null;
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) {
+      return;
+    }
+    
+    this.photoErrorMessage = null;
+    
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      this.photoErrorMessage = this.translateService.instant('USER_INFO.INVALID_PHOTO_TYPE');
+      input.value = '';
+      return;
+    }
+    
+    if (file.size > MAX_FILE_SIZE) {
+      this.photoErrorMessage = this.translateService.instant('USER_INFO.PHOTO_TOO_LARGE');
+      input.value = '';
+      return;
+    }
+    
+    this.selectedPhotoFile = file;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.photoPreviewUrl = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeSelectedPhoto(): void {
+    this.selectedPhotoFile = null;
+    this.photoErrorMessage = null;
+    if (this.apiUserInfo.photo && this.apiUserInfo.photo.length > 0) {
+      this.photoPreviewUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(this.apiUserInfo.photo);
+    } else {
+      this.photoPreviewUrl = null;
+    }
+    if (this.photoInputRef) {
+      this.photoInputRef.nativeElement.value = '';
+    }
   }
 
   saveUserInfo(): void {
     this.isSaving = true;
-    this.userService.updateUserInfo(this.editFormData).subscribe({
+    
+    this.userService.updateUserInfo(this.editFormData, this.selectedPhotoFile).subscribe({
       next: (response) => {
         if (response.success) {
           this.apiUserInfo = { 
             ...this.apiUserInfo,
             ...this.editFormData 
           };
+          this.selectedPhotoFile = null;
           this.isEditing = false;
         }
         this.isSaving = false;
@@ -418,15 +495,10 @@ export class MyUserInfoComponent implements OnInit {
 
   saveTimeZone(): void {
     this.isSavingTimeZone = true;
-    const request: UpdateUserInfoRequest = {
-      photoUrl: this.apiUserInfo.photoUrl,
-      photo: this.apiUserInfo.photo,
-      fullName: this.apiUserInfo.fullName,
-      shortDescription: this.apiUserInfo.shortDescription,
-      description: this.apiUserInfo.description,
-      selectedTimeZoneId: this.selectedTimeZoneId
+    const request: UpdateUserTimeZoneRequest = {
+      timeZoneId: this.selectedTimeZoneId
     };
-    this.userService.updateUserInfo(request).subscribe({
+    this.userService.updateUserTimeZone(request).subscribe({
       next: (response) => {
         if (response.success) {
           this.apiUserInfo.selectedTimeZoneId = this.selectedTimeZoneId;

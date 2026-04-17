@@ -35,7 +35,11 @@ type TimeSelectionMode = 'manual' | 'slots';
       } @else {
         <div class="expert-header">
           <div class="expert-avatar">
-            {{ getInitials(expertInfo.fullName) }}
+            @if (expertPhotoUrl) {
+              <img [src]="expertPhotoUrl" alt="Expert photo" class="avatar-image">
+            } @else {
+              {{ getInitials(expertInfo.fullName) }}
+            }
           </div>
           <div class="expert-details">
             <h2>{{ expertInfo.fullName || ('BOOK_INTERVIEW.EXPERT' | translate) }}</h2>
@@ -176,7 +180,6 @@ export class BookInterviewComponent implements OnInit {
 
   expertId: string | null = null;
   expertInfo: GetUserInfoResponse = {
-    photoUrl: null,
     photo: null,
     fullName: null,
     shortDescription: null,
@@ -184,6 +187,7 @@ export class BookInterviewComponent implements OnInit {
     selectedTimeZoneId: null,
     timeZones: []
   };
+  expertPhotoUrl: string | null = null;
 
   availableSlots: AvailableTimeDto[] = [];
   expertAvailableTimes: AvailableTimeDto[] = [];
@@ -221,6 +225,9 @@ export class BookInterviewComponent implements OnInit {
     this.userService.getUserInfoById(expertId).subscribe({
       next: (response) => {
         this.expertInfo = response;
+        if (response.photo && response.photo.length > 0) {
+          this.expertPhotoUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(response.photo);
+        }
         this.isLoadingExpert = false;
       },
       error: (error) => {
@@ -229,6 +236,15 @@ export class BookInterviewComponent implements OnInit {
         this.isLoadingExpert = false;
       }
     });
+  }
+
+  private byteArrayToBase64(byteArray: number[]): string {
+    const bytes = new Uint8Array(byteArray);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
   }
 
   private loadAvailableSlots(expertId: string): void {

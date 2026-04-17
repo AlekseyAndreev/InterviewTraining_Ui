@@ -17,8 +17,8 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
       <div class="user-card">
         <div class="user-card-header">
           <div class="user-card-avatar">
-            @if (apiUserInfo.photoUrl) {
-              <img [src]="apiUserInfo.photoUrl" alt="User photo" class="avatar-image">
+            @if (photoPreviewUrl) {
+              <img [src]="photoPreviewUrl" alt="User photo" class="avatar-image">
             } @else {
               {{ getInitialsFromName(apiUserInfo.fullName) }}
             }
@@ -45,10 +45,6 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
               </div>
             }
             
-            <div class="info-section">
-              <div class="info-label">{{ 'USER_INFO.PHOTO_URL' | translate }}</div>
-              <div class="info-value">{{ apiUserInfo.photoUrl || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-            </div>
             <div class="info-section">
               <div class="info-label">{{ 'USER_INFO.FULL_NAME' | translate }}</div>
               <div class="info-value">{{ apiUserInfo.fullName || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
@@ -97,7 +93,6 @@ export class UserInfoComponent implements OnInit {
   public oidcSecurityService = inject(OidcSecurityService);
   
   apiUserInfo: GetUserInfoResponse = {
-    photoUrl: null,
     photo: null,
     fullName: null,
     shortDescription: null,
@@ -105,6 +100,7 @@ export class UserInfoComponent implements OnInit {
     selectedTimeZoneId: null,
     timeZones: []
   };
+  photoPreviewUrl: string | null = null;
   isLoading = true;
   error = false;
   
@@ -146,6 +142,9 @@ export class UserInfoComponent implements OnInit {
     this.userService.getUserInfoById(userId).subscribe({
       next: (response) => {
         this.apiUserInfo = response;
+        if (response.photo && response.photo.length > 0) {
+          this.photoPreviewUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(response.photo);
+        }
         this.isLoading = false;
       },
       error: (error) => {
@@ -154,6 +153,15 @@ export class UserInfoComponent implements OnInit {
         this.error = true;
       }
     });
+  }
+
+  private byteArrayToBase64(byteArray: number[]): string {
+    const bytes = new Uint8Array(byteArray);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
   }
 
   private loadUserSkills(userId: string): void {

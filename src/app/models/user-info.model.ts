@@ -5,8 +5,7 @@ export interface TimeZoneDto {
 }
 
 export interface GetUserInfoResponse {
-  photoUrl: string | null;
-  photo: string | null;
+  photo: number[] | null;
   fullName: string | null;
   shortDescription: string | null;
   description: string | null;
@@ -15,14 +14,19 @@ export interface GetUserInfoResponse {
 }
 
 export interface UpdateUserInfoRequest {
-  photoUrl: string | null;
-  photo: string | null;
   fullName: string | null;
   shortDescription: string | null;
   description: string | null;
-  selectedTimeZoneId: string | null;
 }
 
 export interface UpdateUserInfoResponse {
+  success: boolean;
+}
+
+export interface UpdateUserTimeZoneRequest {
+  timeZoneId: string | null;
+}
+
+export interface UpdateUserTimeZoneResponse {
   success: boolean;
 }

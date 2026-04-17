@@ -10,7 +10,8 @@
     "logLevel": 3,
     "secureRoutes": [
       "https://localhost:5101/",
-      "http://localhost:54962/"
+      "http://localhost:5000/",
+      "https://localhost:5001/"
     ],
     "ignoreNonceAfterRefresh": true,
     "disableIatOffsetValidation": true,
@@ -18,6 +19,6 @@
     "postLogoutRedirectUri": "http://localhost:4200"
   },
   "api": {
-    "baseUrl": "http://localhost:54962"
+    "baseUrl": "https://localhost:5001"
   }
 }
