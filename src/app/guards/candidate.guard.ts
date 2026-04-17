@@ -20,11 +20,11 @@ export const candidateGuard: CanActivateFn = (route, state) => {
         take(1),
         map(({ userData }) => {
           const roles = userData?.role as string | string[];
-          const hasCandidateRole = Array.isArray(roles) 
-            ? roles.includes('Candidate') || roles.includes('Admin')
-            : roles === 'Candidate' || roles === 'Admin';
+          const hasAccess = Array.isArray(roles) 
+            ? roles.includes('Candidate') || roles.includes('Expert') || roles.includes('Admin')
+            : roles === 'Candidate' || roles === 'Expert' || roles === 'Admin';
 
-          if (hasCandidateRole) {
+          if (hasAccess) {
             return true;
           }
 
