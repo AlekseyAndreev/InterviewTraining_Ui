@@ -7,6 +7,13 @@ import { InterviewService } from '../../services/interview.service';
 import { UserService } from '../../services/user.service';
 import { InterviewDto, GetMyInterviewsResponse } from '../../models/interview.model';
 
+type InterviewFilterType = 'active' | 'all' | 'completed' | 'completed-success' | 'completed-failed' | 'cancelled';
+
+interface InterviewFilter {
+  key: InterviewFilterType;
+  statuses: string[];
+}
+
 @Component({
   selector: 'app-my-interviews',
   standalone: true,
@@ -15,6 +22,17 @@ import { InterviewDto, GetMyInterviewsResponse } from '../../models/interview.mo
     <div class="my-interviews-container">
       <div class="search-header">
         <h1>{{ 'MY_INTERVIEWS.TITLE' | translate }}</h1>
+        <div class="filter-controls">
+          <label>{{ 'MY_INTERVIEWS.FILTER_BY_STATUS' | translate }}:</label>
+          <select (change)="onFilterChange($event)" class="filter-select">
+            <option value="active" [selected]="selectedFilter === 'active'">{{ 'MY_INTERVIEWS.FILTER_ACTIVE' | translate }}</option>
+            <option value="all" [selected]="selectedFilter === 'all'">{{ 'MY_INTERVIEWS.FILTER_ALL' | translate }}</option>
+            <option value="completed" [selected]="selectedFilter === 'completed'">{{ 'MY_INTERVIEWS.FILTER_COMPLETED' | translate }}</option>
+            <option value="completed-success" [selected]="selectedFilter === 'completed-success'">{{ 'MY_INTERVIEWS.FILTER_COMPLETED_SUCCESS' | translate }}</option>
+            <option value="completed-failed" [selected]="selectedFilter === 'completed-failed'">{{ 'MY_INTERVIEWS.FILTER_COMPLETED_FAILED' | translate }}</option>
+            <option value="cancelled" [selected]="selectedFilter === 'cancelled'">{{ 'MY_INTERVIEWS.FILTER_CANCELLED' | translate }}</option>
+          </select>
+        </div>
       </div>
 
       @if (loading) {
@@ -30,13 +48,13 @@ import { InterviewDto, GetMyInterviewsResponse } from '../../models/interview.mo
         </div>
       }
 
-      @if (!loading && !error && interviews.length > 0) {
+      @if (!loading && !error && filteredInterviews.length > 0) {
         <div class="results-info">
-          {{ 'MY_INTERVIEWS.TOTAL_FOUND' | translate }} {{ interviews.length }}
+          {{ 'MY_INTERVIEWS.TOTAL_FOUND' | translate }} {{ filteredInterviews.length }}
         </div>
 
         <div class="interviews-grid">
-          @for (interview of interviews; track interview.id) {
+          @for (interview of filteredInterviews; track interview.id) {
             <div class="interview-card">
               <div class="interview-avatar">
                 {{ getInitials(isCandidate ? interview.expertName : interview.candidateName) }}
@@ -86,7 +104,7 @@ import { InterviewDto, GetMyInterviewsResponse } from '../../models/interview.mo
         </div>
       }
 
-      @if (!loading && !error && interviews.length === 0) {
+      @if (!loading && !error && filteredInterviews.length === 0) {
         <div class="no-results">
           <p>{{ 'MY_INTERVIEWS.NO_RESULTS' | translate }}</p>
         </div>
@@ -95,7 +113,9 @@ import { InterviewDto, GetMyInterviewsResponse } from '../../models/interview.mo
   `
 })
 export class MyInterviewsComponent implements OnInit {
+  allInterviews: InterviewDto[] = [];
   interviews: InterviewDto[] = [];
+  filteredInterviews: InterviewDto[] = [];
   loading = false;
   error = false;
   isCandidate = false;
@@ -105,6 +125,57 @@ export class MyInterviewsComponent implements OnInit {
   pageSize = 10;
   totalRecords = 0;
   totalPages = 0;
+  
+  selectedFilter: InterviewFilterType = 'active';
+
+  private readonly filters: InterviewFilter[] = [
+    { 
+      key: 'active', 
+      statuses: [
+        'PendingConfirmation',
+        'ConfirmedByCandidate',
+        'ConfirmedByExpert',
+        'ConfirmedBothAdminNotApproved',
+        'ConfirmedBothAdminApprovedTimeDidNotStart',
+        'InProgress'
+      ]
+    },
+    { 
+      key: 'all', 
+      statuses: [] 
+    },
+    { 
+      key: 'completed', 
+      statuses: [
+        'Completed',
+        'TimeExpiredCandidateDidNotApprove',
+        'TimeExpiredExpertDidNotApprove',
+        'TimeExpiredBothDidNotApprove',
+        'TimeExpiredBothApprovedAdminDidNotApprove'
+      ]
+    },
+    { 
+      key: 'completed-success', 
+      statuses: ['Completed']
+    },
+    { 
+      key: 'completed-failed', 
+      statuses: [
+        'TimeExpiredCandidateDidNotApprove',
+        'TimeExpiredExpertDidNotApprove',
+        'TimeExpiredBothDidNotApprove',
+        'TimeExpiredBothApprovedAdminDidNotApprove'
+      ]
+    },
+    { 
+      key: 'cancelled', 
+      statuses: [
+        'CancelledByCandidate',
+        'CancelledByExpert',
+        'CancelledByCandidateAndExpert'
+      ]
+    }
+  ];
 
   private oidcSecurityService = inject(OidcSecurityService);
 
@@ -155,9 +226,10 @@ export class MyInterviewsComponent implements OnInit {
       pageSize: this.pageSize
     }).subscribe({
       next: (response: GetMyInterviewsResponse) => {
-        this.interviews = response.data || [];
+        this.allInterviews = response.data || [];
         this.totalRecords = response.totalRecords || 0;
         this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
+        this.applyFilter();
         this.loading = false;
       },
       error: (err) => {
@@ -166,6 +238,24 @@ export class MyInterviewsComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  applyFilter(): void {
+    const filter = this.filters.find(f => f.key === this.selectedFilter);
+    
+    if (!filter || filter.statuses.length === 0) {
+      this.filteredInterviews = [...this.allInterviews];
+    } else {
+      this.filteredInterviews = this.allInterviews.filter(interview => 
+        filter.statuses.includes(interview.status)
+      );
+    }
+  }
+
+  onFilterChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.selectedFilter = target.value as InterviewFilterType;
+    this.applyFilter();
   }
 
   getInitials(name: string): string {
@@ -195,15 +285,19 @@ export class MyInterviewsComponent implements OnInit {
       'PendingConfirmation': 'status-scheduled',
       'ConfirmedByCandidate': 'status-scheduled',
       'ConfirmedByExpert': 'status-scheduled',
-      'ConfirmedBoth': 'status-scheduled',
-      'ConfirmedBothLinkCreated': 'status-scheduled',
-      'InProgress': 'status-scheduled',
+      'ConfirmedBothAdminNotApproved': 'status-scheduled',
+      'ConfirmedBothAdminApprovedTimeDidNotStart': 'status-scheduled',
+      'InProgress': 'status-inprogress',
       'Completed': 'status-completed',
+      'TimeExpiredCandidateDidNotApprove': 'status-noshow',
+      'TimeExpiredExpertDidNotApprove': 'status-noshow',
+      'TimeExpiredBothDidNotApprove': 'status-noshow',
+      'TimeExpiredBothApprovedAdminDidNotApprove': 'status-noshow',
       'CancelledByCandidate': 'status-cancelled',
       'CancelledByExpert': 'status-cancelled',
       'CancelledByCandidateAndExpert': 'status-cancelled',
-      'DidNotTakePlace': 'status-noshow',
-      'Draft': 'status-draft'
+      'Draft': 'status-draft',
+      'Unknown': 'status-unknown'
     };
     return statusClasses[status] || 'status-scheduled';
   }
