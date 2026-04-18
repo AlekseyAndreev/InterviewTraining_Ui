@@ -5,7 +5,7 @@ export interface TimeZoneDto {
 }
 
 export interface GetUserInfoResponse {
-  photo: number[] | null;
+  photo: number[] | string | { $values?: number[] } | null;
   fullName: string | null;
   shortDescription: string | null;
   description: string | null;

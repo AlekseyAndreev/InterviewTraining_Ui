@@ -386,8 +386,11 @@ export class MyUserInfoComponent implements OnInit {
             this.timezoneSearchQuery = `${selectedTz.description} (${selectedTz.code})`;
           }
         }
-        if (response.photo && response.photo.length > 0) {
-          this.photoPreviewUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(response.photo);
+        if (response.photo) {
+          const base64 = this.byteArrayToBase64(response.photo);
+          if (base64) {
+            this.photoPreviewUrl = 'data:image/jpeg;base64,' + base64;
+          }
         }
         this.isLoading = false;
       },
@@ -398,8 +401,21 @@ export class MyUserInfoComponent implements OnInit {
     });
   }
 
-  private byteArrayToBase64(byteArray: number[]): string {
-    const bytes = new Uint8Array(byteArray);
+  private byteArrayToBase64(byteArray: number[] | string | { $values?: number[] } | null): string {
+    if (!byteArray) return '';
+    
+    let arr: number[];
+    if (Array.isArray(byteArray)) {
+      arr = byteArray;
+    } else if (typeof byteArray === 'string') {
+      return byteArray;
+    } else if (byteArray && '$values' in byteArray && Array.isArray(byteArray.$values)) {
+      arr = byteArray.$values;
+    } else {
+      return '';
+    }
+    
+    const bytes = new Uint8Array(arr);
     let binary = '';
     for (let i = 0; i < bytes.length; i++) {
       binary += String.fromCharCode(bytes[i]);
@@ -502,8 +518,13 @@ export class MyUserInfoComponent implements OnInit {
   removeSelectedPhoto(): void {
     this.selectedPhotoFile = null;
     this.photoErrorMessage = null;
-    if (this.apiUserInfo.photo && this.apiUserInfo.photo.length > 0) {
-      this.photoPreviewUrl = 'data:image/jpeg;base64,' + this.byteArrayToBase64(this.apiUserInfo.photo);
+    if (this.apiUserInfo.photo) {
+      const base64 = this.byteArrayToBase64(this.apiUserInfo.photo);
+      if (base64) {
+        this.photoPreviewUrl = 'data:image/jpeg;base64,' + base64;
+      } else {
+        this.photoPreviewUrl = null;
+      }
     } else {
       this.photoPreviewUrl = null;
     }
