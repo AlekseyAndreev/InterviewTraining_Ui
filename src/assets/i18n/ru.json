@@ -236,7 +236,16 @@
     "STATUS_NO_SHOW": "Неявка",
     "APPROVAL_APPROVED": "Подтверждено",
     "APPROVAL_PENDING": "Ожидает подтверждения",
-    "APPROVAL_CANCELLED": "Отменено"
+    "APPROVAL_CANCELLED": "Отменено",
+    "CANCEL_REASON": "Причина отмены",
+    "CANCEL_REASON_CANDIDATE": "Причина отмены кандидатом",
+    "CANCEL_REASON_EXPERT": "Причина отмены экспертом",
+    "CANCEL_INTERVIEW": "Отменить собеседование",
+    "CANCEL_REASON_LABEL": "Причина отмены (необязательно)",
+    "CANCEL_REASON_PLACEHOLDER": "Введите причину отмены...",
+    "CONFIRM_CANCEL": "Подтвердить отмену",
+    "CANCEL_ACTION": "Отмена",
+    "CANCELLING": "Отмена..."
   },
   "EXPERT_INFO": {
     "TITLE": "Информация для эксперта",

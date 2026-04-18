@@ -2232,3 +2232,133 @@ body {
 .action-link:hover {
   text-decoration: none;
 }
+
+.cancel-section {
+  padding: 1rem 2rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cancel-form {
+  background: #fff5f5;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #ffe0e0;
+}
+
+.cancel-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.cancel-form .form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.cancel-form .form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.3s ease;
+}
+
+.cancel-form .form-textarea:focus {
+  outline: none;
+  border-color: #e74c3c;
+}
+
+.cancel-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-cancel-interview {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-cancel-interview:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.btn-confirm-cancel {
+  flex: 1;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-confirm-cancel:hover:not(:disabled) {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.btn-confirm-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel-action {
+  flex: 1;
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel-action:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.btn-cancel-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancel-reason-section {
+  background: #fff5f5;
+  border-radius: 8px;
+  margin: 0 2rem 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.cancel-reason-text {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}

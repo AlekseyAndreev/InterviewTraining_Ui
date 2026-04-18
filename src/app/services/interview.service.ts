@@ -7,7 +7,9 @@ import {
   CreateInterviewRequest, 
   CreateInterviewResponse,
   GetAllInterviewLanguagesResponse,
-  GetInterviewInfoResponse
+  GetInterviewInfoResponse,
+  CancelInterviewRequest,
+  CancelInterviewResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -37,5 +39,10 @@ export class InterviewService {
   getInterviewInfo(interviewId: string): Observable<GetInterviewInfoResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}`;
     return this.http.get<GetInterviewInfoResponse>(apiUrl);
+  }
+
+  cancelInterview(interviewId: string, request: CancelInterviewRequest): Observable<CancelInterviewResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/cancel`;
+    return this.http.post<CancelInterviewResponse>(apiUrl, request);
   }
 }

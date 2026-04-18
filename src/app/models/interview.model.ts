@@ -56,6 +56,7 @@ export type GetAllInterviewLanguagesResponse = InterviewLanguageDto[];
 
 export interface InterviewParticipantDto {
   id: string;
+  identityUserId: string;
   fullName: string;
   photoUrl: string | null;
   shortDescription: string | null;
@@ -87,4 +88,12 @@ export interface GetInterviewInfoResponse {
   candidateApproval: ParticipantApprovalDto;
   expertApproval: ParticipantApprovalDto;
   createdUtc: string;
+}
+
+export interface CancelInterviewRequest {
+  cancelReason?: string | null;
+}
+
+export interface CancelInterviewResponse {
+  success: boolean;
 }

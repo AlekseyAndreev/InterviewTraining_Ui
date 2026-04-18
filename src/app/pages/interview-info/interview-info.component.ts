@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -10,7 +11,7 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
 @Component({
   selector: 'app-interview-info',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, FormsModule],
   template: `
     <div class="interview-info-container">
       @if (isLoading) {
@@ -107,21 +108,68 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
             </div>
           }
 
-          @if (interviewInfo.notes) {
-            <div class="info-section">
-              <span class="info-label">{{ 'INTERVIEW_INFO.NOTES' | translate }}</span>
-              <p class="notes-text">{{ interviewInfo.notes }}</p>
-            </div>
-          }
+           @if (interviewInfo.notes) {
+             <div class="info-section">
+               <span class="info-label">{{ 'INTERVIEW_INFO.NOTES' | translate }}</span>
+               <p class="notes-text">{{ interviewInfo.notes }}</p>
+             </div>
+           }
 
-          <div class="info-section created-info">
-            <span class="info-label">{{ 'INTERVIEW_INFO.CREATED' | translate }}</span>
-            <span class="info-value">{{ formatDateTime(interviewInfo.createdUtc) }}</span>
-          </div>
+            @if (interviewInfo.candidateApproval.cancelReason || interviewInfo.expertApproval.cancelReason) {
+              <div class="info-section cancel-reason-section">
+                @if (interviewInfo.candidateApproval.cancelReason) {
+                  <span class="info-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_CANDIDATE' | translate }}</span>
+                  <p class="cancel-reason-text">{{ interviewInfo.candidateApproval.cancelReason }}</p>
+                }
+                @if (interviewInfo.expertApproval.cancelReason) {
+                  <span class="info-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_EXPERT' | translate }}</span>
+                  <p class="cancel-reason-text">{{ interviewInfo.expertApproval.cancelReason }}</p>
+                }
+              </div>
+            }
 
-          <div class="actions-section">
-            <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
-          </div>
+           <div class="info-section created-info">
+             <span class="info-label">{{ 'INTERVIEW_INFO.CREATED' | translate }}</span>
+             <span class="info-value">{{ formatDateTime(interviewInfo.createdUtc) }}</span>
+           </div>
+
+           @if (canCancelInterview()) {
+             <div class="cancel-section">
+               @if (showCancelForm) {
+                 <div class="cancel-form">
+                   <div class="form-group">
+                     <label class="form-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_LABEL' | translate }}</label>
+                     <textarea 
+                       class="form-textarea" 
+                       [(ngModel)]="cancelReason" 
+                       [placeholder]="'INTERVIEW_INFO.CANCEL_REASON_PLACEHOLDER' | translate"
+                       rows="3">
+                     </textarea>
+                   </div>
+                   <div class="cancel-actions">
+                     <button class="btn-confirm-cancel" (click)="confirmCancelInterview()" [disabled]="isCancelling">
+                       @if (isCancelling) {
+                         {{ 'INTERVIEW_INFO.CANCELLING' | translate }}
+                       } @else {
+                         {{ 'INTERVIEW_INFO.CONFIRM_CANCEL' | translate }}
+                       }
+                     </button>
+                     <button class="btn-cancel-action" (click)="showCancelForm = false" [disabled]="isCancelling">
+                       {{ 'INTERVIEW_INFO.CANCEL_ACTION' | translate }}
+                     </button>
+                   </div>
+                 </div>
+               } @else {
+                 <button class="btn-cancel-interview" (click)="showCancelForm = true">
+                   {{ 'INTERVIEW_INFO.CANCEL_INTERVIEW' | translate }}
+                 </button>
+               }
+             </div>
+           }
+
+           <div class="actions-section">
+             <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
+           </div>
         </div>
       }
     </div>
@@ -140,9 +188,14 @@ export class InterviewInfoComponent implements OnInit {
   error = false;
   interviewId: string | null = null;
   userTimeZoneCode: string | null = null;
+  currentUserId: string | null = null;
+  showCancelForm = false;
+  cancelReason: string = '';
+  isCancelling = false;
 
   ngOnInit(): void {
     this.interviewId = this.route.snapshot.paramMap.get('id');
+    this.loadCurrentUserId();
     this.loadUserTimeZone();
     if (this.interviewId) {
       this.loadInterviewInfo(this.interviewId);
@@ -150,6 +203,14 @@ export class InterviewInfoComponent implements OnInit {
       this.error = true;
       this.isLoading = false;
     }
+  }
+
+  private loadCurrentUserId(): void {
+    this.oidcSecurityService.userData$.subscribe({
+      next: ({ userData }) => {
+        this.currentUserId = userData?.sub || null;
+      }
+    });
   }
 
   private loadUserTimeZone(): void {
@@ -249,5 +310,40 @@ export class InterviewInfoComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/my-interviews']);
+  }
+
+  canCancelInterview(): boolean {
+    if (!this.interviewInfo || !this.currentUserId) return false;
+    
+    const isCandidate = this.interviewInfo.candidate.identityUserId === this.currentUserId;
+    const isExpert = this.interviewInfo.expert.identityUserId === this.currentUserId;
+    
+    if (!isCandidate && !isExpert) return false;
+    
+    if (isCandidate && this.interviewInfo.candidateApproval.isCancelled) return false;
+    if (isExpert && this.interviewInfo.expertApproval.isCancelled) return false;
+    
+    return true;
+  }
+
+  confirmCancelInterview(): void {
+    if (!this.interviewId || this.isCancelling) return;
+    
+    this.isCancelling = true;
+    this.interviewService.cancelInterview(this.interviewId, {
+      cancelReason: this.cancelReason || null
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.showCancelForm = false;
+          this.loadInterviewInfo(this.interviewId!);
+        }
+        this.isCancelling = false;
+      },
+      error: (error) => {
+        console.error('Error cancelling interview:', error);
+        this.isCancelling = false;
+      }
+    });
   }
 }

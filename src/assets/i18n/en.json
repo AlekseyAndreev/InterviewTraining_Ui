@@ -236,7 +236,16 @@
     "STATUS_NO_SHOW": "No Show",
     "APPROVAL_APPROVED": "Approved",
     "APPROVAL_PENDING": "Pending Approval",
-    "APPROVAL_CANCELLED": "Cancelled"
+    "APPROVAL_CANCELLED": "Cancelled",
+    "CANCEL_REASON": "Cancellation Reason",
+    "CANCEL_REASON_CANDIDATE": "Cancellation Reason by Candidate",
+    "CANCEL_REASON_EXPERT": "Cancellation Reason by Expert",
+    "CANCEL_INTERVIEW": "Cancel Interview",
+    "CANCEL_REASON_LABEL": "Cancellation Reason (optional)",
+    "CANCEL_REASON_PLACEHOLDER": "Enter the reason for cancellation...",
+    "CONFIRM_CANCEL": "Confirm Cancellation",
+    "CANCEL_ACTION": "Cancel",
+    "CANCELLING": "Cancelling..."
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",
