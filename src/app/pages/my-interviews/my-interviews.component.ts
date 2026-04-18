@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
 import { UserService } from '../../services/user.service';
-import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../models/interview.model';
+import { InterviewDto, GetMyInterviewsResponse } from '../../models/interview.model';
 
 @Component({
   selector: 'app-my-interviews',
@@ -15,16 +15,6 @@ import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../mo
     <div class="my-interviews-container">
       <div class="search-header">
         <h1>{{ 'MY_INTERVIEWS.TITLE' | translate }}</h1>
-        <div class="sort-controls">
-          <label>{{ 'MY_INTERVIEWS.FILTER_BY_STATUS' | translate }}:</label>
-          <select (change)="onStatusChange($event)" class="sort-select">
-            <option value="">{{ 'MY_INTERVIEWS.ALL_STATUSES' | translate }}</option>
-            <option value="Scheduled">{{ 'MY_INTERVIEWS.STATUS_SCHEDULED' | translate }}</option>
-            <option value="Completed">{{ 'MY_INTERVIEWS.STATUS_COMPLETED' | translate }}</option>
-            <option value="Cancelled">{{ 'MY_INTERVIEWS.STATUS_CANCELLED' | translate }}</option>
-            <option value="NoShow">{{ 'MY_INTERVIEWS.STATUS_NO_SHOW' | translate }}</option>
-          </select>
-        </div>
       </div>
 
       @if (loading) {
@@ -64,7 +54,7 @@ import { InterviewDto, InterviewStatus, GetMyInterviewsResponse } from '../../mo
                 </p>
                 <p class="interview-status">
                   <span class="status-badge" [ngClass]="getStatusClass(interview.status)">
-                    {{ getStatusTranslation(interview.status) | translate }}
+                    {{ getStatusDescription(interview) }}
                   </span>
                 </p>
               </div>
@@ -109,7 +99,6 @@ export class MyInterviewsComponent implements OnInit {
   loading = false;
   error = false;
   isCandidate = false;
-  selectedStatus: InterviewStatus | undefined;
   userTimeZoneCode: string | null = null;
   
   currentPage = 1;
@@ -122,7 +111,8 @@ export class MyInterviewsComponent implements OnInit {
   constructor(
     private interviewService: InterviewService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -162,8 +152,7 @@ export class MyInterviewsComponent implements OnInit {
 
     this.interviewService.getMyInterviews({
       pageNumber: this.currentPage,
-      pageSize: this.pageSize,
-      status: this.selectedStatus
+      pageSize: this.pageSize
     }).subscribe({
       next: (response: GetMyInterviewsResponse) => {
         this.interviews = response.data || [];
@@ -201,31 +190,27 @@ export class MyInterviewsComponent implements OnInit {
     return dateStr;
   }
 
-  getStatusClass(status: InterviewStatus): string {
-    const statusClasses: Record<InterviewStatus, string> = {
-      [InterviewStatus.Scheduled]: 'status-scheduled',
-      [InterviewStatus.Completed]: 'status-completed',
-      [InterviewStatus.Cancelled]: 'status-cancelled',
-      [InterviewStatus.NoShow]: 'status-noshow'
+  getStatusClass(status: string): string {
+    const statusClasses: Record<string, string> = {
+      'PendingConfirmation': 'status-scheduled',
+      'ConfirmedByCandidate': 'status-scheduled',
+      'ConfirmedByExpert': 'status-scheduled',
+      'ConfirmedBoth': 'status-scheduled',
+      'ConfirmedBothLinkCreated': 'status-scheduled',
+      'InProgress': 'status-scheduled',
+      'Completed': 'status-completed',
+      'CancelledByCandidate': 'status-cancelled',
+      'CancelledByExpert': 'status-cancelled',
+      'CancelledByCandidateAndExpert': 'status-cancelled',
+      'DidNotTakePlace': 'status-noshow',
+      'Draft': 'status-draft'
     };
-    return statusClasses[status] || '';
+    return statusClasses[status] || 'status-scheduled';
   }
 
-  getStatusTranslation(status: InterviewStatus): string {
-    const translations: Record<InterviewStatus, string> = {
-      [InterviewStatus.Scheduled]: 'MY_INTERVIEWS.STATUS_SCHEDULED',
-      [InterviewStatus.Completed]: 'MY_INTERVIEWS.STATUS_COMPLETED',
-      [InterviewStatus.Cancelled]: 'MY_INTERVIEWS.STATUS_CANCELLED',
-      [InterviewStatus.NoShow]: 'MY_INTERVIEWS.STATUS_NO_SHOW'
-    };
-    return translations[status] || status;
-  }
-
-  onStatusChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.selectedStatus = target.value ? target.value as InterviewStatus : undefined;
-    this.currentPage = 1;
-    this.loadInterviews();
+  getStatusDescription(interview: InterviewDto): string {
+    const currentLang = this.translateService.currentLang || 'en';
+    return currentLang === 'ru' ? interview.statusDescriptionRu : interview.statusDescriptionEn;
   }
 
   goToPage(page: number): void {

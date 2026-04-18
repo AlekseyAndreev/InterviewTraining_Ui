@@ -249,7 +249,12 @@
     "CANCEL_ACTION": "Отмена",
     "CANCELLING": "Отмена...",
     "CONFIRM_INTERVIEW": "Подтвердить собеседование",
-    "CONFIRMING": "Подтверждение..."
+    "CONFIRMING": "Подтверждение...",
+    "RESCHEDULE_INTERVIEW": "Изменить время",
+    "NEW_DATE": "Новая дата",
+    "NEW_TIME": "Новое время",
+    "CONFIRM_RESCHEDULE": "Подтвердить изменение",
+    "RESCHEDULING": "Изменение..."
   },
   "EXPERT_INFO": {
     "TITLE": "Информация для эксперта",

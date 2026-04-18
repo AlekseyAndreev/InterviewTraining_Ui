@@ -249,7 +249,12 @@
     "CANCEL_ACTION": "Cancel",
     "CANCELLING": "Cancelling...",
     "CONFIRM_INTERVIEW": "Confirm Interview",
-    "CONFIRMING": "Confirming..."
+    "CONFIRMING": "Confirming...",
+    "RESCHEDULE_INTERVIEW": "Reschedule Interview",
+    "NEW_DATE": "New Date",
+    "NEW_TIME": "New Time",
+    "CONFIRM_RESCHEDULE": "Confirm Reschedule",
+    "RESCHEDULING": "Rescheduling..."
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",

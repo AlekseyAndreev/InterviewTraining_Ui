@@ -29,7 +29,7 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
           <div class="interview-header">
             <h1>{{ 'INTERVIEW_INFO.TITLE' | translate }}</h1>
             <span class="status-badge" [ngClass]="getStatusClass(interviewInfo.status)">
-              {{ getStatusTranslation(interviewInfo.status) | translate }}
+              {{ getStatusDescription(interviewInfo) }}
             </span>
           </div>
 
@@ -44,7 +44,39 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
                 <span class="datetime-value">{{ formatDateTime(interviewInfo.endDateTime) }}</span>
               </div>
             }
+            @if (canRescheduleInterview()) {
+              <button class="btn-reschedule-inline" (click)="startReschedule()">
+                {{ 'INTERVIEW_INFO.RESCHEDULE_INTERVIEW' | translate }}
+              </button>
+            }
           </div>
+
+          @if (canRescheduleInterview() && showRescheduleForm) {
+            <div class="reschedule-section">
+              <div class="reschedule-form">
+                <div class="form-group">
+                  <label class="form-label">{{ 'INTERVIEW_INFO.NEW_DATE' | translate }}</label>
+                  <input type="date" class="form-input" [(ngModel)]="rescheduleDate">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">{{ 'INTERVIEW_INFO.NEW_TIME' | translate }}</label>
+                  <input type="time" class="form-input" [(ngModel)]="rescheduleTime">
+                </div>
+                <div class="reschedule-actions">
+                  <button class="btn-reschedule" (click)="rescheduleInterview()" [disabled]="isRescheduling || !rescheduleDate || !rescheduleTime">
+                    @if (isRescheduling) {
+                      {{ 'INTERVIEW_INFO.RESCHEDULING' | translate }}
+                    } @else {
+                      {{ 'INTERVIEW_INFO.CONFIRM_RESCHEDULE' | translate }}
+                    }
+                  </button>
+                  <button class="btn-cancel-action" (click)="cancelReschedule()" [disabled]="isRescheduling">
+                    {{ 'INTERVIEW_INFO.CANCEL_ACTION' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
 
           <div class="participants-section">
             <div class="participant-card-wrapper">
@@ -208,9 +240,9 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
               </div>
             }
 
-           <div class="actions-section">
-             <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
-           </div>
+            <div class="actions-section">
+              <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
+            </div>
         </div>
       }
     </div>
@@ -234,6 +266,10 @@ export class InterviewInfoComponent implements OnInit {
   cancelReason: string = '';
   isCancelling = false;
   isConfirming = false;
+  showRescheduleForm = false;
+  rescheduleDate: string = '';
+  rescheduleTime: string = '';
+  isRescheduling = false;
 
   ngOnInit(): void {
     this.interviewId = this.route.snapshot.paramMap.get('id');
@@ -307,22 +343,25 @@ export class InterviewInfoComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const statusMap: Record<string, string> = {
-      'Scheduled': 'status-scheduled',
+      'PendingConfirmation': 'status-scheduled',
+      'ConfirmedByCandidate': 'status-scheduled',
+      'ConfirmedByExpert': 'status-scheduled',
+      'ConfirmedBoth': 'status-scheduled',
+      'ConfirmedBothLinkCreated': 'status-scheduled',
+      'InProgress': 'status-scheduled',
       'Completed': 'status-completed',
-      'Cancelled': 'status-cancelled',
-      'NoShow': 'status-noshow'
+      'CancelledByCandidate': 'status-cancelled',
+      'CancelledByExpert': 'status-cancelled',
+      'CancelledByCandidateAndExpert': 'status-cancelled',
+      'DidNotTakePlace': 'status-noshow',
+      'Draft': 'status-draft'
     };
-    return statusMap[status] || '';
+    return statusMap[status] || 'status-scheduled';
   }
 
-  getStatusTranslation(status: string): string {
-    const translations: Record<string, string> = {
-      'Scheduled': 'INTERVIEW_INFO.STATUS_SCHEDULED',
-      'Completed': 'INTERVIEW_INFO.STATUS_COMPLETED',
-      'Cancelled': 'INTERVIEW_INFO.STATUS_CANCELLED',
-      'NoShow': 'INTERVIEW_INFO.STATUS_NO_SHOW'
-    };
-    return translations[status] || status;
+  getStatusDescription(interview: GetInterviewInfoResponse): string {
+    const currentLang = this.translateService.currentLang || 'en';
+    return currentLang === 'ru' ? interview.statusDescriptionRu : interview.statusDescriptionEn;
   }
 
   getApprovalClass(approval: { isApproved: boolean; isCancelled: boolean }): string {
@@ -367,13 +406,29 @@ export class InterviewInfoComponent implements OnInit {
   canCancelInterview(): boolean {
     if (!this.interviewInfo || !this.currentUserId) return false;
     
+    if (this.interviewInfo.candidateApproval.isCancelled || this.interviewInfo.expertApproval.isCancelled) return false;
+    
     const isCandidate = this.interviewInfo.candidate.identityUserId === this.currentUserId;
     const isExpert = this.interviewInfo.expert.identityUserId === this.currentUserId;
     
     if (!isCandidate && !isExpert) return false;
     
-    if (isCandidate && this.interviewInfo.candidateApproval.isCancelled) return false;
-    if (isExpert && this.interviewInfo.expertApproval.isCancelled) return false;
+    const candidateAllowedStatuses = [
+      'PendingConfirmation',
+      'ConfirmedByCandidate',
+      'ConfirmedByExpert',
+      'ConfirmedBoth'
+    ];
+    
+    const expertAllowedStatuses = [
+      'PendingConfirmation',
+      'ConfirmedByCandidate',
+      'ConfirmedByExpert',
+      'ConfirmedBoth'
+    ];
+    
+    if (isCandidate && !candidateAllowedStatuses.includes(this.interviewInfo.status)) return false;
+    if (isExpert && !expertAllowedStatuses.includes(this.interviewInfo.status)) return false;
     
     return true;
   }
@@ -407,11 +462,17 @@ export class InterviewInfoComponent implements OnInit {
     
     if (!isCandidate && !isExpert) return false;
     
+    const candidateAllowedStatuses = ['PendingConfirmation', 'ConfirmedByExpert'];
+    const expertAllowedStatuses = ['PendingConfirmation', 'ConfirmedByCandidate'];
+    
+    if (isCandidate && !candidateAllowedStatuses.includes(this.interviewInfo.status)) return false;
+    if (isExpert && !expertAllowedStatuses.includes(this.interviewInfo.status)) return false;
+    
     if (isCandidate && this.interviewInfo.candidateApproval.isApproved) return false;
     if (isExpert && this.interviewInfo.expertApproval.isApproved) return false;
     
     if (this.interviewInfo.candidateApproval.isCancelled || this.interviewInfo.expertApproval.isCancelled) return false;
-    
+
     return true;
   }
 
@@ -429,6 +490,63 @@ export class InterviewInfoComponent implements OnInit {
       error: (error) => {
         console.error('Error confirming interview:', error);
         this.isConfirming = false;
+      }
+    });
+  }
+
+  canRescheduleInterview(): boolean {
+    if (!this.interviewInfo || !this.currentUserId) return false;
+    
+    const allowedStatuses = [
+      'PendingConfirmation',
+      'ConfirmedByCandidate',
+      'ConfirmedByExpert'
+    ];
+    
+    if (!allowedStatuses.includes(this.interviewInfo.status)) return false;
+    
+    const isCandidate = this.interviewInfo.candidate.identityUserId === this.currentUserId;
+    const isExpert = this.interviewInfo.expert.identityUserId === this.currentUserId;
+    
+    return isCandidate || isExpert;
+  }
+
+  startReschedule(): void {
+    if (!this.interviewInfo) return;
+    
+    const match = this.interviewInfo.startDateTime.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (match) {
+      const [, year, month, day, hours, minutes] = match;
+      this.rescheduleDate = `${year}-${month}-${day}`;
+      this.rescheduleTime = `${hours}:${minutes}`;
+    }
+    this.showRescheduleForm = true;
+  }
+
+  cancelReschedule(): void {
+    this.showRescheduleForm = false;
+    this.rescheduleDate = '';
+    this.rescheduleTime = '';
+  }
+
+  rescheduleInterview(): void {
+    if (!this.interviewId || this.isRescheduling || !this.rescheduleDate || !this.rescheduleTime) return;
+    
+    this.isRescheduling = true;
+    this.interviewService.rescheduleInterview(this.interviewId, {
+      newDate: this.rescheduleDate,
+      newTime: this.rescheduleTime
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.showRescheduleForm = false;
+          this.loadInterviewInfo(this.interviewId!);
+        }
+        this.isRescheduling = false;
+      },
+      error: (error) => {
+        console.error('Error rescheduling interview:', error);
+        this.isRescheduling = false;
       }
     });
   }

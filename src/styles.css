@@ -1226,6 +1226,11 @@ body {
   color: #f57c00;
 }
 
+.status-draft {
+  background: #f5f5f5;
+  color: #757575;
+}
+
 .interview-actions {
   display: flex;
   gap: 0.5rem;
@@ -2443,4 +2448,109 @@ body {
 .btn-confirm-interview:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.reschedule-section {
+  padding: 1rem 2rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.reschedule-form {
+  background: #f0f8ff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #d0e8ff;
+}
+
+.reschedule-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.reschedule-form .form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.reschedule-form .form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.reschedule-form .form-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.reschedule-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-reschedule-interview {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-reschedule-interview:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.btn-reschedule {
+  flex: 1;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-reschedule:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.btn-reschedule:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-reschedule-inline {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-reschedule-inline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
 }

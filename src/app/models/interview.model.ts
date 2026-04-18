@@ -1,26 +1,19 @@
-export interface  InterviewDto {
+export interface InterviewDto {
   id: string;
   expertId: string;
   expertName: string;
   candidateId: string;
   candidateName: string;
   scheduledAt: string;
-  status: InterviewStatus;
-  statusDescription: string;
+  status: string;
+  statusDescriptionRu: string;
+  statusDescriptionEn: string;
   notes: string | null;
-}
-
-export enum InterviewStatus {
-  Scheduled = 'Scheduled',
-  Completed = 'Completed',
-  Cancelled = 'Cancelled',
-  NoShow = 'NoShow'
 }
 
 export interface GetMyInterviewsRequest {
   pageNumber: number;
   pageSize: number;
-  status?: InterviewStatus;
 }
 
 export interface PagedResponse<T> {
@@ -78,6 +71,8 @@ export interface InterviewLanguageInfoDto {
 export interface GetInterviewInfoResponse {
   id: string;
   status: string;
+  statusDescriptionRu: string;
+  statusDescriptionEn: string;
   startDateTime: string;
   endDateTime: string | null;
   candidate: InterviewParticipantDto;
@@ -99,6 +94,17 @@ export interface CancelInterviewResponse {
 }
 
 export interface ConfirmInterviewResponse {
+  interviewId: string;
+  newVersionId: string;
+  success: boolean;
+}
+
+export interface RescheduleInterviewRequest {
+  newDate: string;
+  newTime: string;
+}
+
+export interface RescheduleInterviewResponse {
   interviewId: string;
   newVersionId: string;
   success: boolean;

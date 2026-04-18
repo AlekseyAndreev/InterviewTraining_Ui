@@ -10,7 +10,9 @@ import {
   GetInterviewInfoResponse,
   CancelInterviewRequest,
   CancelInterviewResponse,
-  ConfirmInterviewResponse
+  ConfirmInterviewResponse,
+  RescheduleInterviewRequest,
+  RescheduleInterviewResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -50,5 +52,10 @@ export class InterviewService {
   confirmInterview(interviewId: string): Observable<ConfirmInterviewResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/confirm`;
     return this.http.post<ConfirmInterviewResponse>(apiUrl, {});
+  }
+
+  rescheduleInterview(interviewId: string, request: RescheduleInterviewRequest): Observable<RescheduleInterviewResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/reschedule`;
+    return this.http.put<RescheduleInterviewResponse>(apiUrl, request);
   }
 }
