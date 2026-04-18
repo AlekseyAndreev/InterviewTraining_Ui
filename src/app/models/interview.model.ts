@@ -97,3 +97,9 @@ export interface CancelInterviewRequest {
 export interface CancelInterviewResponse {
   success: boolean;
 }
+
+export interface ConfirmInterviewResponse {
+  interviewId: string;
+  newVersionId: string;
+  success: boolean;
+}

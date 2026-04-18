@@ -237,6 +237,8 @@
     "APPROVAL_APPROVED": "Подтверждено",
     "APPROVAL_PENDING": "Ожидает подтверждения",
     "APPROVAL_CANCELLED": "Отменено",
+    "YOU": "ВЫ",
+    "VIEW_PROFILE": "Просмотреть профиль",
     "CANCEL_REASON": "Причина отмены",
     "CANCEL_REASON_CANDIDATE": "Причина отмены кандидатом",
     "CANCEL_REASON_EXPERT": "Причина отмены экспертом",
@@ -245,7 +247,9 @@
     "CANCEL_REASON_PLACEHOLDER": "Введите причину отмены...",
     "CONFIRM_CANCEL": "Подтвердить отмену",
     "CANCEL_ACTION": "Отмена",
-    "CANCELLING": "Отмена..."
+    "CANCELLING": "Отмена...",
+    "CONFIRM_INTERVIEW": "Подтвердить собеседование",
+    "CONFIRMING": "Подтверждение..."
   },
   "EXPERT_INFO": {
     "TITLE": "Информация для эксперта",

@@ -237,6 +237,8 @@
     "APPROVAL_APPROVED": "Approved",
     "APPROVAL_PENDING": "Pending Approval",
     "APPROVAL_CANCELLED": "Cancelled",
+    "YOU": "YOU",
+    "VIEW_PROFILE": "View Profile",
     "CANCEL_REASON": "Cancellation Reason",
     "CANCEL_REASON_CANDIDATE": "Cancellation Reason by Candidate",
     "CANCEL_REASON_EXPERT": "Cancellation Reason by Expert",
@@ -245,7 +247,9 @@
     "CANCEL_REASON_PLACEHOLDER": "Enter the reason for cancellation...",
     "CONFIRM_CANCEL": "Confirm Cancellation",
     "CANCEL_ACTION": "Cancel",
-    "CANCELLING": "Cancelling..."
+    "CANCELLING": "Cancelling...",
+    "CONFIRM_INTERVIEW": "Confirm Interview",
+    "CONFIRMING": "Confirming..."
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",

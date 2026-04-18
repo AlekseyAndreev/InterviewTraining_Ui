@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
@@ -11,7 +11,7 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
 @Component({
   selector: 'app-interview-info',
   standalone: true,
-  imports: [CommonModule, TranslateModule, FormsModule],
+  imports: [CommonModule, TranslateModule, FormsModule, RouterModule],
   template: `
     <div class="interview-info-container">
       @if (isLoading) {
@@ -47,47 +47,67 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
           </div>
 
           <div class="participants-section">
-            <div class="participant-card">
-              <div class="participant-avatar">
-                @if (interviewInfo.candidate.photoUrl) {
-                  <img [src]="interviewInfo.candidate.photoUrl" alt="Candidate photo" class="avatar-image">
-                } @else {
-                  {{ getInitials(interviewInfo.candidate.fullName) }}
-                }
-              </div>
-              <div class="participant-info">
-                <span class="participant-role">{{ 'INTERVIEW_INFO.CANDIDATE' | translate }}</span>
-                <h3 class="participant-name">{{ interviewInfo.candidate.fullName }}</h3>
-                @if (interviewInfo.candidate.shortDescription) {
-                  <p class="participant-description">{{ interviewInfo.candidate.shortDescription }}</p>
-                }
-              </div>
-              <div class="approval-status">
-                <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.candidateApproval)">
-                  {{ getApprovalText(interviewInfo.candidateApproval) | translate }}
-                </span>
+            <div class="participant-card-wrapper">
+              @if (isCurrentUserCandidate()) {
+                <div class="you-badge">{{ 'INTERVIEW_INFO.YOU' | translate }}</div>
+              } @else {
+                <div class="you-badge you-badge-placeholder">&nbsp;</div>
+              }
+              <div class="participant-card">
+                <div class="participant-avatar">
+                  @if (interviewInfo.candidate.photoUrl) {
+                    <img [src]="interviewInfo.candidate.photoUrl" alt="Candidate photo" class="avatar-image">
+                  } @else {
+                    {{ getInitials(interviewInfo.candidate.fullName) }}
+                  }
+                </div>
+                <div class="participant-info">
+                  <span class="participant-role">{{ 'INTERVIEW_INFO.CANDIDATE' | translate }}</span>
+                  <h3 class="participant-name">{{ interviewInfo.candidate.fullName }}</h3>
+                  @if (interviewInfo.candidate.shortDescription) {
+                    <p class="participant-description">{{ interviewInfo.candidate.shortDescription }}</p>
+                  }
+                </div>
+                <div class="approval-status">
+                  <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.candidateApproval)">
+                    {{ getApprovalText(interviewInfo.candidateApproval) | translate }}
+                  </span>
+                </div>
+                <a [routerLink]="['/user-info', interviewInfo.candidate.identityUserId]" class="btn-view-profile">
+                  {{ 'INTERVIEW_INFO.VIEW_PROFILE' | translate }}
+                </a>
               </div>
             </div>
 
-            <div class="participant-card">
-              <div class="participant-avatar">
-                @if (interviewInfo.expert.photoUrl) {
-                  <img [src]="interviewInfo.expert.photoUrl" alt="Expert photo" class="avatar-image">
-                } @else {
-                  {{ getInitials(interviewInfo.expert.fullName) }}
-                }
-              </div>
-              <div class="participant-info">
-                <span class="participant-role">{{ 'INTERVIEW_INFO.EXPERT' | translate }}</span>
-                <h3 class="participant-name">{{ interviewInfo.expert.fullName }}</h3>
-                @if (interviewInfo.expert.shortDescription) {
-                  <p class="participant-description">{{ interviewInfo.expert.shortDescription }}</p>
-                }
-              </div>
-              <div class="approval-status">
-                <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.expertApproval)">
-                  {{ getApprovalText(interviewInfo.expertApproval) | translate }}
-                </span>
+            <div class="participant-card-wrapper">
+              @if (isCurrentUserExpert()) {
+                <div class="you-badge">{{ 'INTERVIEW_INFO.YOU' | translate }}</div>
+              } @else {
+                <div class="you-badge you-badge-placeholder">&nbsp;</div>
+              }
+              <div class="participant-card">
+                <div class="participant-avatar">
+                  @if (interviewInfo.expert.photoUrl) {
+                    <img [src]="interviewInfo.expert.photoUrl" alt="Expert photo" class="avatar-image">
+                  } @else {
+                    {{ getInitials(interviewInfo.expert.fullName) }}
+                  }
+                </div>
+                <div class="participant-info">
+                  <span class="participant-role">{{ 'INTERVIEW_INFO.EXPERT' | translate }}</span>
+                  <h3 class="participant-name">{{ interviewInfo.expert.fullName }}</h3>
+                  @if (interviewInfo.expert.shortDescription) {
+                    <p class="participant-description">{{ interviewInfo.expert.shortDescription }}</p>
+                  }
+                </div>
+                <div class="approval-status">
+                  <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.expertApproval)">
+                    {{ getApprovalText(interviewInfo.expertApproval) | translate }}
+                  </span>
+                </div>
+                <a [routerLink]="['/user-info', interviewInfo.expert.identityUserId]" class="btn-view-profile">
+                  {{ 'INTERVIEW_INFO.VIEW_PROFILE' | translate }}
+                </a>
               </div>
             </div>
           </div>
@@ -133,39 +153,60 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
              <span class="info-value">{{ formatDateTime(interviewInfo.createdUtc) }}</span>
            </div>
 
-           @if (canCancelInterview()) {
-             <div class="cancel-section">
-               @if (showCancelForm) {
-                 <div class="cancel-form">
-                   <div class="form-group">
-                     <label class="form-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_LABEL' | translate }}</label>
-                     <textarea 
-                       class="form-textarea" 
-                       [(ngModel)]="cancelReason" 
-                       [placeholder]="'INTERVIEW_INFO.CANCEL_REASON_PLACEHOLDER' | translate"
-                       rows="3">
-                     </textarea>
-                   </div>
-                   <div class="cancel-actions">
-                     <button class="btn-confirm-cancel" (click)="confirmCancelInterview()" [disabled]="isCancelling">
-                       @if (isCancelling) {
-                         {{ 'INTERVIEW_INFO.CANCELLING' | translate }}
-                       } @else {
-                         {{ 'INTERVIEW_INFO.CONFIRM_CANCEL' | translate }}
-                       }
-                     </button>
-                     <button class="btn-cancel-action" (click)="showCancelForm = false" [disabled]="isCancelling">
-                       {{ 'INTERVIEW_INFO.CANCEL_ACTION' | translate }}
-                     </button>
-                   </div>
-                 </div>
-               } @else {
-                 <button class="btn-cancel-interview" (click)="showCancelForm = true">
-                   {{ 'INTERVIEW_INFO.CANCEL_INTERVIEW' | translate }}
-                 </button>
-               }
-             </div>
-           }
+            @if (canCancelInterview()) {
+              <div class="cancel-section">
+                @if (showCancelForm) {
+                  <div class="cancel-form">
+                    <div class="form-group">
+                      <label class="form-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_LABEL' | translate }}</label>
+                      <textarea 
+                        class="form-textarea" 
+                        [(ngModel)]="cancelReason" 
+                        [placeholder]="'INTERVIEW_INFO.CANCEL_REASON_PLACEHOLDER' | translate"
+                        rows="3">
+                      </textarea>
+                    </div>
+                    <div class="cancel-actions">
+                      <button class="btn-confirm-cancel" (click)="confirmCancelInterview()" [disabled]="isCancelling">
+                        @if (isCancelling) {
+                          {{ 'INTERVIEW_INFO.CANCELLING' | translate }}
+                        } @else {
+                          {{ 'INTERVIEW_INFO.CONFIRM_CANCEL' | translate }}
+                        }
+                      </button>
+                      <button class="btn-cancel-action" (click)="showCancelForm = false" [disabled]="isCancelling">
+                        {{ 'INTERVIEW_INFO.CANCEL_ACTION' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="interview-actions-row">
+                    @if (canConfirmInterview()) {
+                      <button class="btn-confirm-interview" (click)="confirmInterview()" [disabled]="isConfirming">
+                        @if (isConfirming) {
+                          {{ 'INTERVIEW_INFO.CONFIRMING' | translate }}
+                        } @else {
+                          {{ 'INTERVIEW_INFO.CONFIRM_INTERVIEW' | translate }}
+                        }
+                      </button>
+                    }
+                    <button class="btn-cancel-interview" (click)="showCancelForm = true">
+                      {{ 'INTERVIEW_INFO.CANCEL_INTERVIEW' | translate }}
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else if (canConfirmInterview()) {
+              <div class="cancel-section">
+                <button class="btn-confirm-interview" (click)="confirmInterview()" [disabled]="isConfirming">
+                  @if (isConfirming) {
+                    {{ 'INTERVIEW_INFO.CONFIRMING' | translate }}
+                  } @else {
+                    {{ 'INTERVIEW_INFO.CONFIRM_INTERVIEW' | translate }}
+                  }
+                </button>
+              </div>
+            }
 
            <div class="actions-section">
              <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
@@ -192,6 +233,7 @@ export class InterviewInfoComponent implements OnInit {
   showCancelForm = false;
   cancelReason: string = '';
   isCancelling = false;
+  isConfirming = false;
 
   ngOnInit(): void {
     this.interviewId = this.route.snapshot.paramMap.get('id');
@@ -312,6 +354,16 @@ export class InterviewInfoComponent implements OnInit {
     this.router.navigate(['/my-interviews']);
   }
 
+  isCurrentUserCandidate(): boolean {
+    if (!this.interviewInfo || !this.currentUserId) return false;
+    return this.interviewInfo.candidate.identityUserId === this.currentUserId;
+  }
+
+  isCurrentUserExpert(): boolean {
+    if (!this.interviewInfo || !this.currentUserId) return false;
+    return this.interviewInfo.expert.identityUserId === this.currentUserId;
+  }
+
   canCancelInterview(): boolean {
     if (!this.interviewInfo || !this.currentUserId) return false;
     
@@ -343,6 +395,40 @@ export class InterviewInfoComponent implements OnInit {
       error: (error) => {
         console.error('Error cancelling interview:', error);
         this.isCancelling = false;
+      }
+    });
+  }
+
+  canConfirmInterview(): boolean {
+    if (!this.interviewInfo || !this.currentUserId) return false;
+    
+    const isCandidate = this.interviewInfo.candidate.identityUserId === this.currentUserId;
+    const isExpert = this.interviewInfo.expert.identityUserId === this.currentUserId;
+    
+    if (!isCandidate && !isExpert) return false;
+    
+    if (isCandidate && this.interviewInfo.candidateApproval.isApproved) return false;
+    if (isExpert && this.interviewInfo.expertApproval.isApproved) return false;
+    
+    if (this.interviewInfo.candidateApproval.isCancelled || this.interviewInfo.expertApproval.isCancelled) return false;
+    
+    return true;
+  }
+
+  confirmInterview(): void {
+    if (!this.interviewId || this.isConfirming) return;
+    
+    this.isConfirming = true;
+    this.interviewService.confirmInterview(this.interviewId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.loadInterviewInfo(this.interviewId!);
+        }
+        this.isConfirming = false;
+      },
+      error: (error) => {
+        console.error('Error confirming interview:', error);
+        this.isConfirming = false;
       }
     });
   }

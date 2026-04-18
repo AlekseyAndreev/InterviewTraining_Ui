@@ -9,7 +9,8 @@ import {
   GetAllInterviewLanguagesResponse,
   GetInterviewInfoResponse,
   CancelInterviewRequest,
-  CancelInterviewResponse
+  CancelInterviewResponse,
+  ConfirmInterviewResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -44,5 +45,10 @@ export class InterviewService {
   cancelInterview(interviewId: string, request: CancelInterviewRequest): Observable<CancelInterviewResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/cancel`;
     return this.http.post<CancelInterviewResponse>(apiUrl, request);
+  }
+
+  confirmInterview(interviewId: string): Observable<ConfirmInterviewResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/confirm`;
+    return this.http.post<ConfirmInterviewResponse>(apiUrl, {});
   }
 }
