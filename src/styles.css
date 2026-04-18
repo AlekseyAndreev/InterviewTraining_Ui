@@ -897,6 +897,31 @@ body {
   padding: 2rem;
 }
 
+.available-times-container {
+  margin-top: 0.5rem;
+}
+
+.available-times-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.available-time-item {
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.no-available-times {
+  text-align: center;
+  color: #888;
+  padding: 1.5rem;
+  font-style: italic;
+}
+
 .skills-actions {
   margin-top: 1rem;
   display: flex;

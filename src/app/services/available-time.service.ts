@@ -10,7 +10,6 @@ import {
   UpdateAvailableTimeResponse,
   DeleteAvailableTimeResponse,
   GetAvailableTimesResponse,
-  GetExpertAvailableSlotsRequest,
   GetExpertAvailableSlotsResponse,
   BookSlotRequest,
   BookSlotResponse
@@ -44,12 +43,9 @@ export class AvailableTimeService {
     return this.http.delete<DeleteAvailableTimeResponse>(apiUrl);
   }
 
-  getExpertAvailableSlots(expertId: string, request: GetExpertAvailableSlotsRequest): Observable<GetExpertAvailableSlotsResponse> {
-    const apiUrl = `${this.config.api.baseUrl}/api/v1/experts/${expertId}/available-slots`;
-    const params = new HttpParams()
-      .set('fromDate', request.fromDate)
-      .set('toDate', request.toDate);
-    return this.http.get<GetExpertAvailableSlotsResponse>(apiUrl, { params });
+  getUserAvailableTimes(userId: string): Observable<GetAvailableTimesResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/users/${userId}/available-times`;
+    return this.http.get<GetAvailableTimesResponse>(apiUrl);
   }
 
   bookSlot(slotId: string, request: BookSlotRequest): Observable<BookSlotResponse> {

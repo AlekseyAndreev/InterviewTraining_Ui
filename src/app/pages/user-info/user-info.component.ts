@@ -4,8 +4,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UserService } from '../../services/user.service';
 import { SkillService } from '../../services/skill.service';
+import { AvailableTimeService } from '../../services/available-time.service';
 import { GetUserInfoResponse } from '../../models/user-info.model';
 import { SkillGroupDto } from '../../models/skill.model';
+import { AvailableTimeDto } from '../../models/available-time.model';
 import { UserSkillGroupComponent } from '../../components/user-skill-group/user-skill-group.component';
 
 @Component({
@@ -79,6 +81,28 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
                 }
               </div>
             </div>
+            
+            <div class="info-section">
+              <div class="info-label">{{ 'AVAILABLE_TIME.TITLE' | translate }}</div>
+              <div class="available-times-container">
+                @if (isLoadingAvailableTimes) {
+                  <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>{{ 'AVAILABLE_TIME.LOADING' | translate }}</p>
+                  </div>
+                } @else if (availableTimes.length > 0) {
+                  <div class="available-times-list">
+                    @for (time of availableTimes; track time.id) {
+                      <div class="available-time-item">
+                        {{ time.displayTime }}
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="no-available-times">{{ 'USER_INFO.NO_AVAILABLE_TIMES' | translate }}</div>
+                }
+              </div>
+            </div>
           }
         </div>
       </div>
@@ -90,6 +114,7 @@ export class UserInfoComponent implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private skillService = inject(SkillService);
+  private availableTimeService = inject(AvailableTimeService);
   public oidcSecurityService = inject(OidcSecurityService);
   
   apiUserInfo: GetUserInfoResponse = {
@@ -106,6 +131,10 @@ export class UserInfoComponent implements OnInit {
   
   skillsGroups: SkillGroupDto[] = [];
   isLoadingSkills = false;
+  
+  availableTimes: AvailableTimeDto[] = [];
+  isLoadingAvailableTimes = false;
+  
   userId: string | null = null;
   canBookInterview = false;
   
@@ -116,6 +145,7 @@ export class UserInfoComponent implements OnInit {
     if (this.userId) {
       this.loadUserInfo(this.userId);
       this.loadUserSkills(this.userId);
+      this.loadUserAvailableTimes(this.userId);
       this.checkCanBookInterview();
     } else {
       this.isLoading = false;
@@ -174,6 +204,20 @@ export class UserInfoComponent implements OnInit {
       error: (error) => {
         console.error('Error loading user skills:', error);
         this.isLoadingSkills = false;
+      }
+    });
+  }
+
+  private loadUserAvailableTimes(userId: string): void {
+    this.isLoadingAvailableTimes = true;
+    this.availableTimeService.getUserAvailableTimes(userId).subscribe({
+      next: (response) => {
+        this.availableTimes = response.availableTimes || [];
+        this.isLoadingAvailableTimes = false;
+      },
+      error: (error) => {
+        console.error('Error loading user available times:', error);
+        this.isLoadingAvailableTimes = false;
       }
     });
   }

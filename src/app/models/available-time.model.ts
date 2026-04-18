@@ -56,11 +56,6 @@ export enum SlotStatus {
   Cancelled = 3
 }
 
-export interface GetExpertAvailableSlotsRequest {
-  fromDate: string;
-  toDate: string;
-}
-
 export interface GetExpertAvailableSlotsResponse {
   availableTimes: AvailableTimeDto[];
 }

@@ -253,12 +253,7 @@ export class BookInterviewComponent implements OnInit {
     const toDate = new Date();
     toDate.setDate(today.getDate() + 30);
 
-    const request = {
-      fromDate: this.formatDate(today),
-      toDate: this.formatDate(toDate)
-    };
-
-    this.availableTimeService.getExpertAvailableSlots(expertId, request).subscribe({
+    this.availableTimeService.getUserAvailableTimes(expertId).subscribe({
       next: (response) => {
         this.availableSlots = response.availableTimes;
         this.isLoadingSlots = false;
@@ -304,12 +299,7 @@ export class BookInterviewComponent implements OnInit {
     const toDate = new Date();
     toDate.setDate(today.getDate() + 30);
 
-    const request = {
-      fromDate: this.formatDate(today),
-      toDate: this.formatDate(toDate)
-    };
-
-    this.availableTimeService.getExpertAvailableSlots(expertId, request).subscribe({
+    this.availableTimeService.getUserAvailableTimes(expertId).subscribe({
       next: (response) => {
         this.expertAvailableTimes = response.availableTimes || [];
         this.isLoadingAvailableTimes = false;
