@@ -2554,3 +2554,21 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
 }
+
+.rescheduled-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.rescheduled-badge {
+  display: inline-block;
+  background: #fff8e1;
+  color: #f57c00;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid #ffcc80;
+}

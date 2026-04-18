@@ -254,7 +254,9 @@
     "NEW_DATE": "Новая дата",
     "NEW_TIME": "Новое время",
     "CONFIRM_RESCHEDULE": "Подтвердить изменение",
-    "RESCHEDULING": "Изменение..."
+    "RESCHEDULING": "Изменение...",
+    "RESCHEDULED_BY_CANDIDATE": "Перенесено кандидатом",
+    "RESCHEDULED_BY_EXPERT": "Перенесено экспертом"
   },
   "EXPERT_INFO": {
     "TITLE": "Информация для эксперта",

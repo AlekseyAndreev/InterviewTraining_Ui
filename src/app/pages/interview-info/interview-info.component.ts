@@ -44,6 +44,16 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
                 <span class="datetime-value">{{ formatDateTime(interviewInfo.endDateTime) }}</span>
               </div>
             }
+            @if (interviewInfo.candidateApproval.isRescheduled || interviewInfo.expertApproval.isRescheduled) {
+              <div class="rescheduled-info">
+                @if (interviewInfo.candidateApproval.isRescheduled) {
+                  <span class="rescheduled-badge">{{ 'INTERVIEW_INFO.RESCHEDULED_BY_CANDIDATE' | translate }}</span>
+                }
+                @if (interviewInfo.expertApproval.isRescheduled) {
+                  <span class="rescheduled-badge">{{ 'INTERVIEW_INFO.RESCHEDULED_BY_EXPERT' | translate }}</span>
+                }
+              </div>
+            }
             @if (canRescheduleInterview()) {
               <button class="btn-reschedule-inline" (click)="startReschedule()">
                 {{ 'INTERVIEW_INFO.RESCHEDULE_INTERVIEW' | translate }}

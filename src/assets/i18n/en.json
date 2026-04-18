@@ -254,7 +254,9 @@
     "NEW_DATE": "New Date",
     "NEW_TIME": "New Time",
     "CONFIRM_RESCHEDULE": "Confirm Reschedule",
-    "RESCHEDULING": "Rescheduling..."
+    "RESCHEDULING": "Rescheduling...",
+    "RESCHEDULED_BY_CANDIDATE": "Rescheduled by candidate",
+    "RESCHEDULED_BY_EXPERT": "Rescheduled by expert"
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",

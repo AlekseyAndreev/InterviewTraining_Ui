@@ -56,6 +56,7 @@ export interface InterviewParticipantDto {
 }
 
 export interface ParticipantApprovalDto {
+  isRescheduled: boolean;
   isApproved: boolean;
   isCancelled: boolean;
   cancelReason: string | null;
