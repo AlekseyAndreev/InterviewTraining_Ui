@@ -12,7 +12,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
       <nav class="top-nav">
         <a routerLink="/" class="nav-brand">{{ 'APP.TITLE' | translate }}</a>
-        <div class="nav-menu">
+        
+        <div class="nav-menu-desktop">
           @if (auth.isAuthenticated) {
             <a routerLink="/my-interviews" class="nav-link">{{ 'NAV.MY_INTERVIEWS' | translate }}</a>
             @if (oidcSecurityService.userData$ | async; as userData) {
@@ -40,15 +41,60 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </select>
           }
         </div>
+
+        <div class="nav-menu-mobile">
+          @if (auth.isAuthenticated) {
+            <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+              <span class="hamburger-icon">☰</span>
+            </button>
+            
+            @if (showMobileMenu) {
+              <div class="mobile-menu-dropdown">
+                <a routerLink="/my-interviews" class="mobile-nav-link" (click)="closeMobileMenu()">
+                  {{ 'NAV.MY_INTERVIEWS' | translate }}
+                </a>
+                @if (oidcSecurityService.userData$ | async; as userData) {
+                  <a routerLink="/expert-search" class="mobile-nav-link" (click)="closeMobileMenu()">
+                    {{ 'NAV.EXPERT_SEARCH' | translate }}
+                  </a>
+                  <a routerLink="/my-user-info" class="mobile-nav-link" (click)="closeMobileMenu()">
+                    {{ getUserName(userData) || ('NAV.USER' | translate) }}
+                  </a>
+                }
+                <div class="mobile-menu-divider"></div>
+                <select class="lang-selector-mobile" (change)="switchLanguage($event)" [value]="translateService.currentLang">
+                  <option value="ru">{{ 'LANGUAGE.RU' | translate }}</option>
+                  <option value="en">{{ 'LANGUAGE.EN' | translate }}</option>
+                </select>
+                <button class="btn-logout-mobile" (click)="logout()">{{ 'NAV.LOGOUT' | translate }}</button>
+              </div>
+            }
+          } @else {
+            <select class="lang-selector" (change)="switchLanguage($event)" [value]="translateService.currentLang">
+              <option value="ru">{{ 'LANGUAGE.RU' | translate }}</option>
+              <option value="en">{{ 'LANGUAGE.EN' | translate }}</option>
+            </select>
+          }
+        </div>
       </nav>
     }
   `
 })
 export class TopNavComponent {
+  showMobileMenu = false;
+
   constructor(
     public oidcSecurityService: OidcSecurityService,
     public translateService: TranslateService
   ) {}
+
+  toggleMobileMenu(): void {
+    this.showMobileMenu = !this.showMobileMenu;
+  }
+
+  closeMobileMenu(): void {
+    this.showMobileMenu = false;
+  }
 
   switchLanguage(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -84,6 +130,7 @@ export class TopNavComponent {
   }
 
   logout(): void {
+    this.showMobileMenu = false;
     this.oidcSecurityService.logoffAndRevokeTokens().subscribe({
       next: () => {
         console.log('Logged out successfully');

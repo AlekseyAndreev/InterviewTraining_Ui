@@ -35,10 +35,84 @@ body {
   text-decoration: none;
 }
 
-.nav-menu {
+.nav-menu-desktop {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+}
+
+.nav-menu-mobile {
+  display: none;
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #667eea;
+}
+
+.mobile-menu-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 8px 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+}
+
+.mobile-nav-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.mobile-nav-link:hover {
+  background: #f0f0f0;
+  color: #667eea;
+}
+
+.mobile-menu-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 0.5rem 0;
+}
+
+.lang-selector-mobile {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+}
+
+.btn-logout-mobile {
+  background: transparent;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-logout-mobile:hover {
+  background: #e74c3c;
+  color: white;
 }
 
 .nav-link {
@@ -1630,13 +1704,17 @@ body {
     padding: 0 1rem;
   }
   
-  .nav-menu {
-    gap: 0.5rem;
+  .nav-menu-desktop {
+    display: none;
   }
   
-  .nav-link {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+  .nav-menu-mobile {
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-brand {
+    font-size: 1.1rem;
   }
 
   .search-header {
@@ -1654,6 +1732,33 @@ body {
 
   .btn-view, .btn-book {
     min-width: auto;
+  }
+  
+  .participants-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .interview-datetime {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .datetime-item {
+    width: 100%;
+  }
+  
+  .btn-reschedule-inline {
+    width: 100%;
+  }
+  
+  .filter-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .filter-select {
+    width: 100%;
   }
 }
 
