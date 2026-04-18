@@ -360,7 +360,7 @@ export class InterviewInfoComponent implements OnInit {
   }
 
   getStatusDescription(interview: GetInterviewInfoResponse): string {
-    const currentLang = this.translateService.currentLang || 'en';
+    const currentLang = this.translateService.getCurrentLang() || 'en';
     return currentLang === 'ru' ? interview.statusDescriptionRu : interview.statusDescriptionEn;
   }
 
@@ -500,7 +500,11 @@ export class InterviewInfoComponent implements OnInit {
     const allowedStatuses = [
       'PendingConfirmation',
       'ConfirmedByCandidate',
-      'ConfirmedByExpert'
+      'ConfirmedByExpert',
+      'TimeExpiredCandidateDidNotApprove',
+      'TimeExpiredExpertDidNotApprove',
+      'TimeExpiredBothDidNotApprove',
+      'TimeExpiredBothApprovedAdminDidNotApprove',
     ];
     
     if (!allowedStatuses.includes(this.interviewInfo.status)) return false;
