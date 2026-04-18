@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserInfoResponse, UpdateUserTimeZoneRequest, UpdateUserTimeZoneResponse  } from '../models/user-info.model';
+import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserInfoResponse, UpdateUserTimeZoneRequest, UpdateUserTimeZoneResponse, CurrencyDto } from '../models/user-info.model';
 import { APP_CONFIG } from './config.service';
 
 @Injectable({
@@ -31,6 +31,14 @@ export class UserService {
     formData.append('shortDescription', request.shortDescription || '');
     formData.append('description', request.description || '');
     
+    if (request.interviewPrice !== null && request.interviewPrice !== undefined) {
+      formData.append('interviewPrice', request.interviewPrice.toString());
+    }
+    
+    if (request.currencyId) {
+      formData.append('currencyId', request.currencyId);
+    }
+    
     if (photo) {
       formData.append('photo', photo);
     }
@@ -41,5 +49,10 @@ export class UserService {
   updateUserTimeZone(request: UpdateUserTimeZoneRequest): Observable<UpdateUserTimeZoneResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/users`;
     return this.http.put<UpdateUserTimeZoneResponse>(apiUrl, request);
+  }
+
+  getAllCurrencies(): Observable<CurrencyDto[]> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/currencies`;
+    return this.http.get<CurrencyDto[]>(apiUrl);
   }
 }

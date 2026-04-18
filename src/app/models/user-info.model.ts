@@ -4,6 +4,13 @@ export interface TimeZoneDto {
   description: string;
 }
 
+export interface CurrencyDto {
+  id: string;
+  code: string;
+  nameRu: string;
+  nameEn: string;
+}
+
 export interface GetUserInfoResponse {
   photo: number[] | string | { $values?: number[] } | null;
   fullName: string | null;
@@ -11,12 +18,19 @@ export interface GetUserInfoResponse {
   description: string | null;
   selectedTimeZoneId: string | null;
   timeZones: TimeZoneDto[];
+  interviewPrice: number | null;
+  currencyId: string | null;
+  currencyCode: string | null;
+  currencyNameRu: string | null;
+  currencyNameEn: string | null;
 }
 
 export interface UpdateUserInfoRequest {
   fullName: string | null;
   shortDescription: string | null;
   description: string | null;
+  interviewPrice: number | null;
+  currencyId: string | null;
 }
 
 export interface UpdateUserInfoResponse {

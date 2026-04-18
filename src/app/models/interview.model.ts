@@ -76,6 +76,9 @@ export interface GetInterviewInfoResponse {
   statusDescriptionEn: string;
   startDateTime: string;
   endDateTime: string | null;
+  interviewPrice: number | null;
+  currencyNameRu: string | null;
+  currencyNameEn: string | null;
   candidate: InterviewParticipantDto;
   expert: InterviewParticipantDto;
   language: InterviewLanguageInfoDto | null;

@@ -42,9 +42,15 @@ type TimeSelectionMode = 'manual' | 'slots';
             }
           </div>
           <div class="expert-details">
-            <h2>{{ expertInfo.fullName || ('BOOK_INTERVIEW.EXPERT' | translate) }}</h2>
-            <p class="expert-description">{{ expertInfo.shortDescription || ('BOOK_INTERVIEW.NO_DESCRIPTION' | translate) }}</p>
-          </div>
+             <h2>{{ expertInfo.fullName || ('BOOK_INTERVIEW.EXPERT' | translate) }}</h2>
+             <p class="expert-description">{{ expertInfo.shortDescription || ('BOOK_INTERVIEW.NO_DESCRIPTION' | translate) }}</p>
+             @if (expertInfo.interviewPrice !== null && expertInfo.interviewPrice !== undefined) {
+               <p class="expert-price">
+                 <span class="price-label">{{ 'BOOK_INTERVIEW.INTERVIEW_PRICE' | translate }}:</span>
+                 <span class="price-value">{{ expertInfo.interviewPrice }} {{ getExpertCurrencyName() }}</span>
+               </p>
+             }
+           </div>
         </div>
 
         <div class="expert-skills-section">
@@ -185,7 +191,12 @@ export class BookInterviewComponent implements OnInit {
     shortDescription: null,
     description: null,
     selectedTimeZoneId: null,
-    timeZones: []
+    timeZones: [],
+    interviewPrice: null,
+    currencyId: null,
+    currencyCode: null,
+    currencyNameRu: null,
+    currencyNameEn: null
   };
   expertPhotoUrl: string | null = null;
 
@@ -444,5 +455,11 @@ export class BookInterviewComponent implements OnInit {
       3: 'AVAILABLE_TIME.TYPE_SPECIFIC'
     };
     return typeTexts[type] || '';
+  }
+
+  getExpertCurrencyName(): string {
+    if (!this.expertInfo.currencyId) return '';
+    const currentLang = this.translateService.getCurrentLang() || 'en';
+    return currentLang === 'ru' ? (this.expertInfo.currencyNameRu || '') : (this.expertInfo.currencyNameEn || '');
   }
 }

@@ -88,6 +88,18 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
             </div>
           }
 
+          @if (canConfirmInterview()) {
+            <div class="confirm-section">
+              <button class="btn-confirm-interview" (click)="confirmInterview()" [disabled]="isConfirming">
+                @if (isConfirming) {
+                  {{ 'INTERVIEW_INFO.CONFIRMING' | translate }}
+                } @else {
+                  {{ 'INTERVIEW_INFO.CONFIRM_INTERVIEW' | translate }}
+                }
+              </button>
+            </div>
+          }
+
           <div class="participants-section">
             <div class="participant-card-wrapper">
               @if (isCurrentUserCandidate()) {
@@ -155,13 +167,20 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
           </div>
 
           @if (interviewInfo.language) {
-            <div class="info-section">
-              <span class="info-label">{{ 'INTERVIEW_INFO.LANGUAGE' | translate }}</span>
-              <span class="info-value">{{ getLanguageName(interviewInfo.language) }}</span>
-            </div>
-          }
+             <div class="info-section">
+               <span class="info-label">{{ 'INTERVIEW_INFO.LANGUAGE' | translate }}</span>
+               <span class="info-value">{{ getLanguageName(interviewInfo.language) }}</span>
+             </div>
+           }
 
-          @if (interviewInfo.linkToVideoCall) {
+           @if (interviewInfo.interviewPrice !== null && interviewInfo.interviewPrice !== undefined) {
+             <div class="info-section">
+               <span class="info-label">{{ 'INTERVIEW_INFO.INTERVIEW_SUM' | translate }}</span>
+               <span class="info-value">{{ interviewInfo.interviewPrice }} {{ getInterviewCurrencyName() }}</span>
+             </div>
+           }
+
+           @if (interviewInfo.linkToVideoCall) {
             <div class="info-section">
               <span class="info-label">{{ 'INTERVIEW_INFO.VIDEO_CALL_LINK' | translate }}</span>
               <a [href]="interviewInfo.linkToVideoCall" target="_blank" class="video-link">
@@ -196,59 +215,38 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
            </div>
 
             @if (canCancelInterview()) {
-              <div class="cancel-section">
-                @if (showCancelForm) {
-                  <div class="cancel-form">
-                    <div class="form-group">
-                      <label class="form-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_LABEL' | translate }}</label>
-                      <textarea 
-                        class="form-textarea" 
-                        [(ngModel)]="cancelReason" 
-                        [placeholder]="'INTERVIEW_INFO.CANCEL_REASON_PLACEHOLDER' | translate"
-                        rows="3">
-                      </textarea>
-                    </div>
-                    <div class="cancel-actions">
-                      <button class="btn-confirm-cancel" (click)="confirmCancelInterview()" [disabled]="isCancelling">
-                        @if (isCancelling) {
-                          {{ 'INTERVIEW_INFO.CANCELLING' | translate }}
-                        } @else {
-                          {{ 'INTERVIEW_INFO.CONFIRM_CANCEL' | translate }}
-                        }
-                      </button>
-                      <button class="btn-cancel-action" (click)="showCancelForm = false" [disabled]="isCancelling">
-                        {{ 'INTERVIEW_INFO.CANCEL_ACTION' | translate }}
-                      </button>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="interview-actions-row">
-                    @if (canConfirmInterview()) {
-                      <button class="btn-confirm-interview" (click)="confirmInterview()" [disabled]="isConfirming">
-                        @if (isConfirming) {
-                          {{ 'INTERVIEW_INFO.CONFIRMING' | translate }}
-                        } @else {
-                          {{ 'INTERVIEW_INFO.CONFIRM_INTERVIEW' | translate }}
-                        }
-                      </button>
-                    }
-                    <button class="btn-cancel-interview" (click)="showCancelForm = true">
-                      {{ 'INTERVIEW_INFO.CANCEL_INTERVIEW' | translate }}
-                    </button>
-                  </div>
-                }
-              </div>
-            } @else if (canConfirmInterview()) {
-              <div class="cancel-section">
-                <button class="btn-confirm-interview" (click)="confirmInterview()" [disabled]="isConfirming">
-                  @if (isConfirming) {
-                    {{ 'INTERVIEW_INFO.CONFIRMING' | translate }}
-                  } @else {
-                    {{ 'INTERVIEW_INFO.CONFIRM_INTERVIEW' | translate }}
-                  }
-                </button>
-              </div>
-            }
+               <div class="cancel-section">
+                 @if (showCancelForm) {
+                   <div class="cancel-form">
+                     <div class="form-group">
+                       <label class="form-label">{{ 'INTERVIEW_INFO.CANCEL_REASON_LABEL' | translate }}</label>
+                       <textarea 
+                         class="form-textarea" 
+                         [(ngModel)]="cancelReason" 
+                         [placeholder]="'INTERVIEW_INFO.CANCEL_REASON_PLACEHOLDER' | translate"
+                         rows="3">
+                       </textarea>
+                     </div>
+                     <div class="cancel-actions">
+                       <button class="btn-confirm-cancel" (click)="confirmCancelInterview()" [disabled]="isCancelling">
+                         @if (isCancelling) {
+                           {{ 'INTERVIEW_INFO.CANCELLING' | translate }}
+                         } @else {
+                           {{ 'INTERVIEW_INFO.CONFIRM_CANCEL' | translate }}
+                         }
+                       </button>
+                       <button class="btn-cancel-action" (click)="showCancelForm = false" [disabled]="isCancelling">
+                         {{ 'INTERVIEW_INFO.CANCEL_ACTION' | translate }}
+                       </button>
+                     </div>
+                   </div>
+                 } @else {
+                   <button class="btn-cancel-interview" (click)="showCancelForm = true">
+                     {{ 'INTERVIEW_INFO.CANCEL_INTERVIEW' | translate }}
+                   </button>
+                 }
+               </div>
+             }
 
             <div class="actions-section">
               <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
@@ -395,8 +393,14 @@ export class InterviewInfoComponent implements OnInit {
   }
 
   getLanguageName(lang: { nameRu: string; nameEn: string }): string {
-    const currentLang = this.translateService.currentLang || 'en';
+    const currentLang = this.translateService.getCurrentLang() || 'en';
     return currentLang === 'ru' ? lang.nameRu : lang.nameEn;
+  }
+
+  getInterviewCurrencyName(): string {
+    if (!this.interviewInfo) return '';
+    const currentLang = this.translateService.getCurrentLang() || 'en';
+    return currentLang === 'ru' ? (this.interviewInfo.currencyNameRu || '') : (this.interviewInfo.currencyNameEn || '');
   }
 
   goBack(): void {

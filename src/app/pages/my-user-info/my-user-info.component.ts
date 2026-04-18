@@ -7,7 +7,7 @@ import { APP_CONFIG } from '../../services/config.service';
 import { UserService } from '../../services/user.service';
 import { SkillService } from '../../services/skill.service';
 import { AvailableTimeService } from '../../services/available-time.service';
-import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserTimeZoneRequest, TimeZoneDto } from '../../models/user-info.model';
+import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserTimeZoneRequest, TimeZoneDto, CurrencyDto } from '../../models/user-info.model';
 import { SkillGroupDto } from '../../models/skill.model';
 import { AvailableTimeDto, CreateAvailableTimeRequest, UpdateAvailableTimeRequest } from '../../models/available-time.model';
 import { SkillGroupComponent } from '../../components/skill-group/skill-group.component';
@@ -115,11 +115,26 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                     </div>
                     
                     <div class="form-section">
-                      <label class="form-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</label>
-                      <textarea class="form-textarea" [(ngModel)]="editFormData.description" [placeholder]="'USER_INFO.DESCRIPTION_PLACEHOLDER' | translate" rows="4"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
+                       <label class="form-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</label>
+                       <textarea class="form-textarea" [(ngModel)]="editFormData.description" [placeholder]="'USER_INFO.DESCRIPTION_PLACEHOLDER' | translate" rows="4"></textarea>
+                     </div>
+                     
+                     @if (isExpert) {
+                       <div class="form-section">
+                         <label class="form-label">{{ 'USER_INFO.INTERVIEW_PRICE' | translate }}</label>
+                         <div class="price-input-wrapper">
+                           <input type="number" step="0.01" min="0" class="form-input price-input" [(ngModel)]="editFormData.interviewPrice" [placeholder]="'USER_INFO.INTERVIEW_PRICE_PLACEHOLDER' | translate">
+                           <select class="form-input currency-select" [(ngModel)]="editFormData.currencyId">
+                             <option [ngValue]="null">{{ 'USER_INFO.SELECT_CURRENCY' | translate }}</option>
+                             @for (currency of currencies; track currency.id) {
+                               <option [ngValue]="currency.id">{{ currency.code }}</option>
+                             }
+                           </select>
+                         </div>
+                       </div>
+                     }
+                     
+                     <div class="form-actions">
                       <button class="btn-save" (click)="saveUserInfo()" [disabled]="isSaving">
                         @if (isSaving) {
                           {{ 'USER_INFO.SAVING' | translate }}
@@ -148,11 +163,21 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                     <div class="info-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</div>
                     <div class="info-value">{{ apiUserInfo.shortDescription || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
                   </div>
-                  <div class="info-section">
-                    <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
-                    <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-                  </div>                  
-                }
+                   <div class="info-section">
+                      <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
+                      <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+                    </div>
+                    @if (isExpert) {
+                      <div class="info-section">
+                        <div class="info-label">{{ 'USER_INFO.INTERVIEW_PRICE' | translate }}</div>
+                        @if (apiUserInfo.interviewPrice !== null && apiUserInfo.interviewPrice !== undefined) {
+                          <div class="info-value">{{ apiUserInfo.interviewPrice }} {{ getCurrencyDisplayName() }}</div>
+                        } @else {
+                          <div class="info-value">{{ 'USER_INFO.NOT_SPECIFIED' | translate }}</div>
+                        }
+                      </div>
+                    }                  
+                  }
               }
             }
 
@@ -331,7 +356,12 @@ export class MyUserInfoComponent implements OnInit {
     shortDescription: null,
     description: null,
     selectedTimeZoneId: null,
-    timeZones: []
+    timeZones: [],
+    interviewPrice: null,
+    currencyId: null,
+    currencyCode: null,
+    currencyNameRu: null,
+    currencyNameEn: null
   };
   photoPreviewUrl: string | null = null;
   selectedPhotoFile: File | null = null;
@@ -360,7 +390,13 @@ export class MyUserInfoComponent implements OnInit {
     fullName: null,
     shortDescription: null,
     description: null,
+    interviewPrice: null,
+    currencyId: null,
   };
+  
+  currencies: CurrencyDto[] = [];
+  isLoadingCurrencies = false;
+  isExpert = false;
   
   constructor(
     public oidcSecurityService: OidcSecurityService,
@@ -371,6 +407,35 @@ export class MyUserInfoComponent implements OnInit {
     this.loadUserInfo();
     this.loadSkillsTree();
     this.loadAvailableTimes();
+    this.checkExpertRole();
+    this.loadCurrencies();
+  }
+
+  private checkExpertRole(): void {
+    this.oidcSecurityService.userData$.subscribe({
+      next: ({ userData }) => {
+        const roles = userData?.role;
+        if (Array.isArray(roles)) {
+          this.isExpert = roles.includes('Expert');
+        } else if (typeof roles === 'string') {
+          this.isExpert = roles === 'Expert';
+        }
+      }
+    });
+  }
+
+  private loadCurrencies(): void {
+    this.isLoadingCurrencies = true;
+    this.userService.getAllCurrencies().subscribe({
+      next: (response) => {
+        this.currencies = response || [];
+        this.isLoadingCurrencies = false;
+      },
+      error: (error) => {
+        console.error('Error loading currencies:', error);
+        this.isLoadingCurrencies = false;
+      }
+    });
   }
 
   private loadUserInfo(): void {
@@ -475,6 +540,8 @@ export class MyUserInfoComponent implements OnInit {
       fullName: this.apiUserInfo.fullName || null,
       shortDescription: this.apiUserInfo.shortDescription || null,
       description: this.apiUserInfo.description || null,
+      interviewPrice: this.apiUserInfo.interviewPrice || null,
+      currencyId: this.apiUserInfo.currencyId || null,
     };
   }
 
@@ -742,5 +809,11 @@ export class MyUserInfoComponent implements OnInit {
   onCancelAvailableTimeForm(): void {
     this.showAvailableTimeForm = false;
     this.editingAvailableTime = null;
+  }
+
+  getCurrencyDisplayName(): string {
+    if (!this.apiUserInfo.currencyId) return '';
+    const currentLang = this.translateService.currentLang || 'en';
+    return currentLang === 'ru' ? (this.apiUserInfo.currencyNameRu || '') : (this.apiUserInfo.currencyNameEn || '');
   }
 }

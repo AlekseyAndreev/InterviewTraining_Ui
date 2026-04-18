@@ -75,7 +75,10 @@
     "TIMEZONE_DESCRIPTION": "Select your time zone for correct display of interview times.",
     "ROLES_DESCRIPTION": "Roles determine your capabilities on the platform. A Candidate can search for experts and book interviews. An Expert can conduct interviews and receive compensation.",
     "BOOK_INTERVIEW": "Book Interview",
-    "NO_AVAILABLE_TIMES": "No available times specified"
+    "NO_AVAILABLE_TIMES": "No available times specified",
+    "INTERVIEW_PRICE": "Interview Price",
+    "INTERVIEW_PRICE_PLACEHOLDER": "Enter price",
+    "SELECT_CURRENCY": "Select currency"
   },
   "SKILLS": {
     "TITLE": "Expert Skills",
@@ -112,21 +115,22 @@
     "SHORT_DESCRIPTION": "Short Description"
   },
   "BOOK_INTERVIEW": {
-    "TITLE": "Book Interview",
-    "LOADING_EXPERT": "Loading expert information...",
-    "ERROR_LOADING": "Error loading data",
-    "BACK": "Back",
-    "EXPERT": "Expert",
-    "NO_DESCRIPTION": "No description available",
-    "SELECT_TIME": "Select interview time",
-    "LOADING_SLOTS": "Loading available slots...",
-    "NO_AVAILABLE_SLOTS": "No available time slots",
-    "EXPERT_AVAILABILITY": "Expert's Available Time",
-    "NO_EXPERT_AVAILABILITY": "Expert has not specified available time",
-    "TIME_MODE_MANUAL": "Set time manually",
-    "TIME_MODE_SLOTS": "Select expert's available slots",
-    "SLOTS_NOT_AVAILABLE": "Expert slots are not available — set time manually",
-    "BOOKING_FORM": {
+     "TITLE": "Book Interview",
+     "LOADING_EXPERT": "Loading expert information...",
+     "ERROR_LOADING": "Error loading data",
+     "BACK": "Back",
+     "EXPERT": "Expert",
+     "NO_DESCRIPTION": "No description available",
+     "SELECT_TIME": "Select interview time",
+     "LOADING_SLOTS": "Loading available slots...",
+     "NO_AVAILABLE_SLOTS": "No available time slots",
+     "EXPERT_AVAILABILITY": "Expert's Available Time",
+     "NO_EXPERT_AVAILABILITY": "Expert has not specified available time",
+     "TIME_MODE_MANUAL": "Set time manually",
+     "TIME_MODE_SLOTS": "Select expert's available slots",
+     "SLOTS_NOT_AVAILABLE": "Expert slots are not available — set time manually",
+     "INTERVIEW_PRICE": "Interview Price",
+     "BOOKING_FORM": {
       "TITLE": "Booking Details",
       "SELECTED_TIME": "Selected time",
       "NOTES": "Notes",
@@ -257,7 +261,8 @@
     "CONFIRM_RESCHEDULE": "Confirm Reschedule",
     "RESCHEDULING": "Rescheduling...",
     "RESCHEDULED_BY_CANDIDATE": "Rescheduled by candidate",
-    "RESCHEDULED_BY_EXPERT": "Rescheduled by expert"
+    "RESCHEDULED_BY_EXPERT": "Rescheduled by expert",
+    "INTERVIEW_SUM": "Interview Price"
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",

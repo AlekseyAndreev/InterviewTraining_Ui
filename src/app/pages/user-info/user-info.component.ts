@@ -123,7 +123,12 @@ export class UserInfoComponent implements OnInit {
     shortDescription: null,
     description: null,
     selectedTimeZoneId: null,
-    timeZones: []
+    timeZones: [],
+    interviewPrice: null,
+    currencyId: null,
+    currencyCode: null,
+    currencyNameRu: null,
+    currencyNameEn: null
   };
   photoPreviewUrl: string | null = null;
   isLoading = true;
