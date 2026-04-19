@@ -187,13 +187,6 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
                 {{ interviewInfo.linkToVideoCall }}
               </a>
             </div>
-          }
-
-           @if (interviewInfo.notes) {
-             <div class="info-section">
-               <span class="info-label">{{ 'INTERVIEW_INFO.NOTES' | translate }}</span>
-               <p class="notes-text">{{ interviewInfo.notes }}</p>
-             </div>
            }
 
             @if (interviewInfo.candidateApproval.cancelReason || interviewInfo.expertApproval.cancelReason) {

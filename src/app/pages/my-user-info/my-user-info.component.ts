@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -15,7 +15,7 @@ import { AvailableTimeFormComponent } from '../../components/available-time-form
 import { AvailableTimeListComponent } from '../../components/available-time-list/available-time-list.component';
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
 
@@ -69,6 +69,46 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
               (click)="activeTab = 'roles'">
               {{ 'TABS.ROLES' | translate }}
             </button>
+          </div>
+
+          <div class="tabs-nav-mobile">
+            <div class="mobile-tab-selector" #mobileTabDropdown>
+              <button class="mobile-tab-btn" (click)="toggleMobileTabDropdown()">
+                {{ getActiveTabDisplayName() }}
+              </button>
+              <div class="mobile-tab-dropdown" [class.show]="showMobileTabDropdown">
+                <div 
+                  class="mobile-tab-option" 
+                  [class.active]="activeTab === 'profile'"
+                  (click)="selectMobileTab('profile')">
+                  {{ 'TABS.PROFILE' | translate }}
+                </div>
+                <div 
+                  class="mobile-tab-option" 
+                  [class.active]="activeTab === 'skills'"
+                  (click)="selectMobileTab('skills')">
+                  {{ 'TABS.SKILLS' | translate }}
+                </div>
+                <div 
+                  class="mobile-tab-option" 
+                  [class.active]="activeTab === 'timezone'"
+                  (click)="selectMobileTab('timezone')">
+                  {{ 'TABS.TIMEZONE' | translate }}
+                </div>
+                <div 
+                  class="mobile-tab-option" 
+                  [class.active]="activeTab === 'availability'"
+                  (click)="selectMobileTab('availability')">
+                  {{ 'TABS.AVAILABILITY' | translate }}
+                </div>
+                <div 
+                  class="mobile-tab-option" 
+                  [class.active]="activeTab === 'roles'"
+                  (click)="selectMobileTab('roles')">
+                  {{ 'TABS.ROLES' | translate }}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="tab-content">
@@ -339,7 +379,7 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
     </div>
   `
 })
-export class MyUserInfoComponent implements OnInit {
+export class MyUserInfoComponent implements OnInit, AfterViewInit {
   private config = inject(APP_CONFIG);
   private userService = inject(UserService);
   private skillService = inject(SkillService);
@@ -347,8 +387,11 @@ export class MyUserInfoComponent implements OnInit {
   
   @ViewChild('photoInput') photoInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('timezoneSearchContainer') timezoneSearchContainerRef!: ElementRef;
+  @ViewChild('mobileTabDropdown') mobileTabDropdownRef!: ElementRef;
   
   activeTab: TabName = 'profile';
+  showMobileTabDropdown = false;
+  isMobileView = false;
   
   apiUserInfo: GetUserInfoResponse = {
     photo: null,
@@ -409,6 +452,40 @@ export class MyUserInfoComponent implements OnInit {
     this.loadAvailableTimes();
     this.checkExpertRole();
     this.loadCurrencies();
+    this.checkMobileView();
+  }
+
+  ngAfterViewInit(): void {
+    this.checkMobileView();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.checkMobileView();
+  }
+
+  private checkMobileView(): void {
+    this.isMobileView = window.innerWidth <= 768;
+  }
+
+  toggleMobileTabDropdown(): void {
+    this.showMobileTabDropdown = !this.showMobileTabDropdown;
+  }
+
+  selectMobileTab(tab: TabName): void {
+    this.activeTab = tab;
+    this.showMobileTabDropdown = false;
+  }
+
+  getActiveTabDisplayName(): string {
+    const tabNames: Record<TabName, string> = {
+      'profile': this.translateService.instant('TABS.PROFILE'),
+      'skills': this.translateService.instant('TABS.SKILLS'),
+      'timezone': this.translateService.instant('TABS.TIMEZONE'),
+      'availability': this.translateService.instant('TABS.AVAILABILITY'),
+      'roles': this.translateService.instant('TABS.ROLES')
+    };
+    return tabNames[this.activeTab];
   }
 
   private checkExpertRole(): void {
@@ -686,6 +763,9 @@ export class MyUserInfoComponent implements OnInit {
   onDocumentClick(event: Event): void {
     if (this.timezoneSearchContainerRef && !this.timezoneSearchContainerRef.nativeElement.contains(event.target)) {
       this.showTimezoneDropdown = false;
+    }
+    if (this.mobileTabDropdownRef && !this.mobileTabDropdownRef.nativeElement.contains(event.target)) {
+      this.showMobileTabDropdown = false;
     }
   }
 

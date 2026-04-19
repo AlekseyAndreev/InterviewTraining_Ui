@@ -269,6 +269,7 @@ body {
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .set-roles-hint {
@@ -392,6 +393,7 @@ body {
   font-size: 1.1rem;
   text-align: center;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .candidate-link {
@@ -491,6 +493,82 @@ body {
   border-bottom: 2px solid #f0f0f0;
   padding: 0 2rem;
   gap: 0;
+}
+
+.tabs-nav-mobile {
+  display: none;
+}
+
+.mobile-tab-selector {
+  display: none;
+  position: relative;
+  padding: 0 2rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.mobile-tab-btn {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #667eea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.mobile-tab-btn:hover {
+  background: #f8f9ff;
+}
+
+.mobile-tab-btn::after {
+  content: '▼';
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+.mobile-tab-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 8px 8px;
+  z-index: 100;
+  display: none;
+}
+
+.mobile-tab-dropdown.show {
+  display: block;
+}
+
+.mobile-tab-option {
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #888;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-tab-option:last-child {
+  border-bottom: none;
+}
+
+.mobile-tab-option:hover {
+  background: #f8f9ff;
+  color: #667eea;
+}
+
+.mobile-tab-option.active {
+  color: #667eea;
+  background: #f0f4ff;
 }
 
 .tab-btn {
@@ -1717,6 +1795,18 @@ body {
     font-size: 1.1rem;
   }
 
+  .tabs-nav {
+    display: none;
+  }
+
+  .tabs-nav-mobile {
+    display: block;
+  }
+
+  .mobile-tab-selector {
+    display: block;
+  }
+
   .search-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1759,6 +1849,27 @@ body {
   
   .filter-select {
     width: 100%;
+  }
+
+  .user-info-container {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .tab-content {
+    padding: 1rem;
+  }
+
+  .user-card-header {
+    padding: 1.5rem;
+  }
+
+  .mobile-tab-selector {
+    padding: 0 1rem;
+  }
+
+  .mobile-tab-option {
+    padding: 1rem;
   }
 }
 
