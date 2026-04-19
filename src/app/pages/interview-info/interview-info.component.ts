@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -6,7 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
 import { UserService } from '../../services/user.service';
-import { GetInterviewInfoResponse } from '../../models/interview.model';
+import { GetInterviewInfoResponse, ChatMessageFrom, ChatMessageDto, GetChatMessagesResponse } from '../../models/interview.model';
 
 @Component({
   selector: 'app-interview-info',
@@ -122,11 +122,13 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
                     <p class="participant-description">{{ interviewInfo.candidate.shortDescription }}</p>
                   }
                 </div>
-                <div class="approval-status">
-                  <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.candidateApproval)">
-                    {{ getApprovalText(interviewInfo.candidateApproval) | translate }}
-                  </span>
-                </div>
+                @if (!shouldHideApprovalStatus('candidate')) {
+                  <div class="approval-status">
+                    <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.candidateApproval)">
+                      {{ getApprovalText(interviewInfo.candidateApproval) | translate }}
+                    </span>
+                  </div>
+                }
                 <a [routerLink]="['/user-info', interviewInfo.candidate.identityUserId]" class="btn-view-profile">
                   {{ 'INTERVIEW_INFO.VIEW_PROFILE' | translate }}
                 </a>
@@ -154,11 +156,13 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
                     <p class="participant-description">{{ interviewInfo.expert.shortDescription }}</p>
                   }
                 </div>
-                <div class="approval-status">
-                  <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.expertApproval)">
-                    {{ getApprovalText(interviewInfo.expertApproval) | translate }}
-                  </span>
-                </div>
+                @if (!shouldHideApprovalStatus('expert')) {
+                  <div class="approval-status">
+                    <span class="approval-badge" [ngClass]="getApprovalClass(interviewInfo.expertApproval)">
+                      {{ getApprovalText(interviewInfo.expertApproval) | translate }}
+                    </span>
+                  </div>
+                }
                 <a [routerLink]="['/user-info', interviewInfo.expert.identityUserId]" class="btn-view-profile">
                   {{ 'INTERVIEW_INFO.VIEW_PROFILE' | translate }}
                 </a>
@@ -241,13 +245,78 @@ import { GetInterviewInfoResponse } from '../../models/interview.model';
                </div>
              }
 
-            <div class="actions-section">
-              <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
-            </div>
-        </div>
-      }
-    </div>
-  `
+             <div class="actions-section">
+               <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
+             </div>
+
+            @if (chatMessages) {
+              <div class="chat-section">
+                <h3 class="chat-title">{{ 'INTERVIEW_INFO.CHAT_TITLE' | translate }}</h3>
+                
+                <div class="chat-messages" #chatMessagesContainer>
+                  @for (message of chatMessages; track message.id) {
+                    <div class="chat-message" [ngClass]="getMessageClass(message)">
+                      <div class="message-header">
+                        <span class="message-from">{{ getMessageFromText(message) | translate }}</span>
+                        <span class="message-time">{{ formatMessageTime(message.created) }}</span>
+                        @if (message.isEdited) {
+                          <span class="message-edited">{{ 'INTERVIEW_INFO.EDITED' | translate }}</span>
+                        }
+                      </div>
+                      @if (editingMessageId === message.id) {
+                        <div class="message-edit-form">
+                          <textarea 
+                            class="message-edit-input" 
+                            [(ngModel)]="editingMessageText"
+                            rows="2">
+                          </textarea>
+                          <div class="message-edit-actions">
+                            <button class="btn-save-edit" (click)="saveEditMessage(message.id)" [disabled]="isSavingMessage || !editingMessageText.trim()">
+                              @if (isSavingMessage) {
+                                {{ 'INTERVIEW_INFO.SAVING' | translate }}
+                              } @else {
+                                {{ 'INTERVIEW_INFO.SAVE' | translate }}
+                              }
+                            </button>
+                            <button class="btn-cancel-edit" (click)="cancelEditMessage()" [disabled]="isSavingMessage">
+                              {{ 'INTERVIEW_INFO.CANCEL' | translate }}
+                            </button>
+                          </div>
+                        </div>
+                      } @else {
+                        <div class="message-text">{{ message.text }}</div>
+                        @if (canEditMessage(message)) {
+                          <button class="btn-edit-message" (click)="startEditMessage(message)">
+                            {{ 'INTERVIEW_INFO.EDIT_MESSAGE' | translate }}
+                          </button>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+                
+                <div class="chat-input-section">
+                  <textarea 
+                    class="chat-input" 
+                    [(ngModel)]="newMessageText" 
+                    [placeholder]="'INTERVIEW_INFO.MESSAGE_PLACEHOLDER' | translate"
+                    rows="2"
+                    (keydown.enter)="onMessageKeydown($any($event))">
+                  </textarea>
+                  <button class="btn-send-message" (click)="sendMessage()" [disabled]="isSendingMessage || !newMessageText.trim()">
+                    @if (isSendingMessage) {
+                      {{ 'INTERVIEW_INFO.SENDING' | translate }}
+                    } @else {
+                      {{ 'INTERVIEW_INFO.SEND' | translate }}
+                    }
+                  </button>
+                </div>
+              </div>
+            }
+         </div>
+       }
+     </div>
+   `
 })
 export class InterviewInfoComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -257,8 +326,12 @@ export class InterviewInfoComponent implements OnInit {
   private translateService = inject(TranslateService);
   public oidcSecurityService = inject(OidcSecurityService);
 
+  @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
+
   interviewInfo: GetInterviewInfoResponse | null = null;
+  chatMessages: ChatMessageDto[] = [];
   isLoading = true;
+  isLoadingMessages = false;
   error = false;
   interviewId: string | null = null;
   userTimeZoneCode: string | null = null;
@@ -271,6 +344,13 @@ export class InterviewInfoComponent implements OnInit {
   rescheduleDate: string = '';
   rescheduleTime: string = '';
   isRescheduling = false;
+  
+  newMessageText: string = '';
+  isSendingMessage = false;
+  editingMessageId: string | null = null;
+  editingMessageText: string = '';
+  isSavingMessage = false;
+  isAdmin = false;
 
   ngOnInit(): void {
     this.interviewId = this.route.snapshot.paramMap.get('id');
@@ -288,6 +368,12 @@ export class InterviewInfoComponent implements OnInit {
     this.oidcSecurityService.userData$.subscribe({
       next: ({ userData }) => {
         this.currentUserId = userData?.sub || null;
+        const roles = userData?.role;
+        if (Array.isArray(roles)) {
+          this.isAdmin = roles.includes('Admin');
+        } else if (typeof roles === 'string') {
+          this.isAdmin = roles === 'Admin';
+        }
       }
     });
   }
@@ -312,6 +398,7 @@ export class InterviewInfoComponent implements OnInit {
       next: (response) => {
         this.interviewInfo = response;
         this.isLoading = false;
+        this.loadChatMessages(id);
       },
       error: (error) => {
         console.error('Error loading interview info:', error);
@@ -319,6 +406,28 @@ export class InterviewInfoComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private loadChatMessages(id: string): void {
+    this.isLoadingMessages = true;
+    this.interviewService.getChatMessages(id).subscribe({
+      next: (response: GetChatMessagesResponse) => {
+        this.chatMessages = response.messages || [];
+        this.isLoadingMessages = false;
+        setTimeout(() => this.scrollToBottom(), 0);
+      },
+      error: (error) => {
+        console.error('Error loading chat messages:', error);
+        this.isLoadingMessages = false;
+      }
+    });
+  }
+
+  private scrollToBottom(): void {
+    if (this.chatMessagesContainer) {
+      const container = this.chatMessagesContainer.nativeElement;
+      container.scrollTop = container.scrollHeight;
+    }
   }
 
   formatDateTime(dateStr: string): string {
@@ -363,6 +472,23 @@ export class InterviewInfoComponent implements OnInit {
   getStatusDescription(interview: GetInterviewInfoResponse): string {
     const currentLang = this.translateService.getCurrentLang() || 'en';
     return currentLang === 'ru' ? interview.statusDescriptionRu : interview.statusDescriptionEn;
+  }
+
+  shouldHideApprovalStatus(participant: 'candidate' | 'expert'): boolean {
+    if (!this.interviewInfo) return false;
+    
+    const candidateCancelled = this.interviewInfo.candidateApproval.isCancelled;
+    const expertCancelled = this.interviewInfo.expertApproval.isCancelled;
+    
+    if (candidateCancelled && participant === 'expert') {
+      return true;
+    }
+    
+    if (expertCancelled && participant === 'candidate') {
+      return true;
+    }
+    
+    return false;
   }
 
   getApprovalClass(approval: { isApproved: boolean; isCancelled: boolean }): string {
@@ -560,5 +686,119 @@ export class InterviewInfoComponent implements OnInit {
         this.isRescheduling = false;
       }
     });
+  }
+
+  getMessageClass(message: ChatMessageDto): string {
+    if (message.from === ChatMessageFrom.System) {
+      return 'message-system';
+    }
+    if (message.from === ChatMessageFrom.Candidate) {
+      return 'message-candidate';
+    }
+    if (message.from === ChatMessageFrom.Expert) {
+      return 'message-expert';
+    }
+    if (message.from === ChatMessageFrom.Admin) {
+      return 'message-admin';
+    }
+    return 'message-unknown';
+  }
+
+  getMessageFromText(message: ChatMessageDto): string {
+    if (message.from === ChatMessageFrom.System) {
+      return 'INTERVIEW_INFO.FROM_SYSTEM';
+    }
+    if (message.from === ChatMessageFrom.Candidate) {
+      return 'INTERVIEW_INFO.FROM_CANDIDATE';
+    }
+    if (message.from === ChatMessageFrom.Expert) {
+      return 'INTERVIEW_INFO.FROM_EXPERT';
+    }
+    if (message.from === ChatMessageFrom.Admin) {
+      return 'INTERVIEW_INFO.FROM_ADMIN';
+    }
+    return 'INTERVIEW_INFO.FROM_UNKNOWN';
+  }
+
+  formatMessageTime(dateStr: string): string {
+    if (!dateStr) return '';
+    const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (match) {
+      const [, year, month, day, hours, minutes] = match;
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+    return dateStr;
+  }
+
+  canEditMessage(message: ChatMessageDto): boolean {
+    if (message.from === ChatMessageFrom.System) return false;
+    
+    if (this.isCurrentUserCandidate() && message.from === ChatMessageFrom.Candidate) {
+      return true;
+    }
+    if (this.isCurrentUserExpert() && message.from === ChatMessageFrom.Expert) {
+      return true;
+    }
+    if (this.isAdmin && message.from === ChatMessageFrom.Admin) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  startEditMessage(message: ChatMessageDto): void {
+    this.editingMessageId = message.id;
+    this.editingMessageText = message.text;
+  }
+
+  cancelEditMessage(): void {
+    this.editingMessageId = null;
+    this.editingMessageText = '';
+  }
+
+  saveEditMessage(messageId: string): void {
+    if (!this.interviewId || this.isSavingMessage || !this.editingMessageText.trim()) return;
+    
+    this.isSavingMessage = true;
+    this.interviewService.updateChatMessage(this.interviewId, messageId, {
+      messageText: this.editingMessageText.trim()
+    }).subscribe({
+      next: () => {
+        this.editingMessageId = null;
+        this.editingMessageText = '';
+        this.loadChatMessages(this.interviewId!);
+        this.isSavingMessage = false;
+      },
+      error: (error) => {
+        console.error('Error updating message:', error);
+        this.isSavingMessage = false;
+      }
+    });
+  }
+
+  sendMessage(): void {
+    if (!this.interviewId || this.isSendingMessage || !this.newMessageText.trim()) return;
+    
+    this.isSendingMessage = true;
+    this.interviewService.createChatMessage(this.interviewId, {
+      messageText: this.newMessageText.trim()
+    }).subscribe({
+      next: () => {
+        this.newMessageText = '';
+        this.loadChatMessages(this.interviewId!);
+        this.isSendingMessage = false;
+      },
+      error: (error) => {
+        console.error('Error sending message:', error);
+        this.isSendingMessage = false;
+      }
+    });
+  }
+
+  onMessageKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
+    }
   }
 }

@@ -69,6 +69,23 @@ export interface InterviewLanguageInfoDto {
   nameEn: string;
 }
 
+export interface ChatMessageDto {
+  id: string;
+  created: string;
+  modified: string | null;
+  text: string;
+  from: ChatMessageFrom;
+  isEdited: boolean;
+}
+
+export enum ChatMessageFrom {
+  Unknown = 0,
+  Candidate = 1,
+  Expert = 2,
+  Admin = 3,
+  System = 4
+}
+
 export interface GetInterviewInfoResponse {
   id: string;
   status: string;
@@ -87,6 +104,31 @@ export interface GetInterviewInfoResponse {
   candidateApproval: ParticipantApprovalDto;
   expertApproval: ParticipantApprovalDto;
   createdUtc: string;
+}
+
+export interface GetChatMessagesResponse {
+  interviewId: string;
+  messages: ChatMessageDto[];
+}
+
+export interface CreateChatMessageRequest {
+  messageText: string;
+}
+
+export interface CreateChatMessageResponse {
+  messageId: string;
+  createdUtc: string;
+  success: boolean;
+}
+
+export interface UpdateChatMessageRequest {
+  messageText: string;
+}
+
+export interface UpdateChatMessageResponse {
+  messageId: string;
+  modifiedUtc: string;
+  isEdited: boolean;
 }
 
 export interface CancelInterviewRequest {

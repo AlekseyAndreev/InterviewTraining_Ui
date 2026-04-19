@@ -12,7 +12,12 @@ import {
   CancelInterviewResponse,
   ConfirmInterviewResponse,
   RescheduleInterviewRequest,
-  RescheduleInterviewResponse
+  RescheduleInterviewResponse,
+  CreateChatMessageRequest,
+  CreateChatMessageResponse,
+  UpdateChatMessageRequest,
+  UpdateChatMessageResponse,
+  GetChatMessagesResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -57,5 +62,20 @@ export class InterviewService {
   rescheduleInterview(interviewId: string, request: RescheduleInterviewRequest): Observable<RescheduleInterviewResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/reschedule`;
     return this.http.put<RescheduleInterviewResponse>(apiUrl, request);
+  }
+
+  createChatMessage(interviewId: string, request: CreateChatMessageRequest): Observable<CreateChatMessageResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/chat/messages`;
+    return this.http.post<CreateChatMessageResponse>(apiUrl, request);
+  }
+
+  updateChatMessage(interviewId: string, messageId: string, request: UpdateChatMessageRequest): Observable<UpdateChatMessageResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/chat/messages/${messageId}`;
+    return this.http.put<UpdateChatMessageResponse>(apiUrl, request);
+  }
+
+  getChatMessages(interviewId: string): Observable<GetChatMessagesResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/chat/messages`;
+    return this.http.get<GetChatMessagesResponse>(apiUrl);
   }
 }
