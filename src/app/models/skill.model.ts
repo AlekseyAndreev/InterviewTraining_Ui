@@ -2,6 +2,7 @@ export interface SkillDto {
   id: string;
   name: string;
   isSelected: boolean;
+  isConfirmed: boolean;
 }
 
 export interface SkillGroupDto {

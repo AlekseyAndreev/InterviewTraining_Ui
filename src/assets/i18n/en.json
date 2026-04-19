@@ -86,7 +86,9 @@
     "SAVE": "Save Skills",
     "SAVING": "Saving...",
     "NO_SKILLS": "No skills available",
-    "NO_SKILLS_SELECTED": "No skills selected"
+    "NO_SKILLS_SELECTED": "No skills selected",
+    "CONFIRMED": "Confirmed",
+    "NOT_CONFIRMED": "Not confirmed"
   },
   "CALLBACK": {
     "PROCESSING": "Processing authentication..."

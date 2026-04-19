@@ -1105,6 +1105,7 @@ body {
 .skill-item-readonly {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem;
   background: #e8f4f8;
   border-radius: 4px;
@@ -1114,6 +1115,26 @@ body {
 .skill-item-text {
   color: #333;
   font-size: 0.9rem;
+  flex: 1;
+}
+
+.skill-confirmed-badge,
+.skill-unconfirmed-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.skill-confirmed-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.skill-unconfirmed-badge {
+  background: #fff3e0;
+  color: #e65100;
 }
 
 .token-value {

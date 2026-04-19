@@ -86,7 +86,9 @@
     "SAVE": "Сохранить навыки",
     "SAVING": "Сохранение...",
     "NO_SKILLS": "Навыки недоступны",
-    "NO_SKILLS_SELECTED": "Навыки не выбраны"
+    "NO_SKILLS_SELECTED": "Навыки не выбраны",
+    "CONFIRMED": "Подтверждён",
+    "NOT_CONFIRMED": "Не подтверждён"
   },
   "CALLBACK": {
     "PROCESSING": "Обработка аутентификации..."

@@ -21,6 +21,11 @@ import { SkillGroupDto, SkillDto } from '../../models/skill.model';
               @for (skill of selectedSkills; track skill.id) {
                 <div class="skill-item-readonly">
                   <span class="skill-item-text">{{ skill.name }}</span>
+                  @if (skill.isConfirmed) {
+                    <span class="skill-confirmed-badge">{{ 'SKILLS.CONFIRMED' | translate }}</span>
+                  } @else {
+                    <span class="skill-unconfirmed-badge">{{ 'SKILLS.NOT_CONFIRMED' | translate }}</span>
+                  }
                 </div>
               }
             }
