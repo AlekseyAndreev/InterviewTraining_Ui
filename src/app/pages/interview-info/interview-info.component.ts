@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -6,7 +6,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { InterviewService } from '../../services/interview.service';
 import { UserService } from '../../services/user.service';
+import { InterviewNotificationService } from '../../services/interview-notification.service';
 import { GetInterviewInfoResponse, ChatMessageFrom, ChatMessageDto, GetChatMessagesResponse } from '../../models/interview.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-interview-info',
@@ -318,13 +320,14 @@ import { GetInterviewInfoResponse, ChatMessageFrom, ChatMessageDto, GetChatMessa
      </div>
    `
 })
-export class InterviewInfoComponent implements OnInit {
+export class InterviewInfoComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private interviewService = inject(InterviewService);
   private userService = inject(UserService);
   private translateService = inject(TranslateService);
   public oidcSecurityService = inject(OidcSecurityService);
+  private notificationService = inject(InterviewNotificationService);
 
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
 
@@ -351,6 +354,8 @@ export class InterviewInfoComponent implements OnInit {
   editingMessageText: string = '';
   isSavingMessage = false;
   isAdmin = false;
+  
+  private signalRSubscriptions: Subscription[] = [];
 
   ngOnInit(): void {
     this.interviewId = this.route.snapshot.paramMap.get('id');
@@ -362,6 +367,71 @@ export class InterviewInfoComponent implements OnInit {
       this.error = true;
       this.isLoading = false;
     }
+    this.initSignalR();
+  }
+
+  private initSignalR(): void {
+    if (!this.interviewId) return;
+    
+    this.oidcSecurityService.getAccessToken().subscribe(token => {
+      if (token) {
+        this.notificationService.startConnection(token, this.interviewId!);
+        this.subscribeToNotifications();
+      }
+    });
+  }
+
+  private subscribeToNotifications(): void {
+    const versionSub = this.notificationService.interviewVersionChanged$
+      .subscribe(notification => {
+        if (notification.interviewId === this.interviewId) {
+          this.loadInterviewInfo(notification.interviewId);
+        }
+      });
+    
+    const messageCreatedSub = this.notificationService.chatMessageCreated$
+      .subscribe(notification => {
+        console.log('Processing ChatMessageCreated:', notification);
+        if (notification.interviewId === this.interviewId) {
+          const newMessage: ChatMessageDto = {
+            id: notification.id,
+            created: notification.createdUtc,
+            modified: notification.modifiedUtc,
+            text: notification.text,
+            from: notification.from,
+            isEdited: notification.isEdited
+          };
+          const exists = this.chatMessages.some(m => m.id === notification.id);
+          if (!exists) {
+            this.chatMessages = [...this.chatMessages, newMessage];
+            setTimeout(() => this.scrollToBottom(), 0);
+          }
+        }
+      });
+    
+    const messageUpdatedSub = this.notificationService.chatMessageUpdated$
+      .subscribe(notification => {
+        if (notification.interviewId === this.interviewId) {
+          this.chatMessages = this.chatMessages.map(msg => {
+            if (msg.id === notification.id) {
+              return {
+                ...msg,
+                text: notification.text,
+                modified: notification.modifiedUtc,
+                isEdited: notification.isEdited
+              };
+            }
+            return msg;
+          });
+        }
+      });
+    
+    this.signalRSubscriptions = [versionSub, messageCreatedSub, messageUpdatedSub];
+  }
+
+  ngOnDestroy(): void {
+    this.signalRSubscriptions.forEach(sub => sub.unsubscribe());
+    this.signalRSubscriptions = [];
   }
 
   private loadCurrentUserId(): void {

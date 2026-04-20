@@ -155,3 +155,28 @@ export interface RescheduleInterviewResponse {
   newVersionId: string;
   success: boolean;
 }
+
+export interface InterviewVersionChangedNotification {
+  interviewId: string;
+  newVersionId: string;
+}
+
+export interface ChatMessageCreatedNotification {
+  id: string;
+  interviewId: string;
+  from: ChatMessageFrom;
+  text: string;
+  createdUtc: string;
+  isEdited: boolean;
+  modifiedUtc: string | null;
+}
+
+export interface ChatMessageUpdatedNotification {
+  id: string;
+  interviewId: string;
+  from: ChatMessageFrom;
+  text: string;
+  createdUtc: string;
+  isEdited: boolean;
+  modifiedUtc: string | null;
+}
