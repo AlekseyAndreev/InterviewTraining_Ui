@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ElementRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
@@ -44,7 +44,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
         <div class="nav-menu-mobile">
           @if (auth.isAuthenticated) {
-            <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+            <button class="mobile-menu-btn" (click)="toggleMobileMenu($event)">
               <span class="hamburger-icon">☰</span>
             </button>
             
@@ -85,10 +85,20 @@ export class TopNavComponent {
 
   constructor(
     public oidcSecurityService: OidcSecurityService,
-    public translateService: TranslateService
+    public translateService: TranslateService,
+    private elementRef: ElementRef
   ) {}
 
-  toggleMobileMenu(): void {
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.nav-menu-mobile')) {
+      this.showMobileMenu = false;
+    }
+  }
+
+  toggleMobileMenu(event: MouseEvent): void {
+    event.stopPropagation();
     this.showMobileMenu = !this.showMobileMenu;
   }
 
