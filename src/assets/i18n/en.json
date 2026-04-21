@@ -316,5 +316,16 @@
     "PROFILE_DESCRIPTION_1": "A completed profile will help candidates find you and book an interview.",
     "PROFILE_DESCRIPTION_2": "Specify your skills, short and full description of your expertise.",
     "MORE_INFO": "More info"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "UNREAD": "unread",
+    "EMPTY": "No notifications",
+    "MARK_READ": "Mark as read",
+    "MARK_UNREAD": "Mark as unread",
+    "DELETE": "Delete",
+    "ERROR_MARK_READ": "Error marking notification",
+    "ERROR_MARK_UNREAD": "Error removing read status",
+    "ERROR_DELETE": "Error deleting notification"
   }
 }

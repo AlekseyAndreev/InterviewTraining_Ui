@@ -1,13 +1,17 @@
-import { Component, HostListener, ElementRef } from '@angular/core';
+import { Component, HostListener, ElementRef, inject, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
+import { NotificationService } from '../../services/notification.service';
+import { UserNotificationDto } from '../../models/notification.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-top-nav',
   standalone: true,
-  imports: [RouterLink, AsyncPipe, TranslateModule],
+  imports: [RouterLink, AsyncPipe, TranslateModule, NotificationBellComponent],
   template: `
     @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
       <nav class="top-nav">
@@ -21,6 +25,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             }
             <div class="nav-user">
               @if (oidcSecurityService.userData$ | async; as userData) {
+                <app-notification-bell 
+                  [notifications]="notifications"
+                  (notificationsChange)="onNotificationsChange($event)">
+                </app-notification-bell>
                 <a routerLink="/my-user-info" class="user-avatar-link">
                   <div class="user-avatar">
                     {{ getInitials(userData) }}
@@ -57,6 +65,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   <a routerLink="/expert-search" class="mobile-nav-link" (click)="closeMobileMenu()">
                     {{ 'NAV.EXPERT_SEARCH' | translate }}
                   </a>
+                  <app-notification-bell 
+                    [notifications]="notifications"
+                    (notificationsChange)="onNotificationsChange($event)">
+                  </app-notification-bell>
                   <a routerLink="/my-user-info" class="mobile-nav-link" (click)="closeMobileMenu()">
                     {{ getUserName(userData) || ('NAV.USER' | translate) }}
                   </a>
@@ -80,20 +92,53 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
   `
 })
-export class TopNavComponent {
+export class TopNavComponent implements OnInit, OnDestroy {
   showMobileMenu = false;
+  notifications: UserNotificationDto[] = [];
+  
+  public oidcSecurityService = inject(OidcSecurityService);
+  public translateService = inject(TranslateService);
+  private notificationService = inject(NotificationService);
+  private authSubscription: Subscription | null = null;
 
-  constructor(
-    public oidcSecurityService: OidcSecurityService,
-    public translateService: TranslateService,
-    private elementRef: ElementRef
-  ) {}
+  ngOnInit(): void {
+    this.authSubscription = this.oidcSecurityService.isAuthenticated$.subscribe({
+      next: ({ isAuthenticated }) => {
+        if (isAuthenticated) {
+          this.loadNotifications();
+        } else {
+          this.notifications = [];
+        }
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
+
+  loadNotifications(): void {
+    this.notificationService.getUserNotifications().subscribe({
+      next: (response) => {
+        this.notifications = response.notifications || [];
+      },
+      error: (err) => console.error('Error loading notifications:', err)
+    });
+  }
+
+  onNotificationsChange(updatedNotifications: UserNotificationDto[]): void {
+    this.notifications = updatedNotifications;
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.nav-menu-mobile')) {
       this.showMobileMenu = false;
+    }
+    if (!target.closest('.notification-wrapper')) {
     }
   }
 
