@@ -27,7 +27,10 @@
     "EXPERT_BENEFIT_3": "Share your experience and knowledge",
     "CANDIDATE_HINT_PREFIX": "Now you can",
     "CANDIDATE_HINT_LINK": "search for experts",
-    "CANDIDATE_HINT_SUFFIX": "to take an interview."
+    "CANDIDATE_HINT_SUFFIX": "to take an interview.",
+    "EXPERT_HINT_PREFIX": "Now you can ",
+    "EXPERT_HINT_LINK": "view your interviews",
+    "EXPERT_HINT_SUFFIX": "."
   },
   "TABS": {
     "PROFILE": "Profile",

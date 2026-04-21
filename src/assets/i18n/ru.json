@@ -27,7 +27,10 @@
     "EXPERT_BENEFIT_3": "Поделиться опытом и знаниями",
     "CANDIDATE_HINT_PREFIX": "Сейчас вы можете",
     "CANDIDATE_HINT_LINK": "поискать экспертов",
-    "CANDIDATE_HINT_SUFFIX": "для прохождения собеседования."
+    "CANDIDATE_HINT_SUFFIX": "для прохождения собеседования.",
+    "EXPERT_HINT_PREFIX": "Сейчас вы можете ",
+    "EXPERT_HINT_LINK": "просмотреть ваши собеседования",
+    "EXPERT_HINT_SUFFIX": "."
   },
   "TABS": {
     "PROFILE": "Профиль",

@@ -40,6 +40,12 @@ import { APP_CONFIG } from '../../services/config.service';
               <a routerLink="/expert-search" class="candidate-link">{{ 'HOME.CANDIDATE_HINT_LINK' | translate }}</a>
               {{ 'HOME.CANDIDATE_HINT_SUFFIX' | translate }}
             </p>
+          } @else if (hasExpertRole(userData)) {
+            <p class="candidate-hint">
+              {{ 'HOME.EXPERT_HINT_PREFIX' | translate }}
+              <a routerLink="/my-interviews" class="candidate-link">{{ 'HOME.EXPERT_HINT_LINK' | translate }}</a>
+              {{ 'HOME.EXPERT_HINT_SUFFIX' | translate }}
+            </p>
           } @else if (getUserRoles(userData).length === 0) {
             <div class="set-roles-container">
               <p class="set-roles-hint">{{ 'HOME.SET_ROLES_HINT' | translate }}</p>
@@ -110,6 +116,10 @@ export class HomeComponent {
 
   hasCandidateRole(userData: any): boolean {
     return this.getUserRoles(userData).includes('Candidate');
+  }
+
+  hasExpertRole(userData: any): boolean {
+    return this.getUserRoles(userData).includes('Expert');
   }
 
   goToChangeRoles(): void {
