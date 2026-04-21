@@ -13,7 +13,7 @@ export class SnackbarService {
   private counter = 0;
   readonly messages = signal<SnackbarMessage[]>([]);
 
-  showError(message: string, duration = 5000): void {
+  showError(message: string, duration = 15000): void {
     const id = ++this.counter;
     this.messages.update(msgs => [...msgs, { id, message, type: 'error' }]);
     
