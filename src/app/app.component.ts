@@ -3,16 +3,18 @@ import { RouterOutlet, Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { TranslateService } from '@ngx-translate/core';
 import { TopNavComponent } from './components/top-nav/top-nav.component';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, TopNavComponent],
+  imports: [RouterOutlet, TopNavComponent, SnackbarComponent],
   template: `
     <app-top-nav></app-top-nav>
-<main class="main-content">
+    <main class="main-content">
       <router-outlet></router-outlet>
     </main>
+    <app-snackbar></app-snackbar>
   `
 })
 export class AppComponent {

@@ -32,6 +32,13 @@
     "EXPERT_HINT_LINK": "view your interviews",
     "EXPERT_HINT_SUFFIX": "."
   },
+  "ERRORS": {
+    "UNKNOWN": "An unknown error occurred",
+    "NO_CONNECTION": "No connection to server",
+    "INTERNAL_SERVER": "Internal server error",
+    "ACCESS_DENIED": "Access denied",
+    "NOT_FOUND": "Requested resource not found"
+  },
   "TABS": {
     "PROFILE": "Profile",
     "SKILLS": "Skills",

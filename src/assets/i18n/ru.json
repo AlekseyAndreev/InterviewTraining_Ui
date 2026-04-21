@@ -32,6 +32,13 @@
     "EXPERT_HINT_LINK": "просмотреть ваши собеседования",
     "EXPERT_HINT_SUFFIX": "."
   },
+  "ERRORS": {
+    "UNKNOWN": "Произошла неизвестная ошибка",
+    "NO_CONNECTION": "Нет соединения с сервером",
+    "INTERNAL_SERVER": "Внутренняя ошибка сервера",
+    "ACCESS_DENIED": "Доступ запрещён",
+    "NOT_FOUND": "Запрошенный ресурс не найден"
+  },
   "TABS": {
     "PROFILE": "Профиль",
     "SKILLS": "Навыки",
