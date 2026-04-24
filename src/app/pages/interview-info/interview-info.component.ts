@@ -251,49 +251,60 @@ import { Subscription } from 'rxjs';
                <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
              </div>
 
-            @if (chatMessages) {
+            @if (chatMessages !== null) {
               <div class="chat-section">
                 <h3 class="chat-title">{{ 'INTERVIEW_INFO.CHAT_TITLE' | translate }}</h3>
                 
                 <div class="chat-messages" #chatMessagesContainer>
-                  @for (message of chatMessages; track message.id) {
-                    <div class="chat-message" [ngClass]="getMessageClass(message)">
-                      <div class="message-header">
-                        <span class="message-from">{{ getMessageFromText(message) | translate }}</span>
-                        <span class="message-time">{{ formatMessageTime(message.created) }}</span>
-                        @if (message.isEdited) {
-                          <span class="message-edited">{{ 'INTERVIEW_INFO.EDITED' | translate }}</span>
+                  @if (isLoadingMessages) {
+                    <div class="chat-loading">
+                      <div class="spinner"></div>
+                      <p>{{ 'INTERVIEW_INFO.LOADING_MESSAGES' | translate }}</p>
+                    </div>
+                  } @else {
+                    @for (message of chatMessages; track message.id) {
+                      <div class="chat-message" [ngClass]="getMessageClass(message)">
+                        <div class="message-header">
+                          <span class="message-from">{{ getMessageFromText(message) | translate }}</span>
+                          <span class="message-time">{{ formatMessageTime(message.created) }}</span>
+                          @if (message.isEdited) {
+                            <span class="message-edited">{{ 'INTERVIEW_INFO.EDITED' | translate }}</span>
+                          }
+                        </div>
+                        @if (editingMessageId === message.id) {
+                          <div class="message-edit-form">
+                            <textarea 
+                              class="message-edit-input" 
+                              [(ngModel)]="editingMessageText"
+                              rows="2">
+                            </textarea>
+                            <div class="message-edit-actions">
+                              <button class="btn-save-edit" (click)="saveEditMessage(message.id)" [disabled]="isSavingMessage || !editingMessageText.trim()">
+                                @if (isSavingMessage) {
+                                  {{ 'INTERVIEW_INFO.SAVING' | translate }}
+                                } @else {
+                                  {{ 'INTERVIEW_INFO.SAVE' | translate }}
+                                }
+                              </button>
+                              <button class="btn-cancel-edit" (click)="cancelEditMessage()" [disabled]="isSavingMessage">
+                                {{ 'INTERVIEW_INFO.CANCEL' | translate }}
+                              </button>
+                            </div>
+                          </div>
+                        } @else {
+                          <div class="message-text">{{ message.text }}</div>
+                          @if (canEditMessage(message)) {
+                            <button class="btn-edit-message" (click)="startEditMessage(message)">
+                              {{ 'INTERVIEW_INFO.EDIT_MESSAGE' | translate }}
+                            </button>
+                          }
                         }
                       </div>
-                      @if (editingMessageId === message.id) {
-                        <div class="message-edit-form">
-                          <textarea 
-                            class="message-edit-input" 
-                            [(ngModel)]="editingMessageText"
-                            rows="2">
-                          </textarea>
-                          <div class="message-edit-actions">
-                            <button class="btn-save-edit" (click)="saveEditMessage(message.id)" [disabled]="isSavingMessage || !editingMessageText.trim()">
-                              @if (isSavingMessage) {
-                                {{ 'INTERVIEW_INFO.SAVING' | translate }}
-                              } @else {
-                                {{ 'INTERVIEW_INFO.SAVE' | translate }}
-                              }
-                            </button>
-                            <button class="btn-cancel-edit" (click)="cancelEditMessage()" [disabled]="isSavingMessage">
-                              {{ 'INTERVIEW_INFO.CANCEL' | translate }}
-                            </button>
-                          </div>
-                        </div>
-                      } @else {
-                        <div class="message-text">{{ message.text }}</div>
-                        @if (canEditMessage(message)) {
-                          <button class="btn-edit-message" (click)="startEditMessage(message)">
-                            {{ 'INTERVIEW_INFO.EDIT_MESSAGE' | translate }}
-                          </button>
-                        }
-                      }
-                    </div>
+                    } @empty {
+                      <div class="chat-empty-state">
+                        <p class="chat-empty-text">{{ 'INTERVIEW_INFO.NO_MESSAGES' | translate }}</p>
+                      </div>
+                    }
                   }
                 </div>
                 
@@ -332,7 +343,7 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
 
   interviewInfo: GetInterviewInfoResponse | null = null;
-  chatMessages: ChatMessageDto[] = [];
+  chatMessages: ChatMessageDto[] | null = null;
   isLoading = true;
   isLoadingMessages = false;
   error = false;
@@ -401,17 +412,22 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
             from: notification.from,
             isEdited: notification.isEdited
           };
-          const exists = this.chatMessages.some(m => m.id === notification.id);
-          if (!exists) {
-            this.chatMessages = [...this.chatMessages, newMessage];
+          if (this.chatMessages === null) {
+            this.chatMessages = [newMessage];
             setTimeout(() => this.scrollToBottom(), 0);
+          } else {
+            const exists = this.chatMessages.some(m => m.id === notification.id);
+            if (!exists) {
+              this.chatMessages = [...this.chatMessages, newMessage];
+              setTimeout(() => this.scrollToBottom(), 0);
+            }
           }
         }
       });
     
     const messageUpdatedSub = this.notificationService.chatMessageUpdated$
       .subscribe(notification => {
-        if (notification.interviewId === this.interviewId) {
+        if (notification.interviewId === this.interviewId && this.chatMessages !== null) {
           this.chatMessages = this.chatMessages.map(msg => {
             if (msg.id === notification.id) {
               return {

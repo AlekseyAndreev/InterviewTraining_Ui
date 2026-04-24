@@ -50,10 +50,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/expert-info/expert-info.component').then(m => m.ExpertInfoComponent)
   },
   {
-    path: 'callback',
-    loadComponent: () => import('./pages/callback/callback.component').then(m => m.CallbackComponent)
-  },
-  {
     path: '**',
     redirectTo: ''
   }

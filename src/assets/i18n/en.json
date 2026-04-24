@@ -288,7 +288,9 @@
     "SAVING": "Saving...",
     "SEND": "Send",
     "SENDING": "Sending...",
-    "MESSAGE_PLACEHOLDER": "Type your message..."
+    "MESSAGE_PLACEHOLDER": "Type your message...",
+    "NO_MESSAGES": "No messages yet. Start the conversation!",
+    "LOADING_MESSAGES": "Loading messages..."
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",
