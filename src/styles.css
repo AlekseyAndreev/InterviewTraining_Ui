@@ -3247,3 +3247,15 @@ body {
     font-size: 0.95rem;
   }
 }
+
+.email-verified-badge {
+  margin-left: 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+.email-verified-badge.verified {
+  color: #4caf50;
+}
+.email-verified-badge.not-verified {
+  color: #f44336;
+}

@@ -191,7 +191,14 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                   @if (oidcSecurityService.userData$ | async; as userData) {
                     <div class="info-section">
                       <div class="info-label">{{ 'USER_INFO.EMAIL' | translate }}</div>
-                      <div class="info-value info-value-readonly">{{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+                      <div class="info-value info-value-readonly">
+                        {{ getUserEmail(userData) || ('USER_INFO.NOT_SPECIFIED' | translate) }}
+                        @if (isEmailVerified(userData) === true) {
+                          <span class="email-verified-badge verified">✓</span>
+                        } @else if (isEmailVerified(userData) === false) {
+                          <span class="email-verified-badge not-verified">✗</span>
+                        }
+                      </div>
                     </div>
                   }
                   
@@ -781,6 +788,18 @@ export class MyUserInfoComponent implements OnInit, AfterViewInit {
   getUserEmail(userData: any): string | undefined {
     const data = userData?.userData || userData;
     return data?.email;
+  }
+
+  isEmailVerified(userData: any): boolean | null {
+    const data = userData?.userData || userData;
+    const verified = data?.email_verified;
+    if (typeof verified === 'boolean') {
+      return verified;
+    }
+    if (typeof verified === 'string') {
+      return verified.toLowerCase() === 'true';
+    }
+    return null;
   }
 
   getUserRoles(userData: any): string[] {

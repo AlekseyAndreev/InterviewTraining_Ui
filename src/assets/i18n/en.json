@@ -88,7 +88,9 @@
     "NO_AVAILABLE_TIMES": "No available times specified",
     "INTERVIEW_PRICE": "Interview Price",
     "INTERVIEW_PRICE_PLACEHOLDER": "Enter price",
-    "SELECT_CURRENCY": "Select currency"
+    "SELECT_CURRENCY": "Select currency",
+    "EMAIL_VERIFIED": "Email verified",
+    "EMAIL_NOT_VERIFIED": "Email not verified"
   },
   "SKILLS": {
     "TITLE": "Expert Skills",
