@@ -170,19 +170,6 @@ import { UserChatMessageDto } from '../../models/user-chat.model';
       word-wrap: break-word;
     }
 
-    .message-own {
-      background: #e3f2fd;
-      align-self: flex-start;
-      border-left: 3px solid #1976d2;
-    }
-
-    .message-other {
-      background: #f3e5f5;
-      align-self: flex-end;
-      border-right: 3px solid #7b1fa2;
-      margin-left: auto;
-    }
-
     .message-header {
       display: flex;
       align-items: center;
@@ -208,75 +195,11 @@ import { UserChatMessageDto } from '../../models/user-chat.model';
       font-style: italic;
     }
 
-    .message-unread-badge {
-      font-size: 0.7rem;
-      background: #e74c3c;
-      color: white;
-      padding: 0.1rem 0.4rem;
-      border-radius: 10px;
-      font-weight: 500;
-    }
-
     .message-text {
       font-size: 0.95rem;
       color: #333;
       line-height: 1.4;
       white-space: pre-wrap;
-    }
-
-    .message-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-edit-message {
-      background: transparent;
-      color: #667eea;
-      border: 1px solid #667eea;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.75rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-edit-message:hover {
-      background: #667eea;
-      color: white;
-    }
-
-    .btn-delete-message {
-      background: transparent;
-      color: #e74c3c;
-      border: 1px solid #e74c3c;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.75rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-delete-message:hover {
-      background: #e74c3c;
-      color: white;
-    }
-
-    .btn-mark-read {
-      background: transparent;
-      color: #27ae60;
-      border: 1px solid #27ae60;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.75rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-mark-read:hover {
-      background: #27ae60;
-      color: white;
     }
 
     .message-edit-form {
@@ -537,7 +460,7 @@ export class UserChatComponent implements OnInit, OnDestroy {
     if (this.isOwnMessage(message)) {
       return this.translateService.instant('USER_CHAT.YOU');
     }
-    return message.senderFullName || this.translateService.instant('USER_CHAT.ADMIN');
+    return this.translateService.instant('USER_CHAT.ADMIN');
   }
 
   formatMessageTime(dateStr: string): string {

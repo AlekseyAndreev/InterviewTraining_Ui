@@ -44,4 +44,9 @@ export class UserChatService {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/user-chat/messages/${messageId}/read`;
     return this.http.post<MarkUserChatMessageAsReadResponse>(apiUrl, {});
   }
+
+  getMessagesForAdmin(userId: string): Observable<GetUserChatMessagesWithAdminsResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/user-chat/messages/for-admin`;
+    return this.http.get<GetUserChatMessagesWithAdminsResponse>(apiUrl, { params: { userId } });
+  }
 }
