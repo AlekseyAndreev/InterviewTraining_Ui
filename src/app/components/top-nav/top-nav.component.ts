@@ -4,14 +4,17 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AsyncPipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
+import { ChatIconComponent } from '../chat-icon/chat-icon.component';
 import { NotificationService } from '../../services/notification.service';
+import { UserChatService } from '../../services/user-chat.service';
 import { UserNotificationDto } from '../../models/notification.model';
+import { UserChatMessageDto } from '../../models/user-chat.model';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-top-nav',
   standalone: true,
-  imports: [RouterLink, AsyncPipe, TranslateModule, NotificationBellComponent],
+  imports: [RouterLink, AsyncPipe, TranslateModule, NotificationBellComponent, ChatIconComponent],
   template: `
     @if (oidcSecurityService.isAuthenticated$ | async; as auth) {
       <nav class="top-nav">
@@ -25,6 +28,7 @@ import { Subscription } from 'rxjs';
             }
             <div class="nav-user">
               @if (oidcSecurityService.userData$ | async; as userData) {
+                <app-chat-icon [unreadCount]="chatUnreadCount"></app-chat-icon>
                 <app-notification-bell 
                   [notifications]="notifications"
                   (notificationsChange)="onNotificationsChange($event)">
@@ -69,6 +73,7 @@ import { Subscription } from 'rxjs';
                     [notifications]="notifications"
                     (notificationsChange)="onNotificationsChange($event)">
                   </app-notification-bell>
+                  <app-chat-icon [unreadCount]="chatUnreadCount"></app-chat-icon>
                   <a routerLink="/my-user-info" class="mobile-nav-link" (click)="closeMobileMenu()">
                     {{ getUserName(userData) || ('NAV.USER' | translate) }}
                   </a>
@@ -95,10 +100,13 @@ import { Subscription } from 'rxjs';
 export class TopNavComponent implements OnInit, OnDestroy {
   showMobileMenu = false;
   notifications: UserNotificationDto[] = [];
+  chatUnreadCount: number = 0;
+  currentUserId: string | null = null;
   
   public oidcSecurityService = inject(OidcSecurityService);
   public translateService = inject(TranslateService);
   private notificationService = inject(NotificationService);
+  private userChatService = inject(UserChatService);
   private authSubscription: Subscription | null = null;
 
   ngOnInit(): void {
@@ -106,6 +114,12 @@ export class TopNavComponent implements OnInit, OnDestroy {
       next: ({ isAuthenticated }) => {
         if (isAuthenticated) {
           this.loadNotifications();
+          this.oidcSecurityService.userData$.subscribe({
+            next: ({ userData }) => {
+              this.currentUserId = userData?.sub || null;
+            }
+          });
+          this.loadChatUnreadCount();
         } else {
           this.notifications = [];
         }
@@ -125,6 +139,16 @@ export class TopNavComponent implements OnInit, OnDestroy {
         this.notifications = response.notifications || [];
       },
       error: (err) => console.error('Error loading notifications:', err)
+    });
+  }
+
+  loadChatUnreadCount(): void {
+    this.userChatService.getMessagesWithAdmins().subscribe({
+      next: (response) => {
+        const messages = response.messages || [];
+        this.chatUnreadCount = messages.filter(m => !m.isRead && m.receiverUserId === this.currentUserId).length;
+      },
+      error: (err) => console.error('Error loading chat unread count:', err)
     });
   }
 

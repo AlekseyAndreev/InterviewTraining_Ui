@@ -331,5 +331,30 @@
     "ERROR_MARK_READ": "Error marking notification",
     "ERROR_MARK_UNREAD": "Error removing read status",
     "ERROR_DELETE": "Error deleting notification"
+  },
+  "USER_CHAT": {
+    "TITLE": "Chat with Administrator",
+    "BACK": "Back",
+    "ICON_TITLE": "Chat",
+    "LOADING_MESSAGES": "Loading messages...",
+    "NO_MESSAGES": "No messages yet. Start the conversation!",
+    "YOU": "You",
+    "ADMIN": "Administrator",
+    "SEND": "Send",
+    "SENDING": "Sending...",
+    "MESSAGE_PLACEHOLDER": "Type your message...",
+    "EDIT_MESSAGE": "Edit",
+    "DELETE_MESSAGE": "Delete",
+    "MARK_AS_READ": "Mark as read",
+    "SAVE": "Save",
+    "SAVING": "Saving...",
+    "CANCEL": "Cancel",
+    "EDITED": "edited",
+    "UNREAD": "unread",
+    "ERROR_LOADING": "Error loading chat messages",
+    "ERROR_SENDING": "Error sending message",
+    "ERROR_EDITING": "Error editing message",
+    "ERROR_DELETING": "Error deleting message",
+    "ERROR_MARKING_READ": "Error marking message as read"
   }
 }

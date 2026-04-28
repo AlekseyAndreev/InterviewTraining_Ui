@@ -50,6 +50,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/expert-info/expert-info.component').then(m => m.ExpertInfoComponent)
   },
   {
+    path: 'user-chat',
+    loadComponent: () => import('./pages/user-chat/user-chat.component').then(m => m.UserChatComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: ''
   }
