@@ -44,3 +44,19 @@ export interface UpdateUserTimeZoneRequest {
 export interface UpdateUserTimeZoneResponse {
   success: boolean;
 }
+
+export interface AdminUserDto {
+  id: string;
+  identityUserId: string;
+  fullName: string;
+  isExpert: boolean;
+  isCandidate: boolean;
+  isDeleted: boolean;
+}
+
+export interface GetAllUsersForAdminResponse {
+  data: AdminUserDto[];
+  pageNumber: number;
+  pageSize: number;
+  totalRecords: number;
+}

@@ -8,7 +8,8 @@
     "USER": "User",
     "LOGOUT": "Logout",
     "EXPERT_SEARCH": "Interview Search",
-    "MY_INTERVIEWS": "My Interviews"
+    "MY_INTERVIEWS": "My Interviews",
+    "ALL_USERS": "All Users"
   },
   "HOME": {
     "LOGIN": "Login",
@@ -356,5 +357,22 @@
     "ERROR_EDITING": "Error editing message",
     "ERROR_DELETING": "Error deleting message",
     "ERROR_MARKING_READ": "Error marking message as read"
+  },
+  "ALL_USERS": {
+    "TITLE": "All Users",
+    "SEARCH": "Search",
+    "SEARCH_PLACEHOLDER": "Search by name...",
+    "LOADING": "Loading...",
+    "ERROR": "Error loading users",
+    "TOTAL_FOUND": "Total found",
+    "NO_RESULTS": "No users found",
+    "VIEW_PROFILE": "View Profile",
+    "NOT_SPECIFIED": "Not specified",
+    "ROLE_CANDIDATE": "Candidate",
+    "ROLE_EXPERT": "Expert",
+    "ROLE_NONE": "No role",
+    "DELETED": "Deleted",
+    "PAGE": "Page",
+    "OF": "of"
   }
 }

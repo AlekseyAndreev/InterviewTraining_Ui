@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserInfoResponse, UpdateUserTimeZoneRequest, UpdateUserTimeZoneResponse, CurrencyDto } from '../models/user-info.model';
+import { GetUserInfoResponse, UpdateUserInfoRequest, UpdateUserInfoResponse, UpdateUserTimeZoneRequest, UpdateUserTimeZoneResponse, CurrencyDto, GetAllUsersForAdminResponse } from '../models/user-info.model';
 import { APP_CONFIG } from './config.service';
 
 @Injectable({
@@ -54,5 +54,14 @@ export class UserService {
   getAllCurrencies(): Observable<CurrencyDto[]> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/currencies`;
     return this.http.get<CurrencyDto[]>(apiUrl);
+  }
+
+  getAllUsers(pageNumber: number = 1, pageSize: number = 20, searchFilter: string | null = null): Observable<GetAllUsersForAdminResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/users/all`;
+    let params: any = { pageNumber, pageSize };
+    if (searchFilter) {
+      params.searchFilter = searchFilter;
+    }
+    return this.http.get<GetAllUsersForAdminResponse>(apiUrl, { params });
   }
 }

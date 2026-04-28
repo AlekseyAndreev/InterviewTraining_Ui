@@ -1,6 +1,7 @@
 ﻿import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { candidateGuard } from './guards/candidate.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,11 @@ export const routes: Routes = [
   {
     path: 'expert-info',
     loadComponent: () => import('./pages/expert-info/expert-info.component').then(m => m.ExpertInfoComponent)
+  },
+  {
+    path: 'all-users',
+    loadComponent: () => import('./pages/all-users/all-users.component').then(m => m.AllUsersComponent),
+    canActivate: [adminGuard]
   },
   {
     path: 'user-chat',

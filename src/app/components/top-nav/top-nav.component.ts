@@ -22,6 +22,9 @@ import { Subscription } from 'rxjs';
         
         <div class="nav-menu-desktop">
           @if (auth.isAuthenticated) {
+            @if (isAdmin) {
+              <a routerLink="/all-users" class="nav-link">{{ 'NAV.ALL_USERS' | translate }}</a>
+            }
             <a routerLink="/my-interviews" class="nav-link">{{ 'NAV.MY_INTERVIEWS' | translate }}</a>
             @if (oidcSecurityService.userData$ | async; as userData) {
               <a routerLink="/expert-search" class="nav-link">{{ 'NAV.EXPERT_SEARCH' | translate }}</a>
@@ -62,6 +65,11 @@ import { Subscription } from 'rxjs';
             
             @if (showMobileMenu) {
               <div class="mobile-menu-dropdown">
+                @if (isAdmin) {
+                  <a routerLink="/all-users" class="mobile-nav-link" (click)="closeMobileMenu()">
+                    {{ 'NAV.ALL_USERS' | translate }}
+                  </a>
+                }
                 <a routerLink="/my-interviews" class="mobile-nav-link" (click)="closeMobileMenu()">
                   {{ 'NAV.MY_INTERVIEWS' | translate }}
                 </a>
@@ -102,6 +110,7 @@ export class TopNavComponent implements OnInit, OnDestroy {
   notifications: UserNotificationDto[] = [];
   chatUnreadCount: number = 0;
   currentUserId: string | null = null;
+  isAdmin: boolean = false;
   
   public oidcSecurityService = inject(OidcSecurityService);
   public translateService = inject(TranslateService);
@@ -117,6 +126,8 @@ export class TopNavComponent implements OnInit, OnDestroy {
           this.oidcSecurityService.userData$.subscribe({
             next: ({ userData }) => {
               this.currentUserId = userData?.sub || null;
+              const roles = userData?.role;
+              this.isAdmin = Array.isArray(roles) ? roles.includes('Admin') : roles === 'Admin';
             }
           });
           this.loadChatUnreadCount();
