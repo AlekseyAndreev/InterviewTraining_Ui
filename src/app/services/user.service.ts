@@ -47,7 +47,7 @@ export class UserService {
   }
 
   updateUserTimeZone(request: UpdateUserTimeZoneRequest): Observable<UpdateUserTimeZoneResponse> {
-    const apiUrl = `${this.config.api.baseUrl}/api/v1/users`;
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/users/time-zone`;
     return this.http.put<UpdateUserTimeZoneResponse>(apiUrl, request);
   }
 
