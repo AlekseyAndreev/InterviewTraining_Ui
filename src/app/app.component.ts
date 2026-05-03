@@ -29,8 +29,8 @@ export class AppComponent {
     this.oidcSecurityService.checkAuth().subscribe({
       next: ({ isAuthenticated, userData, accessToken }) => {
         if (isAuthenticated) {
-          const returnUrl = sessionStorage.getItem('returnUrl') || '/';
-          sessionStorage.removeItem('returnUrl');
+          const returnUrl = localStorage.getItem('returnUrl') || '/';
+          localStorage.removeItem('returnUrl');
           
           if (window.location.pathname === '/callback') {
             this.router.navigateByUrl(returnUrl);

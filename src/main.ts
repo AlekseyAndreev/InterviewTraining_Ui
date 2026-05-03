@@ -1,8 +1,8 @@
-import { bootstrapApplication } from '@angular/platform-browser';
+﻿import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideAuth, PassedInitialConfig, authInterceptor } from 'angular-auth-oidc-client';
+import { provideAuth, PassedInitialConfig, authInterceptor, DefaultLocalStorageService, AbstractSecurityStorage } from 'angular-auth-oidc-client';
 import { unauthorizedInterceptor } from './app/interceptors/unauthorized.interceptor';
 import { errorInterceptor } from './app/interceptors/error.interceptor';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
@@ -78,6 +78,8 @@ loadConfig()
         ),
         provideAnimations(),
         provideAuth(createAuthConfig(appConfig)),
+        // Переопределяем storage на localStorage для синхронизации между вкладками
+        { provide: AbstractSecurityStorage, useClass: DefaultLocalStorageService },
         {
           provide: APP_CONFIG,
           useValue: appConfig,

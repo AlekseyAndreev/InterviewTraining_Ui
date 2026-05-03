@@ -13,8 +13,8 @@ export const authGuard: CanActivateFn = (route, state) => {
       if (isAuthenticated) {
         return true;
       }
-      // Store the attempted URL for redirecting after login
-      sessionStorage.setItem('returnUrl', state.url);
+      // Store the attempted URL for redirecting after login (localStorage for cross-tab sync)
+      localStorage.setItem('returnUrl', state.url);
       
       // Redirect to home page if not authenticated
       router.navigate(['/']);
