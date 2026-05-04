@@ -14,6 +14,7 @@ import { SkillGroupDto } from '../../models/skill.model';
 import { AvailableTimeDto } from '../../models/available-time.model';
 import { UserChatMessageDto } from '../../models/user-chat.model';
 import { UserSkillGroupComponent } from '../../components/user-skill-group/user-skill-group.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-info',
@@ -60,10 +61,10 @@ import { UserSkillGroupComponent } from '../../components/user-skill-group/user-
               <div class="info-label">{{ 'USER_INFO.SHORT_DESCRIPTION' | translate }}</div>
               <div class="info-value">{{ apiUserInfo.shortDescription || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
             </div>
-            <div class="info-section">
-              <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
-              <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
-            </div>
+                <div class="info-section">
+                  <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
+                  <div class="info-value" [innerHTML]="descriptionHtml"></div>
+                </div>
             
             <div class="info-section">
               <div class="info-label">{{ 'SKILLS.TITLE' | translate }}</div>
@@ -212,6 +213,7 @@ export class UserInfoComponent implements OnInit {
   private userChatService = inject(UserChatService);
   private snackbarService = inject(SnackbarService);
   public oidcSecurityService = inject(OidcSecurityService);
+  private sanitizer = inject(DomSanitizer);
   
   apiUserInfo: GetUserInfoResponse = {
     photo: null,
@@ -252,6 +254,15 @@ export class UserInfoComponent implements OnInit {
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
   
   constructor(private translateService: TranslateService) {}
+
+  /** Sanitized description with line breaks */
+  get descriptionHtml(): SafeHtml {
+    const raw = this.apiUserInfo.description || '';
+    const html = raw.replace(/\n/g, '<br>');
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('userId');

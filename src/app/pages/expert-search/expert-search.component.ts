@@ -58,7 +58,7 @@ import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.mo
                   {{ 'EXPERT_SEARCH.VIEW_PROFILE' | translate }}
                 </button>
                 @if (isCandidate) {
-                  <button class="btn-book" (click)="bookInterview(expert)">
+                  <button class="btn-book" (click)="bookInterview(expert)" [disabled]="!canApply(expert)">
                     {{ 'EXPERT_SEARCH.BOOK_INTERVIEW' | translate }}
                   </button>
                 }
@@ -99,6 +99,7 @@ export class ExpertSearchComponent implements OnInit {
   loading = false;
   error = false;
   isCandidate = false;
+  currentUserId: string | null = null;
   
   currentPage = 1;
   pageSize = 10;
@@ -113,19 +114,27 @@ export class ExpertSearchComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkUserRole();
+    this.checkUserRoleAndId();
     this.loadExperts();
   }
 
-  private checkUserRole(): void {
+  private checkUserRoleAndId(): void {
     this.oidcSecurityService.userData$.subscribe({
       next: ({ userData }) => {
         const roles = userData?.role as string | string[];
         this.isCandidate = Array.isArray(roles)
           ? roles.includes('Candidate')
           : roles === 'Candidate';
+        this.currentUserId = userData?.sub ?? null;
       }
     });
+  }
+
+  /** Determines if the interview button should be enabled for a given expert */
+  canApply(expert: GetExpertResponse): boolean {
+    if (!this.isCandidate) return false;
+    // Disable if the expert is the current user
+    return expert.identityServerId !== this.currentUserId;
   }
 
   loadExperts(): void {

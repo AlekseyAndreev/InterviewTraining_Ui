@@ -13,6 +13,7 @@ import { AvailableTimeDto, CreateAvailableTimeRequest, UpdateAvailableTimeReques
 import { SkillGroupComponent } from '../../components/skill-group/skill-group.component';
 import { AvailableTimeFormComponent } from '../../components/available-time-form/available-time-form.component';
 import { AvailableTimeListComponent } from '../../components/available-time-list/available-time-list.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -212,7 +213,7 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                   </div>
                    <div class="info-section">
                       <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
-                      <div class="info-value">{{ apiUserInfo.description || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
+<div class="info-section">\n  <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>\n  <div class="info-value" [innerHTML]="descriptionHtml"></div>\n</div>
                     </div>
                     @if (isExpert) {
                       <div class="info-section">
@@ -450,7 +451,8 @@ export class MyUserInfoComponent implements OnInit, AfterViewInit {
   
   constructor(
     public oidcSecurityService: OidcSecurityService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -914,5 +916,12 @@ export class MyUserInfoComponent implements OnInit, AfterViewInit {
     if (!this.apiUserInfo.currencyId) return '';
     const currentLang = this.translateService.currentLang || 'en';
     return currentLang === 'ru' ? (this.apiUserInfo.currencyNameRu || '') : (this.apiUserInfo.currencyNameEn || '');
+  }
+
+  /** Sanitized description with line breaks */
+  get descriptionHtml(): SafeHtml {
+    const raw = this.apiUserInfo.description || '';
+    const html = raw.replace(/\n/g, '<br>');
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }
