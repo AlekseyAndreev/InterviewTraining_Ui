@@ -129,7 +129,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
                           @if (message.isEdited) {
                             <span class="message-edited">{{ 'USER_CHAT.EDITED' | translate }}</span>
                           }
-                          @if (!message.isRead && isReceivedMessage(message)) {
+                          @if (!message.isRead && isSenderMessage(message)) {
                             <span class="message-unread-badge">{{ 'USER_CHAT.UNREAD' | translate }}</span>
                           }
                         </div>
@@ -164,7 +164,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
                                 {{ 'USER_CHAT.DELETE_MESSAGE' | translate }}
                               </button>
                             }
-                            @if (!message.isRead && isReceivedMessage(message)) {
+                            @if (!message.isRead && isSenderMessage(message)) {
                               <button class="btn-mark-read" (click)="markChatMessageAsRead(message)">
                                 {{ 'USER_CHAT.MARK_AS_READ' | translate }}
                               </button>
@@ -435,6 +435,10 @@ export class UserInfoComponent implements OnInit {
     return message.receiverUserId === this.currentUserId;
   }
 
+  isSenderMessage(message: UserChatMessageDto): boolean {
+    return message.senderUserId === this.currentUserId;
+  }
+
   getChatMessageClass(message: UserChatMessageDto): string {
     if (this.isOwnMessage(message)) {
       return 'message-own';
@@ -446,7 +450,12 @@ export class UserInfoComponent implements OnInit {
     if (this.isOwnMessage(message)) {
       return this.translateService.instant('USER_CHAT.YOU');
     }
-    return message.senderFullName || this.translateService.instant('USER_CHAT.ADMIN');
+    if(this.isAdmin) {
+      return message.senderFullName || this.translateService.instant('USER_CHAT.FROM_USER');
+    }
+    else{
+      return message.senderFullName || this.translateService.instant('USER_CHAT.ADMIN');
+    }
   }
 
   formatChatMessageTime(dateStr: string): string {

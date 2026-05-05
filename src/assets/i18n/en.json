@@ -340,6 +340,7 @@
     "LOADING_MESSAGES": "Loading messages...",
     "NO_MESSAGES": "No messages yet. Start the conversation!",
     "YOU": "You",
+    "FROM_USER": "User",
     "ADMIN": "Administrator",
     "SEND": "Send",
     "SENDING": "Sending...",
