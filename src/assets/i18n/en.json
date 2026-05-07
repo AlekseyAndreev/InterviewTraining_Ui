@@ -49,6 +49,8 @@
   },
   "USER_INFO": {
     "TITLE": "User Info",
+    "EXPERT_INFO_WHEN_NOT_SHOW": "If you want to show your profile in interview search - please contact administrator",
+    "EXPERT_INFO_WHEN_SHOW": "You profile is displaying in interview search page",
     "NAME": "Name",
     "EMAIL": "Email",
     "USER_ID": "User ID",

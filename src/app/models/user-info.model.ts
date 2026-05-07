@@ -23,6 +23,7 @@ export interface GetUserInfoResponse {
   currencyCode: string | null;
   currencyNameRu: string | null;
   currencyNameEn: string | null;
+  isExpertAvailableInSearch: boolean | false;
 }
 
 export interface UpdateUserInfoRequest {

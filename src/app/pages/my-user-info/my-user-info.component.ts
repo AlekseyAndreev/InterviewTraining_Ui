@@ -201,8 +201,17 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                         }
                       </div>
                     </div>
+                  }                  
+                  @if (isExpert && apiUserInfo.isExpertAvailableInSearch) {
+                    <div class="info-section">
+                        <div class="info-label">{{ 'USER_INFO.EXPERT_INFO_WHEN_SHOW' | translate }}</div>
+                    </div>
                   }
-                  
+                  @if (isExpert && !apiUserInfo.isExpertAvailableInSearch) {
+                    <div class="info-section">
+                        <div class="info-label">{{ 'USER_INFO.EXPERT_INFO_WHEN_NOT_SHOW' | translate }}</div>
+                    </div>
+                  }
                   <div class="info-section">
                     <div class="info-label">{{ 'USER_INFO.FULL_NAME' | translate }}</div>
                     <div class="info-value">{{ apiUserInfo.fullName || ('USER_INFO.NOT_SPECIFIED' | translate) }}</div>
@@ -213,7 +222,7 @@ type TabName = 'profile' | 'skills' | 'timezone' | 'availability' | 'roles';
                   </div>
                    <div class="info-section">
                       <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>
-<div class="info-section">\n  <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>\n  <div class="info-value" [innerHTML]="descriptionHtml"></div>\n</div>
+                      <div class="info-section">\n  <div class="info-label">{{ 'USER_INFO.DESCRIPTION' | translate }}</div>\n  <div class="info-value" [innerHTML]="descriptionHtml"></div>\n</div>
                     </div>
                     @if (isExpert) {
                       <div class="info-section">
@@ -412,7 +421,8 @@ export class MyUserInfoComponent implements OnInit, AfterViewInit {
     currencyId: null,
     currencyCode: null,
     currencyNameRu: null,
-    currencyNameEn: null
+    currencyNameEn: null,
+    isExpertAvailableInSearch: false,
   };
   photoPreviewUrl: string | null = null;
   selectedPhotoFile: File | null = null;

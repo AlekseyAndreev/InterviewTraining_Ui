@@ -229,7 +229,8 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     currencyId: null,
     currencyCode: null,
     currencyNameRu: null,
-    currencyNameEn: null
+    currencyNameEn: null,
+    isExpertAvailableInSearch: false,
   };
   photoPreviewUrl: string | null = null;
   isLoading = true;

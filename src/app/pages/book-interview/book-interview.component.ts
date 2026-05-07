@@ -196,7 +196,8 @@ export class BookInterviewComponent implements OnInit {
     currencyId: null,
     currencyCode: null,
     currencyNameRu: null,
-    currencyNameEn: null
+    currencyNameEn: null,
+    isExpertAvailableInSearch: false,
   };
   expertPhotoUrl: string | null = null;
 
