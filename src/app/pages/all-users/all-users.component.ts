@@ -66,6 +66,9 @@ import { AdminUserDto } from '../../models/user-info.model';
                 @if (user.isDeleted) {
                   <span class="deleted-badge">{{ 'ALL_USERS.DELETED' | translate }}</span>
                 }
+                @if (user.unreadMessagesByAdmin > 0) {
+                  <span class="unread-badge">{{ user.unreadMessagesByAdmin }} {{ 'ALL_USERS.UNREAD_MESSAGES' | translate }}</span>
+                }
               </div>
               <div class="user-actions">
                 <a [routerLink]="['/user-info', user.identityUserId]" class="btn-view">
@@ -258,6 +261,17 @@ import { AdminUserDto } from '../../models/user-info.model';
       border-radius: 12px;
       font-size: 0.75rem;
       font-weight: 500;
+    }
+
+    .unread-badge {
+      display: inline-block;
+      background: #fff3e0;
+      color: #e65100;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 0.25rem;
     }
 
     .user-actions {

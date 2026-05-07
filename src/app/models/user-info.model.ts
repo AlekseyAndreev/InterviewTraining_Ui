@@ -52,6 +52,7 @@ export interface AdminUserDto {
   isExpert: boolean;
   isCandidate: boolean;
   isDeleted: boolean;
+  unreadMessagesByAdmin: number;
 }
 
 export interface GetAllUsersForAdminResponse {
