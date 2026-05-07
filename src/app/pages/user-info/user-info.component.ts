@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,6 +15,8 @@ import { AvailableTimeDto } from '../../models/available-time.model';
 import { UserChatMessageDto } from '../../models/user-chat.model';
 import { UserSkillGroupComponent } from '../../components/user-skill-group/user-skill-group.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
+import { UserWithAdminChatNotificationService } from '../../services/user-with-admin-chat-notification.service';
 
 @Component({
   selector: 'app-user-info',
@@ -129,7 +131,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
                           @if (message.isEdited) {
                             <span class="message-edited">{{ 'USER_CHAT.EDITED' | translate }}</span>
                           }
-                          @if (!message.isRead && isSenderMessage(message)) {
+                          @if (!message.isRead && !isOwnMessage(message)) {
                             <span class="message-unread-badge">{{ 'USER_CHAT.UNREAD' | translate }}</span>
                           }
                         </div>
@@ -164,7 +166,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
                                 {{ 'USER_CHAT.DELETE_MESSAGE' | translate }}
                               </button>
                             }
-                            @if (!message.isRead && isSenderMessage(message)) {
+                            @if (!message.isRead && !isOwnMessage(message)) {
                               <button class="btn-mark-read" (click)="markChatMessageAsRead(message)">
                                 {{ 'USER_CHAT.MARK_AS_READ' | translate }}
                               </button>
@@ -204,7 +206,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
     </div>
   `
 })
-export class UserInfoComponent implements OnInit {
+export class UserInfoComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private userService = inject(UserService);
@@ -214,6 +216,7 @@ export class UserInfoComponent implements OnInit {
   private snackbarService = inject(SnackbarService);
   public oidcSecurityService = inject(OidcSecurityService);
   private sanitizer = inject(DomSanitizer);
+  private chatNotificationService = inject(UserWithAdminChatNotificationService);
   
   apiUserInfo: GetUserInfoResponse = {
     photo: null,
@@ -250,6 +253,7 @@ export class UserInfoComponent implements OnInit {
   editingMessageId: string | null = null;
   editingMessageText: string = '';
   isSavingMessage = false;
+  private signalRSubscriptions: Subscription[] = [];
 
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
   
@@ -283,9 +287,52 @@ export class UserInfoComponent implements OnInit {
         this.isAdmin = Array.isArray(roles) ? roles.includes('Admin') : roles === 'Admin';
         if (this.isAdmin && this.userId) {
           this.loadChatMessages();
+          this.initSignalR();
         }
       }
     });
+  }
+
+  private initSignalR(): void {
+    this.oidcSecurityService.getAccessToken().subscribe({
+      next: (token) => {
+        if (token && this.userId) {
+          this.chatNotificationService.startConnection(token, this.userId);
+          this.subscribeToNotifications();
+        }
+      },
+      error: (error) => {
+        console.error('Error getting access token for SignalR:', error);
+      }
+    });
+  }
+
+  private subscribeToNotifications(): void {
+    const createdSub = this.chatNotificationService.messageCreated$.subscribe({
+      next: () => {
+        this.loadChatMessages();
+      }
+    });
+
+    const updatedSub = this.chatNotificationService.messageUpdated$.subscribe({
+      next: (notification) => {
+        const message = this.chatMessages.find(m => m.id === notification.id);
+        if (message) {
+          message.messageText = notification.text;
+          message.isEdited = notification.isEdited;
+          message.isRead = false;
+          this.chatMessages = [...this.chatMessages];
+        }
+      }
+    });
+
+    this.signalRSubscriptions.push(createdSub, updatedSub);
+  }
+
+  ngOnDestroy(): void {
+    this.signalRSubscriptions.forEach(sub => sub.unsubscribe());
+    this.signalRSubscriptions = [];
+    this.chatNotificationService.stopConnection();
   }
 
   private checkCanBookInterview(): void {
@@ -428,15 +475,11 @@ export class UserInfoComponent implements OnInit {
   }
 
   isOwnMessage(message: UserChatMessageDto): boolean {
-    return message.senderUserId === this.currentUserId;
+    return message.isSenderAdmin;
   }
 
   isReceivedMessage(message: UserChatMessageDto): boolean {
     return message.receiverUserId === this.currentUserId;
-  }
-
-  isSenderMessage(message: UserChatMessageDto): boolean {
-    return message.senderUserId === this.currentUserId;
   }
 
   getChatMessageClass(message: UserChatMessageDto): string {
@@ -448,7 +491,7 @@ export class UserInfoComponent implements OnInit {
 
   getChatMessageFromText(message: UserChatMessageDto): string {
     if (this.isOwnMessage(message)) {
-      return this.translateService.instant('USER_CHAT.YOU');
+      return this.translateService.instant('USER_CHAT.FROM_ADMIN');
     }
     if(this.isAdmin) {
       return message.senderFullName || this.translateService.instant('USER_CHAT.FROM_USER');

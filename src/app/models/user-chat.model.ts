@@ -1,5 +1,6 @@
 export interface UserChatMessageDto {
   id: string;
+  isSenderAdmin: boolean;
   senderUserId: string;
   senderFullName: string;
   receiverUserId: string;
@@ -41,4 +42,22 @@ export interface DeleteUserChatMessageResponse {
 
 export interface MarkUserChatMessageAsReadResponse {
   success: boolean;
+}
+
+export interface UserWithAdminChatMessageCreatedNotification {
+  id: string;
+  userId: string;
+  text: string;
+  createdUtc: string;
+  isEdited: boolean;
+  modifiedUtc: string | null;
+}
+
+export interface UserWithAdminChatMessageUpdatedNotification {
+  id: string;
+  userId: string;
+  text: string;
+  createdUtc: string;
+  isEdited: boolean;
+  modifiedUtc: string | null;
 }

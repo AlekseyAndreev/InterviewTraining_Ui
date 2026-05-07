@@ -334,12 +334,13 @@
     "ERROR_DELETE": "Error deleting notification"
   },
   "USER_CHAT": {
-    "TITLE": "Chat with Administrator",
+    "TITLE": "User chat with Administrator",
     "BACK": "Back",
     "ICON_TITLE": "Chat",
     "LOADING_MESSAGES": "Loading messages...",
     "NO_MESSAGES": "No messages yet. Start the conversation!",
     "YOU": "You",
+    "FROM_ADMIN": "From administrator",
     "FROM_USER": "User",
     "ADMIN": "Administrator",
     "SEND": "Send",

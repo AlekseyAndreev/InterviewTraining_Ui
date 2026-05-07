@@ -247,10 +247,6 @@ import { Subscription } from 'rxjs';
                </div>
              }
 
-             <div class="actions-section">
-               <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
-             </div>
-
             @if (chatMessages !== null) {
               <div class="chat-section">
                 <h3 class="chat-title">{{ 'INTERVIEW_INFO.CHAT_TITLE' | translate }}</h3>
@@ -326,6 +322,10 @@ import { Subscription } from 'rxjs';
                 </div>
               </div>
             }
+
+            <div class="actions-section">
+              <button class="btn-back" (click)="goBack()">{{ 'INTERVIEW_INFO.BACK' | translate }}</button>
+            </div>
          </div>
        }
      </div>

@@ -6,7 +6,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UserChatService } from '../../services/user-chat.service';
 import { SnackbarService } from '../../services/snackbar.service';
+import { UserWithAdminChatNotificationService } from '../../services/user-with-admin-chat-notification.service';
 import { UserChatMessageDto } from '../../models/user-chat.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-chat',
@@ -386,6 +388,7 @@ export class UserChatComponent implements OnInit, OnDestroy {
   private snackbarService = inject(SnackbarService);
   private translateService = inject(TranslateService);
   public oidcSecurityService = inject(OidcSecurityService);
+  private chatNotificationService = inject(UserWithAdminChatNotificationService);
 
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
 
@@ -400,6 +403,7 @@ export class UserChatComponent implements OnInit, OnDestroy {
   isSavingMessage = false;
 
   private authSubscription: any = null;
+  private signalRSubscriptions: Subscription[] = [];
 
   ngOnInit(): void {
     this.authSubscription = this.oidcSecurityService.userData$.subscribe({
@@ -407,15 +411,55 @@ export class UserChatComponent implements OnInit, OnDestroy {
         this.currentUserId = userData?.sub || null;
         if (this.currentUserId) {
           this.loadMessages();
+          this.initSignalR();
         }
       }
     });
+  }
+
+  private initSignalR(): void {
+    if (!this.currentUserId) return;
+
+    this.oidcSecurityService.getAccessToken().subscribe(token => {
+      if (token) {
+        this.chatNotificationService.startConnection(token, this.currentUserId!);
+        this.subscribeToNotifications();
+      }
+    });
+  }
+
+  private subscribeToNotifications(): void {
+    const messageCreatedSub = this.chatNotificationService.messageCreated$
+      .subscribe(notification => {
+        console.log('Processing UserWithAdminChatMessageCreated:', notification);
+        this.loadMessages();
+      });
+
+    const messageUpdatedSub = this.chatNotificationService.messageUpdated$
+      .subscribe(notification => {
+        console.log('Processing UserWithAdminChatMessageUpdated:', notification);
+        this.messages = this.messages.map(msg => {
+          if (msg.id === notification.id) {
+            return {
+              ...msg,
+              messageText: notification.text,
+              isEdited: notification.isEdited
+            };
+          }
+          return msg;
+        });
+      });
+
+    this.signalRSubscriptions = [messageCreatedSub, messageUpdatedSub];
   }
 
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+    this.signalRSubscriptions.forEach(sub => sub.unsubscribe());
+    this.signalRSubscriptions = [];
+    this.chatNotificationService.stopConnection();
   }
 
   private loadMessages(): void {
