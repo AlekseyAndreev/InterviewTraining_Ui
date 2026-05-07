@@ -4,7 +4,8 @@ import { Subject } from 'rxjs';
 import { APP_CONFIG } from './config.service';
 import {
   UserWithAdminChatMessageCreatedNotification,
-  UserWithAdminChatMessageUpdatedNotification
+  UserWithAdminChatMessageUpdatedNotification,
+  UserWithAdminChatMessageDeletedNotification
 } from '../models/user-chat.model';
 
 @Injectable({
@@ -16,9 +17,11 @@ export class UserWithAdminChatNotificationService implements OnDestroy {
 
   private messageCreatedSubject = new Subject<UserWithAdminChatMessageCreatedNotification>();
   private messageUpdatedSubject = new Subject<UserWithAdminChatMessageUpdatedNotification>();
+  private messageDeletedSubject = new Subject<UserWithAdminChatMessageDeletedNotification>();
 
   messageCreated$ = this.messageCreatedSubject.asObservable();
   messageUpdated$ = this.messageUpdatedSubject.asObservable();
+  messageDeleted$ = this.messageDeletedSubject.asObservable();
 
   private hubStarted = false;
   private currentUserId: string | null = null;
@@ -81,6 +84,10 @@ export class UserWithAdminChatNotificationService implements OnDestroy {
       this.messageUpdatedSubject.next(notification);
     });
 
+    this.hubConnection.on('UserWithAdminChatMessageDeleted', (notification: UserWithAdminChatMessageDeletedNotification) => {
+      this.messageDeletedSubject.next(notification);
+    });
+
     this.hubConnection.onclose(error => {
       this.hubStarted = false;
     });
@@ -129,5 +136,6 @@ export class UserWithAdminChatNotificationService implements OnDestroy {
     this.stopConnection();
     this.messageCreatedSubject.complete();
     this.messageUpdatedSubject.complete();
+    this.messageDeletedSubject.complete();
   }
 }

@@ -7,7 +7,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UserChatService } from '../../services/user-chat.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { UserWithAdminChatNotificationService } from '../../services/user-with-admin-chat-notification.service';
-import { UserChatMessageDto } from '../../models/user-chat.model';
+import { UserChatMessageDto, UserWithAdminChatMessageDeletedNotification } from '../../models/user-chat.model';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -443,14 +443,21 @@ export class UserChatComponent implements OnInit, OnDestroy {
             return {
               ...msg,
               messageText: notification.text,
-              isEdited: notification.isEdited
+              isEdited: notification.isEdited,
+              isRead: false,
             };
           }
           return msg;
         });
       });
 
-    this.signalRSubscriptions = [messageCreatedSub, messageUpdatedSub];
+    const messageDeletedSub = this.chatNotificationService.messageDeleted$
+      .subscribe((notification: UserWithAdminChatMessageDeletedNotification) => {
+        console.log('Processing UserWithAdminChatMessageDeleted:', notification);
+        this.messages = this.messages.filter(msg => msg.id !== notification.id);
+      });
+
+    this.signalRSubscriptions = [messageCreatedSub, messageUpdatedSub, messageDeletedSub];
   }
 
   ngOnDestroy(): void {

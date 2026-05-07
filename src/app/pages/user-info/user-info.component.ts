@@ -326,7 +326,14 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.signalRSubscriptions.push(createdSub, updatedSub);
+    const deleteSub = this.chatNotificationService.messageDeleted$.subscribe({
+      next: (notification) => {
+        console.log('Processing UserWithAdminChatMessageDeleted:', notification);
+        this.chatMessages = this.chatMessages.filter(msg => msg.id !== notification.id);
+      }
+    });
+
+    this.signalRSubscriptions.push(createdSub, updatedSub, deleteSub);
   }
 
   ngOnDestroy(): void {

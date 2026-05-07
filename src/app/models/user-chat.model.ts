@@ -61,3 +61,12 @@ export interface UserWithAdminChatMessageUpdatedNotification {
   isEdited: boolean;
   modifiedUtc: string | null;
 }
+
+export interface UserWithAdminChatMessageDeletedNotification {
+  id: string;
+  userId: string;
+  text: string;
+  createdUtc: string;
+  isEdited: boolean;
+  modifiedUtc: string | null;
+}
