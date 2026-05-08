@@ -295,7 +295,16 @@
     "SENDING": "Sending...",
     "MESSAGE_PLACEHOLDER": "Type your message...",
     "NO_MESSAGES": "No messages yet. Start the conversation!",
-    "LOADING_MESSAGES": "Loading messages..."
+    "LOADING_MESSAGES": "Loading messages...",
+    "ADMIN_DATA": "Admin Data",
+    "LINK_TO_VIDEO_CALL": "Video Call Link",
+    "LINK_TO_VIDEO_CALL_PLACEHOLDER": "Enter video call link...",
+    "IS_PAID_BY_CANDIDATE": "Paid by Candidate",
+    "IS_PAID_TO_EXPERT": "Paid to Expert",
+    "NOT_SET": "Not Set",
+    "YES": "Yes",
+    "NO": "No",
+    "SAVE_ADMIN_DATA": "Save Admin Data"
   },
   "EXPERT_INFO": {
     "TITLE": "Information for Experts",

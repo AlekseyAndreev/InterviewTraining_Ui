@@ -17,7 +17,9 @@ import {
   CreateChatMessageResponse,
   UpdateChatMessageRequest,
   UpdateChatMessageResponse,
-  GetChatMessagesResponse
+  GetChatMessagesResponse,
+  ChangeAdminDataRequest,
+  ChangeAdminDataResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -77,5 +79,10 @@ export class InterviewService {
   getChatMessages(interviewId: string): Observable<GetChatMessagesResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/chat/messages`;
     return this.http.get<GetChatMessagesResponse>(apiUrl);
+  }
+
+  changeAdminData(interviewId: string, request: ChangeAdminDataRequest): Observable<ChangeAdminDataResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/admin-data`;
+    return this.http.put<ChangeAdminDataResponse>(apiUrl, request);
   }
 }

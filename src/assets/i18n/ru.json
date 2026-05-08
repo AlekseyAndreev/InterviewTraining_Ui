@@ -295,7 +295,16 @@
     "SENDING": "Отправка...",
     "MESSAGE_PLACEHOLDER": "Введите сообщение...",
     "NO_MESSAGES": "Пока нет сообщений. Начните общение!",
-    "LOADING_MESSAGES": "Загрузка сообщений..."
+    "LOADING_MESSAGES": "Загрузка сообщений...",
+    "ADMIN_DATA": "Данные администратора",
+    "LINK_TO_VIDEO_CALL": "Ссылка на видеозвонок",
+    "LINK_TO_VIDEO_CALL_PLACEHOLDER": "Введите ссылку на видеозвонок...",
+    "IS_PAID_BY_CANDIDATE": "Оплачено кандидатом",
+    "IS_PAID_TO_EXPERT": "Оплачено эксперту",
+    "NOT_SET": "Не задано",
+    "YES": "Да",
+    "NO": "Нет",
+    "SAVE_ADMIN_DATA": "Сохранить данные"
   },
   "EXPERT_INFO": {
     "TITLE": "Информация для эксперта",

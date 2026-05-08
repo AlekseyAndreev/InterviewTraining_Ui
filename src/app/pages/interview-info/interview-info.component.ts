@@ -186,14 +186,55 @@ import { Subscription } from 'rxjs';
              </div>
            }
 
-           @if (interviewInfo.linkToVideoCall) {
-            <div class="info-section">
-              <span class="info-label">{{ 'INTERVIEW_INFO.VIDEO_CALL_LINK' | translate }}</span>
-              <a [href]="interviewInfo.linkToVideoCall" target="_blank" class="video-link">
-                {{ interviewInfo.linkToVideoCall }}
-              </a>
-            </div>
-           }
+@if (interviewInfo.linkToVideoCall) {
+             <div class="info-section">
+               <span class="info-label">{{ 'INTERVIEW_INFO.VIDEO_CALL_LINK' | translate }}</span>
+               <a [href]="interviewInfo.linkToVideoCall" target="_blank" class="video-link">
+                 {{ interviewInfo.linkToVideoCall }}
+               </a>
+             </div>
+            }
+
+            @if (isAdmin) {
+              <div class="admin-section">
+                <h3 class="admin-section-title">{{ 'INTERVIEW_INFO.ADMIN_DATA' | translate }}</h3>
+                
+                <div class="form-group">
+                  <label class="form-label">{{ 'INTERVIEW_INFO.LINK_TO_VIDEO_CALL' | translate }}</label>
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    [(ngModel)]="adminLinkToVideoCall"
+                    [placeholder]="'INTERVIEW_INFO.LINK_TO_VIDEO_CALL_PLACEHOLDER' | translate">
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">{{ 'INTERVIEW_INFO.IS_PAID_BY_CANDIDATE' | translate }}</label>
+                  <select class="form-select" [(ngModel)]="adminIsPaidByCandidate">
+                    <option [ngValue]="null">{{ 'INTERVIEW_INFO.NOT_SET' | translate }}</option>
+                    <option [ngValue]="true">{{ 'INTERVIEW_INFO.YES' | translate }}</option>
+                    <option [ngValue]="false">{{ 'INTERVIEW_INFO.NO' | translate }}</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">{{ 'INTERVIEW_INFO.IS_PAID_TO_EXPERT' | translate }}</label>
+                  <select class="form-select" [(ngModel)]="adminIsPaidToExpert">
+                    <option [ngValue]="null">{{ 'INTERVIEW_INFO.NOT_SET' | translate }}</option>
+                    <option [ngValue]="true">{{ 'INTERVIEW_INFO.YES' | translate }}</option>
+                    <option [ngValue]="false">{{ 'INTERVIEW_INFO.NO' | translate }}</option>
+                  </select>
+                </div>
+                
+                <button class="btn-save-admin-data" (click)="saveAdminData()" [disabled]="isSavingAdminData">
+                  @if (isSavingAdminData) {
+                    {{ 'INTERVIEW_INFO.SAVING' | translate }}
+                  } @else {
+                    {{ 'INTERVIEW_INFO.SAVE_ADMIN_DATA' | translate }}
+                  }
+                </button>
+              </div>
+            }
 
             @if (interviewInfo.candidateApproval.cancelReason || interviewInfo.expertApproval.cancelReason) {
               <div class="info-section cancel-reason-section">
@@ -366,6 +407,11 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
   isSavingMessage = false;
   isAdmin = false;
   
+  adminLinkToVideoCall: string = '';
+  adminIsPaidByCandidate: boolean | null = null;
+  adminIsPaidToExpert: boolean | null = null;
+  isSavingAdminData = false;
+  
   private signalRSubscriptions: Subscription[] = [];
 
   ngOnInit(): void {
@@ -485,6 +531,11 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
         this.interviewInfo = response;
         this.isLoading = false;
         this.loadChatMessages(id);
+        if (this.isAdmin) {
+          this.adminLinkToVideoCall = response.linkToVideoCall || '';
+          this.adminIsPaidByCandidate = response.isPaidByCandidate;
+          this.adminIsPaidToExpert = response.isPaidToExpert;
+        }
       },
       error: (error) => {
         console.error('Error loading interview info:', error);
@@ -544,6 +595,7 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
       'ConfirmedByExpert': 'status-scheduled',
       'ConfirmedBoth': 'status-scheduled',
       'ConfirmedBothLinkCreated': 'status-scheduled',
+      'ConfirmedBothAdminNotApproved': 'status-scheduled',
       'InProgress': 'status-scheduled',
       'Completed': 'status-completed',
       'CancelledByCandidate': 'status-cancelled',
@@ -679,6 +731,10 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
     const isCandidate = this.interviewInfo.candidate.identityUserId === this.currentUserId;
     const isExpert = this.interviewInfo.expert.identityUserId === this.currentUserId;
     
+    if (this.isAdmin && this.interviewInfo.status === 'ConfirmedBothAdminNotApproved') {
+      return true;
+    }
+    
     if (!isCandidate && !isExpert) return false;
     
     const candidateAllowedStatuses = ['PendingConfirmation', 'ConfirmedByExpert'];
@@ -709,6 +765,28 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error confirming interview:', error);
         this.isConfirming = false;
+      }
+    });
+  }
+
+  saveAdminData(): void {
+    if (!this.interviewId || this.isSavingAdminData) return;
+    
+    this.isSavingAdminData = true;
+    this.interviewService.changeAdminData(this.interviewId, {
+      linkToVideoCall: this.adminLinkToVideoCall || null,
+      isPaidByCandidate: this.adminIsPaidByCandidate,
+      isPaidToExpert: this.adminIsPaidToExpert
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.loadInterviewInfo(this.interviewId!);
+        }
+        this.isSavingAdminData = false;
+      },
+      error: (error) => {
+        console.error('Error saving admin data:', error);
+        this.isSavingAdminData = false;
       }
     });
   }

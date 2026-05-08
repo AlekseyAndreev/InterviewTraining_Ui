@@ -104,6 +104,8 @@ export interface GetInterviewInfoResponse {
   candidateApproval: ParticipantApprovalDto;
   expertApproval: ParticipantApprovalDto;
   createdUtc: string;
+  isPaidByCandidate: boolean | null;
+  isPaidToExpert: boolean | null;
 }
 
 export interface GetChatMessagesResponse {
@@ -179,4 +181,16 @@ export interface ChatMessageUpdatedNotification {
   createdUtc: string;
   isEdited: boolean;
   modifiedUtc: string | null;
+}
+
+export interface ChangeAdminDataRequest {
+  linkToVideoCall?: string | null;
+  isPaidByCandidate?: boolean | null;
+  isPaidToExpert?: boolean | null;
+}
+
+export interface ChangeAdminDataResponse {
+  interviewId: string;
+  newVersionId: string;
+  success: boolean;
 }
