@@ -129,7 +129,10 @@
     "DATE_DESC": "Newest First",
     "DATE_ASC": "Oldest First",
     "NOT_SPECIFIED": "Not specified",
-    "SHORT_DESCRIPTION": "Short Description"
+    "SHORT_DESCRIPTION": "Short Description",
+    "LLM_INTERVIEWS": "AI Interviews",
+    "LLM_AI": "AI",
+    "START_LLM_INTERVIEW": "Start Interview"
   },
   "BOOK_INTERVIEW": {
      "TITLE": "Book Interview",
@@ -388,5 +391,20 @@
     "UNREAD_MESSAGES": "unread messages",
     "PAGE": "Page",
     "OF": "of"
+  },
+  "LLM_INTERVIEW": {
+    "TITLE": "AI Interview",
+    "BACK": "Back",
+    "STARTING": "Starting interview...",
+    "YOU": "You",
+    "AI": "AI",
+    "NO_MESSAGES": "No messages yet",
+    "MESSAGE_PLACEHOLDER": "Type your message...",
+    "SEND": "Send",
+    "SENDING": "Sending...",
+    "ERROR_INVALID_TYPE": "Invalid interview type",
+    "ERROR_STARTING": "Error starting interview",
+    "ERROR_SENDING": "Error sending message",
+    "TITLE_SUFFIX": "AI Interview"
   }
 }

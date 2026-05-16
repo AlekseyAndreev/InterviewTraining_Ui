@@ -1,10 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ExpertService } from '../../services/expert.service';
+import { LlmService } from '../../services/llm.service';
 import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.model';
+import { AllLlmInterviewsResponse } from '../../models/llm.model';
 
 @Component({
   selector: 'app-expert-search',
@@ -24,6 +26,45 @@ import { GetExpertResponse, GetAllExpertsResponse } from '../../models/expert.mo
           </select>
         </div>
       </div>
+
+      @if (llmInterviews.length > 0 || llmLoading || llmError) {
+        <div class="llm-section">
+          <h2 class="llm-section-title">{{ 'EXPERT_SEARCH.LLM_INTERVIEWS' | translate }}</h2>
+
+          @if (llmLoading) {
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>{{ 'EXPERT_SEARCH.LOADING' | translate }}</p>
+            </div>
+          }
+
+          @if (llmError) {
+            <div class="error-state">
+              <p>{{ 'EXPERT_SEARCH.ERROR' | translate }}</p>
+            </div>
+          }
+
+          @if (!llmLoading && !llmError && llmInterviews.length > 0) {
+            <div class="experts-grid">
+              @for (interview of llmInterviews; track interview.interviewType) {
+                <div class="expert-card">
+                  <div class="expert-avatar">
+                    {{ 'EXPERT_SEARCH.LLM_AI' | translate }}
+                  </div>
+                  <div class="expert-info">
+                    <h3 class="expert-name">{{ getInterviewName(interview) }}</h3>
+                  </div>
+                  <div class="expert-actions">
+                    <button class="btn-book" (click)="startLlmInterview(interview.interviewType)">
+                      {{ 'EXPERT_SEARCH.START_LLM_INTERVIEW' | translate }}
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
 
       @if (loading) {
         <div class="loading-state">
@@ -100,6 +141,10 @@ export class ExpertSearchComponent implements OnInit {
   error = false;
   isCandidate = false;
   currentUserId: string | null = null;
+
+  llmInterviews: AllLlmInterviewsResponse[] = [];
+  llmLoading = false;
+  llmError = false;
   
   currentPage = 1;
   pageSize = 10;
@@ -107,15 +152,18 @@ export class ExpertSearchComponent implements OnInit {
   totalPages = 0;
 
   private oidcSecurityService = inject(OidcSecurityService);
+  private translateService = inject(TranslateService);
 
   constructor(
     private expertService: ExpertService,
+    private llmService: LlmService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.checkUserRoleAndId();
     this.loadExperts();
+    this.loadLlmInterviews();
   }
 
   private checkUserRoleAndId(): void {
@@ -185,5 +233,30 @@ export class ExpertSearchComponent implements OnInit {
   goToPage(page: number): void {
     this.currentPage = page;
     this.loadExperts();
+  }
+
+  loadLlmInterviews(): void {
+    this.llmLoading = true;
+    this.llmError = false;
+
+    this.llmService.getAllInterviews().subscribe({
+      next: (response: AllLlmInterviewsResponse[]) => {
+        this.llmInterviews = response || [];
+        this.llmLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading LLM interviews:', err);
+        this.llmError = true;
+        this.llmLoading = false;
+      }
+    });
+  }
+
+  startLlmInterview(type: number): void {
+    this.router.navigate(['/llm-interview', type]);
+  }
+
+  getInterviewName(interview: AllLlmInterviewsResponse): string {
+    return this.translateService.currentLang === 'ru' ? interview.interviewNameRu : interview.interviewNameEn;
   }
 }

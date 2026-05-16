@@ -3393,3 +3393,36 @@ body {
   border-right: 3px solid #7b1fa2;
   margin-left: auto;
 }
+
+/* LLM Interview Section */
+.llm-section {
+  margin-bottom: 2rem;
+}
+
+.llm-section-title {
+  color: white;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.llm-section .expert-card {
+  border-top: 4px solid #27ae60;
+}
+
+.llm-section .expert-avatar {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.llm-section .btn-book {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+}
+
+.llm-section .btn-book:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}

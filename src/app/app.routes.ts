@@ -61,6 +61,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'llm-interview/:type',
+    loadComponent: () => import('./pages/llm-interview/llm-interview.component').then(m => m.LlmInterviewComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: ''
   }

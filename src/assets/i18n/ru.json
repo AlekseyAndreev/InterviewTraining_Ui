@@ -129,7 +129,10 @@
     "DATE_DESC": "Сначала новые",
     "DATE_ASC": "Сначала старые",
     "NOT_SPECIFIED": "Не указано",
-    "SHORT_DESCRIPTION": "Краткое описание"
+    "SHORT_DESCRIPTION": "Краткое описание",
+    "LLM_INTERVIEWS": "Собеседования с ИИ",
+    "LLM_AI": "ИИ",
+    "START_LLM_INTERVIEW": "Начать собеседование"
   },
   "BOOK_INTERVIEW": {
      "TITLE": "Запись на собеседование",
@@ -388,5 +391,20 @@
     "UNREAD_MESSAGES": "непрочитанных сообщений",
     "PAGE": "Страница",
     "OF": "из"
+  },
+  "LLM_INTERVIEW": {
+    "TITLE": "Собеседование с ИИ",
+    "BACK": "Назад",
+    "STARTING": "Начало собеседования...",
+    "YOU": "Вы",
+    "AI": "ИИ",
+    "NO_MESSAGES": "Пока нет сообщений",
+    "MESSAGE_PLACEHOLDER": "Введите сообщение...",
+    "SEND": "Отправить",
+    "SENDING": "Отправка...",
+    "ERROR_INVALID_TYPE": "Неверный тип собеседования",
+    "ERROR_STARTING": "Ошибка при начале собеседования",
+    "ERROR_SENDING": "Ошибка при отправке сообщения",
+    "TITLE_SUFFIX": "собеседование с ИИ"
   }
 }
