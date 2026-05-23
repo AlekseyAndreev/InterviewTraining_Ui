@@ -59,9 +59,16 @@ import { Subscription } from 'rxjs';
 
         <div class="nav-menu-mobile">
           @if (auth.isAuthenticated) {
-            <button class="mobile-menu-btn" (click)="toggleMobileMenu($event)">
-              <span class="hamburger-icon">☰</span>
-            </button>
+            <div class="mobile-icons-row">
+              <app-notification-bell 
+                [notifications]="notifications"
+                (notificationsChange)="onNotificationsChange($event)">
+              </app-notification-bell>
+              <app-chat-icon [unreadCount]="chatUnreadCount"></app-chat-icon>
+              <button class="mobile-menu-btn" (click)="toggleMobileMenu($event)">
+                <span class="hamburger-icon">☰</span>
+              </button>
+            </div>
             
             @if (showMobileMenu) {
               <div class="mobile-menu-dropdown">
@@ -77,11 +84,6 @@ import { Subscription } from 'rxjs';
                   <a routerLink="/expert-search" class="mobile-nav-link" (click)="closeMobileMenu()">
                     {{ 'NAV.EXPERT_SEARCH' | translate }}
                   </a>
-                  <app-notification-bell 
-                    [notifications]="notifications"
-                    (notificationsChange)="onNotificationsChange($event)">
-                  </app-notification-bell>
-                  <app-chat-icon [unreadCount]="chatUnreadCount"></app-chat-icon>
                   <a routerLink="/my-user-info" class="mobile-nav-link" (click)="closeMobileMenu()">
                     {{ getUserName(userData) || ('NAV.USER' | translate) }}
                   </a>

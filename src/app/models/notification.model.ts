@@ -3,6 +3,8 @@ export interface UserNotificationDto {
   isRead: boolean;
   text: string;
   created: string;
+  linkType: string;
+  linkId: string;
 }
 
 export interface GetUserNotificationsResponse {

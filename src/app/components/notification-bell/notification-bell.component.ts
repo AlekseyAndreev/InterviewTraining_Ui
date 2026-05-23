@@ -1,8 +1,13 @@
 import { Component, EventEmitter, HostListener, Input, Output, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserNotificationDto } from '../../models/notification.model';
 import { NotificationService } from '../../services/notification.service';
 import { SnackbarService } from '../../services/snackbar.service';
+
+const LINK_ROUTES: Record<string, (id: string) => string[]> = {
+  interview: (id) => ['/interview-info', id],
+};
 
 @Component({
   selector: 'app-notification-bell',
@@ -32,6 +37,11 @@ import { SnackbarService } from '../../services/snackbar.service';
                 <div class="notification-item" [class.unread]="!notification.isRead">
                   <div class="notification-content">
                     <div class="notification-text">{{ notification.text }}</div>
+                    @if (hasLink(notification)) {
+                      <a class="notification-link" (click)="navigateByLink(notification, $event)">
+                        {{ getLinkText(notification) }}
+                      </a>
+                    }
                     <div class="notification-date">{{ formatDate(notification.created) }}</div>
                   </div>
                   <div class="notification-actions">
@@ -183,6 +193,22 @@ import { SnackbarService } from '../../services/snackbar.service';
       font-weight: 500;
     }
 
+    .notification-link {
+      display: inline-block;
+      margin-top: 6px;
+      color: #667eea;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .notification-link:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+
     .notification-date {
       color: #888;
       font-size: 0.8rem;
@@ -238,6 +264,7 @@ export class NotificationBellComponent {
   private notificationService = inject(NotificationService);
   private snackbarService = inject(SnackbarService);
   private translateService = inject(TranslateService);
+  private router = inject(Router);
 
   @Input() notifications: UserNotificationDto[] = [];
   @Output() notificationsChange = new EventEmitter<UserNotificationDto[]>();
@@ -246,6 +273,28 @@ export class NotificationBellComponent {
 
   get unreadCount(): number {
     return this.notifications.filter(n => !n.isRead).length;
+  }
+
+  hasLink(notification: UserNotificationDto): boolean {
+    return !!notification.linkType && !!notification.linkId && notification.linkType in LINK_ROUTES;
+  }
+
+  getLinkText(notification: UserNotificationDto): string {
+    switch (notification.linkType) {
+      case 'interview':
+        return this.translateService.instant('NOTIFICATIONS.GO_TO_INTERVIEW');
+      default:
+        return '';
+    }
+  }
+
+  navigateByLink(notification: UserNotificationDto, event: MouseEvent): void {
+    event.stopPropagation();
+    const routeFactory = LINK_ROUTES[notification.linkType];
+    if (routeFactory && notification.linkId) {
+      this.isOpen = false;
+      this.router.navigate(routeFactory(notification.linkId));
+    }
   }
 
   toggleDropdown(event: MouseEvent): void {

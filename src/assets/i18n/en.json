@@ -345,7 +345,8 @@
     "DELETE": "Delete",
     "ERROR_MARK_READ": "Error marking notification",
     "ERROR_MARK_UNREAD": "Error removing read status",
-    "ERROR_DELETE": "Error deleting notification"
+    "ERROR_DELETE": "Error deleting notification",
+    "GO_TO_INTERVIEW": "Go to interview"
   },
   "USER_CHAT": {
     "TITLE": "User chat with Administrator",

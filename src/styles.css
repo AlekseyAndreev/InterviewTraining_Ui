@@ -1816,6 +1816,12 @@ body {
     font-size: 1.1rem;
   }
 
+  .mobile-icons-row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
   .tabs-nav {
     display: none;
   }
