@@ -186,7 +186,7 @@ import { Subscription } from 'rxjs';
              </div>
            }
 
-@if (interviewInfo.linkToVideoCall) {
+            @if (interviewInfo.linkToVideoCall) {
              <div class="info-section">
                <span class="info-label">{{ 'INTERVIEW_INFO.VIDEO_CALL_LINK' | translate }}</span>
                <a [href]="interviewInfo.linkToVideoCall" target="_blank" class="video-link">
@@ -684,22 +684,17 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
     
     if (!isCandidate && !isExpert) return false;
     
-    const candidateAllowedStatuses = [
+    const allowedStatusesToCancel = [
+      'Draft',
       'PendingConfirmation',
       'ConfirmedByCandidate',
       'ConfirmedByExpert',
-      'ConfirmedBoth'
+      'ConfirmedBothAdminApprovedTimeDidNotStart',
+      'ConfirmedBothAdminNotApproved',
     ];
     
-    const expertAllowedStatuses = [
-      'PendingConfirmation',
-      'ConfirmedByCandidate',
-      'ConfirmedByExpert',
-      'ConfirmedBoth'
-    ];
-    
-    if (isCandidate && !candidateAllowedStatuses.includes(this.interviewInfo.status)) return false;
-    if (isExpert && !expertAllowedStatuses.includes(this.interviewInfo.status)) return false;
+    if (isCandidate && !allowedStatusesToCancel.includes(this.interviewInfo.status)) return false;
+    if (isExpert && !allowedStatusesToCancel.includes(this.interviewInfo.status)) return false;
     
     return true;
   }
@@ -795,13 +790,16 @@ export class InterviewInfoComponent implements OnInit, OnDestroy {
     if (!this.interviewInfo || !this.currentUserId) return false;
     
     const allowedStatuses = [
+      'Draft',
       'PendingConfirmation',
       'ConfirmedByCandidate',
       'ConfirmedByExpert',
+      'ConfirmedBothAdminApprovedTimeDidNotStart',
+      'ConfirmedBothAdminNotApproved',
+      'TimeExpiredBothApprovedAdminDidNotApprove',
       'TimeExpiredCandidateDidNotApprove',
       'TimeExpiredExpertDidNotApprove',
       'TimeExpiredBothDidNotApprove',
-      'TimeExpiredBothApprovedAdminDidNotApprove',
     ];
     
     if (!allowedStatuses.includes(this.interviewInfo.status)) return false;
