@@ -454,7 +454,7 @@ export class LlmInterviewComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/expert-search']);
+    this.router.navigate(['/llm-interviews']);
   }
 
   getInterviewTitle(): string {

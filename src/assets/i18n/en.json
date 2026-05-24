@@ -9,7 +9,8 @@
     "LOGOUT": "Logout",
     "EXPERT_SEARCH": "Interview Search",
     "MY_INTERVIEWS": "My Interviews",
-    "ALL_USERS": "All Users"
+    "ALL_USERS": "All Users",
+    "LLM_INTERVIEWS": "AI Interviews"
   },
   "HOME": {
     "LOGIN": "Login",
@@ -407,5 +408,13 @@
     "ERROR_STARTING": "Error starting interview",
     "ERROR_SENDING": "Error sending message",
     "TITLE_SUFFIX": "AI Interview"
+  },
+  "LLM_INTERVIEWS": {
+    "TITLE": "AI Interviews",
+    "LOADING": "Loading interviews...",
+    "ERROR": "Error loading interviews",
+    "AI": "AI",
+    "START": "Start Interview",
+    "NO_INTERVIEWS": "No AI interviews available"
   }
 }

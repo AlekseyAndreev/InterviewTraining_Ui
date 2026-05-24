@@ -25,6 +25,7 @@ import { Subscription } from 'rxjs';
             @if (isAdmin) {
               <a routerLink="/all-users" class="nav-link">{{ 'NAV.ALL_USERS' | translate }}</a>
             }
+            <a routerLink="/llm-interviews" class="nav-link">{{ 'NAV.LLM_INTERVIEWS' | translate }}</a>
             <a routerLink="/my-interviews" class="nav-link">{{ 'NAV.MY_INTERVIEWS' | translate }}</a>
             @if (oidcSecurityService.userData$ | async; as userData) {
               <a routerLink="/expert-search" class="nav-link">{{ 'NAV.EXPERT_SEARCH' | translate }}</a>
@@ -77,6 +78,9 @@ import { Subscription } from 'rxjs';
                     {{ 'NAV.ALL_USERS' | translate }}
                   </a>
                 }
+                <a routerLink="/llm-interviews" class="mobile-nav-link" (click)="closeMobileMenu()">
+                  {{ 'NAV.LLM_INTERVIEWS' | translate }}
+                </a>
                 <a routerLink="/my-interviews" class="mobile-nav-link" (click)="closeMobileMenu()">
                   {{ 'NAV.MY_INTERVIEWS' | translate }}
                 </a>
@@ -174,8 +178,6 @@ export class TopNavComponent implements OnInit, OnDestroy {
     const target = event.target as HTMLElement;
     if (!target.closest('.nav-menu-mobile')) {
       this.showMobileMenu = false;
-    }
-    if (!target.closest('.notification-wrapper')) {
     }
   }
 
