@@ -19,7 +19,9 @@ import {
   UpdateChatMessageResponse,
   GetChatMessagesResponse,
   ChangeAdminDataRequest,
-  ChangeAdminDataResponse
+  ChangeAdminDataResponse,
+  InterviewForAdminDto,
+  GetAllInterviewsForAdminResponse
 } from '../models/interview.model';
 import { APP_CONFIG } from './config.service';
 
@@ -84,5 +86,14 @@ export class InterviewService {
   changeAdminData(interviewId: string, request: ChangeAdminDataRequest): Observable<ChangeAdminDataResponse> {
     const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/${interviewId}/admin-data`;
     return this.http.put<ChangeAdminDataResponse>(apiUrl, request);
+  }
+
+  getAllInterviews(pageNumber: number = 1, pageSize: number = 20, searchFilter: string | null = null): Observable<GetAllInterviewsForAdminResponse> {
+    const apiUrl = `${this.config.api.baseUrl}/api/v1/interviews/all`;
+    let params: any = { pageNumber, pageSize };
+    if (searchFilter) {
+      params.searchFilter = searchFilter;
+    }
+    return this.http.get<GetAllInterviewsForAdminResponse>(apiUrl, { params });
   }
 }

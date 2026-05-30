@@ -56,6 +56,11 @@ export const routes: Routes = [
     canActivate: [adminGuard]
   },
   {
+    path: 'all-interviews',
+    loadComponent: () => import('./pages/all-interviews/all-interviews.component').then(m => m.AllInterviewsComponent),
+    canActivate: [adminGuard]
+  },
+  {
     path: 'user-chat',
     loadComponent: () => import('./pages/user-chat/user-chat.component').then(m => m.UserChatComponent),
     canActivate: [authGuard]

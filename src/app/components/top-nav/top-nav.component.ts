@@ -24,6 +24,7 @@ import { Subscription } from 'rxjs';
           @if (auth.isAuthenticated) {
             @if (isAdmin) {
               <a routerLink="/all-users" class="nav-link">{{ 'NAV.ALL_USERS' | translate }}</a>
+              <a routerLink="/all-interviews" class="nav-link">{{ 'NAV.ALL_INTERVIEWS' | translate }}</a>
             }
             <a routerLink="/llm-interviews" class="nav-link">{{ 'NAV.LLM_INTERVIEWS' | translate }}</a>
             <a routerLink="/my-interviews" class="nav-link">{{ 'NAV.MY_INTERVIEWS' | translate }}</a>
@@ -76,6 +77,9 @@ import { Subscription } from 'rxjs';
                 @if (isAdmin) {
                   <a routerLink="/all-users" class="mobile-nav-link" (click)="closeMobileMenu()">
                     {{ 'NAV.ALL_USERS' | translate }}
+                  </a>
+                  <a routerLink="/all-interviews" class="mobile-nav-link" (click)="closeMobileMenu()">
+                    {{ 'NAV.ALL_INTERVIEWS' | translate }}
                   </a>
                 }
                 <a routerLink="/llm-interviews" class="mobile-nav-link" (click)="closeMobileMenu()">

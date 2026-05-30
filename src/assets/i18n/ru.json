@@ -10,6 +10,7 @@
     "EXPERT_SEARCH": "Поиск собеседования",
     "MY_INTERVIEWS": "Мои собеседования",
     "ALL_USERS": "Все пользователи",
+    "ALL_INTERVIEWS": "Все собеседования",
     "LLM_INTERVIEWS": "Собеседования с ИИ"
   },
   "HOME": {
@@ -416,5 +417,27 @@
     "AI": "ИИ",
     "START": "Начать собеседование",
     "NO_INTERVIEWS": "Нет доступных собеседований с ИИ"
+  },
+  "ALL_INTERVIEWS": {
+    "TITLE": "Все собеседования",
+    "SEARCH": "Поиск",
+    "SEARCH_PLACEHOLDER": "Поиск по имени эксперта или кандидата...",
+    "LOADING": "Загрузка...",
+    "ERROR": "Ошибка при загрузке собеседований",
+    "TOTAL_FOUND": "Всего найдено",
+    "NO_RESULTS": "Собеседования не найдены",
+    "VIEW_DETAILS": "Подробнее",
+    "NOT_SPECIFIED": "Не указано",
+    "EXPERT": "Эксперт",
+    "CANDIDATE": "Кандидат",
+    "SCHEDULED_AT": "Запланировано на",
+    "DELETED": "Удалено",
+    "CANCELLED_BY_CANDIDATE": "Отменено кандидатом",
+    "CANCELLED_BY_EXPERT": "Отменено экспертом",
+    "CONFIRMED_BY_CANDIDATE": "Подтверждено кандидатом",
+    "CONFIRMED_BY_EXPERT": "Подтверждено экспертом",
+    "CREATED_AT": "Создано",
+    "PAGE": "Страница",
+    "OF": "из"
   }
 }

@@ -194,3 +194,28 @@ export interface ChangeAdminDataResponse {
   newVersionId: string;
   success: boolean;
 }
+
+export interface InterviewForAdminDto {
+  id: string;
+  expertId: string;
+  expertName: string;
+  candidateId: string;
+  candidateName: string;
+  status: string;
+  statusDescriptionRu: string;
+  statusDescriptionEn: string;
+  scheduledAtUtc: string;
+  isDeleted: boolean;
+  isCancelledByCandidate: boolean;
+  isCancelledByExpert: boolean;
+  isConfirmedByCandidate: boolean;
+  isConfirmedByExpert: boolean;
+  createdAt: string;
+}
+
+export interface GetAllInterviewsForAdminResponse {
+  data: InterviewForAdminDto[];
+  pageNumber: number;
+  pageSize: number;
+  totalRecords: number;
+}

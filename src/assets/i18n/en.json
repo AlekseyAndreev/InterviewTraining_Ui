@@ -10,6 +10,7 @@
     "EXPERT_SEARCH": "Interview Search",
     "MY_INTERVIEWS": "My Interviews",
     "ALL_USERS": "All Users",
+    "ALL_INTERVIEWS": "All Interviews",
     "LLM_INTERVIEWS": "AI Interviews"
   },
   "HOME": {
@@ -416,5 +417,27 @@
     "AI": "AI",
     "START": "Start Interview",
     "NO_INTERVIEWS": "No AI interviews available"
+  },
+  "ALL_INTERVIEWS": {
+    "TITLE": "All Interviews",
+    "SEARCH": "Search",
+    "SEARCH_PLACEHOLDER": "Search by expert or candidate name...",
+    "LOADING": "Loading...",
+    "ERROR": "Error loading interviews",
+    "TOTAL_FOUND": "Total found",
+    "NO_RESULTS": "No interviews found",
+    "VIEW_DETAILS": "View Details",
+    "NOT_SPECIFIED": "Not specified",
+    "EXPERT": "Expert",
+    "CANDIDATE": "Candidate",
+    "SCHEDULED_AT": "Scheduled at",
+    "DELETED": "Deleted",
+    "CANCELLED_BY_CANDIDATE": "Cancelled by candidate",
+    "CANCELLED_BY_EXPERT": "Cancelled by expert",
+    "CONFIRMED_BY_CANDIDATE": "Confirmed by candidate",
+    "CONFIRMED_BY_EXPERT": "Confirmed by expert",
+    "CREATED_AT": "Created",
+    "PAGE": "Page",
+    "OF": "of"
   }
 }
